@@ -199,14 +199,16 @@
 
         /* Install command */
         .install-cmd {
-            background: var(--surface);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 18px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 500px;
+            max-width: 520px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .install-cmd code {
@@ -216,18 +218,19 @@
         }
 
         .install-cmd button {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s;
         }
 
         .install-cmd button:hover {
             background: #7c3aed;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
         }
 
         /* Hero visual */
