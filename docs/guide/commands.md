@@ -1,52 +1,105 @@
 # Slash Commands
 
-Type `/` to access quick commands. Start typing to filter.
+LinNote supports two ways to execute commands:
+1. **Slash commands** - Type `/` followed by the command (e.g., `/list`)
+2. **Keywords** - Type just the keyword (e.g., `list`)
 
-## Mode Commands
+Both work the same way!
 
-| Command | Action |
-|---------|--------|
-| `/text` | Switch to Plain Text mode |
-| `/list` | Switch to Checklist mode |
-| `/code` | Switch to Code mode |
-| `/calc` | Switch to Calculator mode |
-| `/timer` | Switch to Timer mode |
-| `/md` | Switch to Markdown mode |
+## Mode Switching
+
+| Command | Keyword | Action |
+|---------|---------|--------|
+| `/plain` | `plain` | Plain Text mode |
+| `/text` | `text` | Plain Text mode |
+| `/list` | `list` | Checklist mode |
+| `/checklist` | `checklist` | Checklist mode |
+| `/code` | `code` | Code mode |
+| `/calc` | `calc` | Calculator (Math) mode |
+| `/timer` | `timer` | Timer mode |
+| `/md` | `md` | Markdown mode |
+| `/markdown` | `markdown` | Markdown mode |
+
+## Text Analysis
+
+Analyze numbers in your current note:
+
+| Command | Keyword | Action |
+|---------|---------|--------|
+| `/sum` | `sum` | Sum all numbers |
+| `/avg` | `avg` | Average of numbers |
+| `/count` | `count` | Count numbers |
+
+### Examples
+
+```
+I bought:
+- Apples: 25
+- Oranges: 30
+- Bananas: 15
+
+sum
+```
+**Result:** `Sum: 70`
+
+```
+Test scores:
+85
+90
+78
+92
+
+avg
+```
+**Result:** `Average: 86.25`
 
 ## Timer Commands
 
 | Command | Action |
 |---------|--------|
-| `/timer start` | Start stopwatch |
-| `/timer 5m` | 5 minute countdown |
-| `/timer 1h30m` | 1 hour 30 min countdown |
-| `/pomodoro` | Pomodoro (25/5 min) |
-| `/pomodoro 50 10` | Custom Pomodoro |
-| `/breathe` | Breathing exercise |
+| `timer` | Start stopwatch (if enabled in settings) |
+| `timer sw` | Start stopwatch |
+| `timer stopwatch` | Start stopwatch |
+| `timer 5` | 5 minute countdown |
+| `timer 5m` | 5 minute countdown |
+| `timer 5s` | 5 second countdown |
+| `timer 5:30` | 5 min 30 sec countdown |
+| `timer 10 : laundry` | 10 min timer named "laundry" |
+| `timer pomo` | Pomodoro (uses settings) |
+| `timer 52 17` | Custom Pomodoro: 52min work, 17min break |
+| `timer breathe` | Breathing exercise |
+| `timer p` | Pause/Resume |
+| `timer r` | Reset |
+| `timer s` | Stop |
 
-## Text Analysis
+## AutoPaste
+
+Automatically paste clipboard content:
 
 | Command | Action |
 |---------|--------|
-| `/sum` | Sum all numbers in note |
-| `/avg` | Average of numbers |
-| `/count` | Count numbers |
+| `paste` | Paste with newline separator |
+| `paste(,)` | Paste with comma separator |
+| `paste(;)` | Paste with semicolon separator |
+| `paste( )` | Paste with space separator |
+
+### Example Usage
+
+Copy multiple items to clipboard one by one, then:
+```
+paste(, )
+```
+**Result:** `item1, item2, item3`
 
 ## Utility Commands
 
-| Command | Action |
-|---------|--------|
-| `/settings` | Open settings dialog |
-| `/ocr` | Capture text from screen |
-| `/paste` | Auto-paste clipboard |
-| `/paste ,` | Paste with comma delimiter |
+| Command | Keyword | Action |
+|---------|---------|--------|
+| `/settings` | `settings` | Open settings dialog |
+| `/ocr` | `ocr` | Screen text capture |
 
-## Examples
+## Custom Aliases
 
-```
-/calc           → Switch to calculator mode
-/timer 25m work → 25 min timer named "work"
-/pomodoro       → Start 25/5 Pomodoro
-/sum            → Sum numbers in current note
-/ocr            → Screen OCR capture
-```
+You can create custom aliases for keywords in Settings → Keywords.
+
+Example: Set `l` as alias for `list` → typing `l` switches to Checklist mode.
