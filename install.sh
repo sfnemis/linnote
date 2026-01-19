@@ -175,7 +175,7 @@ install_app() {
     chmod +x "$INSTALL_DIR/$APP_NAME"
     print_success "Binary installed to $INSTALL_DIR/$APP_NAME"
     
-    # Copy desktop entry
+    # Copy desktop entry with KDE-compatible categories
     cat > "$DESKTOP_DIR/linnote.desktop" << EOF
 [Desktop Entry]
 Type=Application
@@ -185,11 +185,11 @@ Comment=A quick scratchpad for Linux with global hotkey support
 Exec=$INSTALL_DIR/$APP_NAME %U
 Icon=linnote
 Terminal=false
-Categories=Utility;TextEditor;
-Keywords=notes;scratchpad;clipboard;paste;
+Categories=Qt;KDE;Utility;
+Keywords=notes;scratchpad;clipboard;paste;calculator;
 StartupNotify=true
 StartupWMClass=LinNote
-MimeType=x-scheme-handler/linnote;
+X-KDE-StartupNotify=true
 EOF
     print_success "Desktop entry installed"
     
@@ -236,11 +236,12 @@ setup_path() {
     local path_line='export PATH="$HOME/.local/bin:$PATH"'
     local added=false
     
-    # Add to .zshrc if it exists (check first since user is using zsh)
+    # Add to .zshrc if it exists (check for UNCOMMENTED path line)
     if [ -f "$HOME/.zshrc" ]; then
-        if ! grep -qF '.local/bin' "$HOME/.zshrc"; then
+        # Check if there's an uncommented .local/bin export
+        if ! grep -v '^[[:space:]]*#' "$HOME/.zshrc" | grep -qF '.local/bin'; then
             echo "" >> "$HOME/.zshrc"
-            echo "# LinNote - added by installer" >> "$HOME/.zshrc"
+            echo "# LinNote PATH" >> "$HOME/.zshrc"
             echo "$path_line" >> "$HOME/.zshrc"
             print_success "Added to ~/.zshrc"
             added=true
@@ -249,11 +250,11 @@ setup_path() {
         fi
     fi
     
-    # Add to .bashrc if it exists
+    # Add to .bashrc if it exists (check for UNCOMMENTED path line)
     if [ -f "$HOME/.bashrc" ]; then
-        if ! grep -qF '.local/bin' "$HOME/.bashrc"; then
+        if ! grep -v '^[[:space:]]*#' "$HOME/.bashrc" | grep -qF '.local/bin'; then
             echo "" >> "$HOME/.bashrc"
-            echo "# LinNote - added by installer" >> "$HOME/.bashrc"
+            echo "# LinNote PATH" >> "$HOME/.bashrc"
             echo "$path_line" >> "$HOME/.bashrc"
             if [ "$added" = false ]; then
                 print_success "Added to ~/.bashrc"
