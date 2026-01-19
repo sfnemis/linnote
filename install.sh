@@ -79,6 +79,7 @@ install_dependencies() {
             sudo pacman -S --needed --noconfirm \
                 qt6-base qt6-declarative qt6-tools \
                 kf6 layer-shell-qt \
+                tesseract tesseract-data-eng tesseract-data-tur \
                 cmake make gcc git
             ;;
         debian|ubuntu|linuxmint|pop)
@@ -87,6 +88,7 @@ install_dependencies() {
             sudo apt-get install -y \
                 qt6-base-dev qt6-declarative-dev qt6-tools-dev \
                 libkf6windowsystem-dev libkf6globalaccel-dev \
+                tesseract-ocr tesseract-ocr-eng tesseract-ocr-tur \
                 cmake build-essential git
             ;;
         fedora)
@@ -94,6 +96,7 @@ install_dependencies() {
             sudo dnf install -y \
                 qt6-qtbase-devel qt6-qtdeclarative-devel \
                 kf6-kwindowsystem-devel kf6-kglobalaccel-devel \
+                tesseract tesseract-langpack-eng tesseract-langpack-tur \
                 cmake gcc-c++ git
             ;;
         opensuse*|suse)
@@ -101,6 +104,7 @@ install_dependencies() {
             sudo zypper install -y \
                 qt6-base-devel qt6-declarative-devel \
                 kf6-kwindowsystem-devel kf6-kglobalaccel-devel \
+                tesseract-ocr tesseract-ocr-traineddata-english tesseract-ocr-traineddata-turkish \
                 cmake gcc-c++ git
             ;;
         *)
@@ -348,7 +352,7 @@ main() {
     
     echo ""
     print_header "Installation Complete! 🎉"
-    echo -e "  Run LinNote with: ${CYAN}linnote${NC}"
+    printf "  Run LinNote with: %slinnote%s\n" "$CYAN" "$NC"
     echo "  Or find it in your applications menu"
     echo ""
 }
