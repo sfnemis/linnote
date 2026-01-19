@@ -133,84 +133,25 @@ clone_repo() {
     print_success "Repository cloned"
 }
 
-# Animated penguin spinner
-show_penguin_spinner() {
-    local pid=$1
-    local message=$2
-    local delay=0.15
-    
-    # Penguin animation frames
-    local frames=(
-        "   (o<    "
-        "   (o>    "
-        "   (o^    "
-        "   (o>    "
-    )
-    
-    local penguin_body='   //\\
-  V_/_'
-    
-    local i=0
-    while kill -0 "$pid" 2>/dev/null; do
-        local frame="${frames[$((i % ${#frames[@]}))]}"
-        printf "\r${CYAN}%s${NC} %s" "$frame" "$message"
-        sleep $delay
-        ((i++))
-    done
-    printf "\r\033[K"  # Clear line
-}
-
 # Build the application
 build_app() {
     print_step "Building LinNote..."
-    echo ""
     
     cd "$BUILD_DIR"
     mkdir -p build
     cd build
     
-    # Run cmake silently
-    echo -e "  ${BLUE}(o< ${NC} Configuring build..."
-    cmake .. -DCMAKE_BUILD_TYPE=Release > /dev/null 2>&1
+    print_step "Running cmake..."
+    cmake .. -DCMAKE_BUILD_TYPE=Release
     
-    # Run make with animated penguin
-    echo -e "  ${BLUE}(o< ${NC} Compiling... (this may take a few minutes)"
-    echo ""
+    print_step "Compiling... (this may take a few minutes)"
+    make -j$(nproc)
     
-    # Start build in background
-    make -j$(nproc) > /dev/null 2>&1 &
-    local build_pid=$!
-    
-    # Show animated penguin while building
-    local frames=("(o< " "(o> " "(o^ " "(O< " "(o< " "(o> ")
-    local messages=("Compiling core..." "Building UI..." "Linking..." "Almost there..." "Finishing up...")
-    local i=0
-    local msg_idx=0
-    
-    while kill -0 "$build_pid" 2>/dev/null; do
-        local frame="${frames[$((i % ${#frames[@]}))]}"
-        local msg="${messages[$((msg_idx % ${#messages[@]}))]}"
-        printf "\r  ${CYAN}%s${NC} %s     " "$frame" "$msg"
-        sleep 0.2
-        ((i++))
-        if (( i % 25 == 0 )); then
-            ((msg_idx++))
-        fi
-    done
-    
-    # Wait for build to complete and check exit status
-    wait $build_pid
-    local build_status=$?
-    
-    printf "\r\033[K"  # Clear spinner line
-    
-    if [ $build_status -ne 0 ] || [ ! -f "LinNote" ]; then
-        print_error "Build failed"
-        echo "  Run manually for details: cd $BUILD_DIR/build && make"
+    if [ ! -f "LinNote" ]; then
+        print_error "Build failed: LinNote binary not found"
         exit 1
     fi
     
-    echo -e "  ${GREEN}(o<${NC} Build complete!"
     print_success "Build completed"
 }
 
