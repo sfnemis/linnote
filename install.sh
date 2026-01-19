@@ -222,32 +222,39 @@ EOF
 
 # Setup PATH automatically
 setup_path() {
+    # Check if already in current PATH
     if [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then
         print_success "$INSTALL_DIR is already in PATH"
         return
     fi
     
-    print_step "Adding $INSTALL_DIR to PATH..."
+    print_step "Configuring PATH..."
     
     local path_line='export PATH="$HOME/.local/bin:$PATH"'
     local added=false
     
-    # Add to .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-        if ! grep -q '.local/bin' "$HOME/.bashrc"; then
-            echo "" >> "$HOME/.bashrc"
-            echo "# LinNote - added by installer" >> "$HOME/.bashrc"
-            echo "$path_line" >> "$HOME/.bashrc"
-            added=true
-        fi
-    fi
-    
-    # Add to .zshrc if it exists
+    # Add to .zshrc if it exists (check first since user is using zsh)
     if [ -f "$HOME/.zshrc" ]; then
-        if ! grep -q '.local/bin' "$HOME/.zshrc"; then
+        if ! grep -qF '.local/bin' "$HOME/.zshrc"; then
             echo "" >> "$HOME/.zshrc"
             echo "# LinNote - added by installer" >> "$HOME/.zshrc"
             echo "$path_line" >> "$HOME/.zshrc"
+            print_success "Added to ~/.zshrc"
+            added=true
+        else
+            print_success "PATH already in ~/.zshrc"
+        fi
+    fi
+    
+    # Add to .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+        if ! grep -qF '.local/bin' "$HOME/.bashrc"; then
+            echo "" >> "$HOME/.bashrc"
+            echo "# LinNote - added by installer" >> "$HOME/.bashrc"
+            echo "$path_line" >> "$HOME/.bashrc"
+            if [ "$added" = false ]; then
+                print_success "Added to ~/.bashrc"
+            fi
             added=true
         fi
     fi
@@ -255,16 +262,11 @@ setup_path() {
     # Create .bashrc if neither exists
     if [ ! -f "$HOME/.bashrc" ] && [ ! -f "$HOME/.zshrc" ]; then
         echo "$path_line" >> "$HOME/.bashrc"
+        print_success "Created ~/.bashrc with PATH"
         added=true
     fi
     
-    if [ "$added" = true ]; then
-        print_success "PATH configured - restart terminal or run: source ~/.bashrc"
-    else
-        print_success "PATH already configured in shell config"
-    fi
-    
-    # Also export for current session
+    # Export for current session
     export PATH="$INSTALL_DIR:$PATH"
 }
 
@@ -363,7 +365,7 @@ main() {
     
     echo ""
     print_header "Installation Complete! 🎉"
-    printf "  Run LinNote with: %slinnote%s\n" "$CYAN" "$NC"
+    echo -e "  Run LinNote with: \033[0;36mlinnote\033[0m"
     echo "  Or find it in your applications menu"
     echo ""
 }
