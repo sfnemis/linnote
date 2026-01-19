@@ -1,0 +1,96 @@
+# LinNote
+
+A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Linux-green.svg)
+![Qt](https://img.shields.io/badge/Qt-6-brightgreen.svg)
+
+**[User Guide](docs/USER_GUIDE.md)** | **[Changelog](CHANGELOG.md)**
+
+## Features
+
+- Multi-page notes with tabs
+- Smart calculations (type `2+2=` to evaluate)
+- Currency conversion (real-time rates)
+- Unit conversion (length, weight, temperature, etc.)
+- Pomodoro timer, stopwatch, countdown
+- OCR screen capture
+- Markdown & code highlighting
+- Note encryption with master password
+- 14+ color themes
+- Global hotkey support
+- Wayland native
+
+## Installation
+
+### Quick Install (Recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sfnemis/linnote/main/install.sh | bash
+```
+
+This will:
+- Detect your distro (Arch, Debian, Fedora, openSUSE)
+- Install dependencies
+- Build from source
+- Set up desktop entry and icons
+
+### Manual Build
+
+```bash
+git clone https://github.com/sfnemis/linnote.git
+cd linnote
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+
+#### Dependencies
+
+**Arch/Manjaro:**
+```bash
+sudo pacman -S qt6-base qt6-declarative kf6 cmake
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo apt install qt6-base-dev libkf6windowsystem-dev cmake build-essential
+```
+
+**Fedora:**
+```bash
+sudo dnf install qt6-qtbase-devel kf6-kwindowsystem-devel cmake gcc-c++
+```
+
+## Usage
+
+Launch from your application menu or run `linnote` from terminal.
+
+**Keyboard shortcuts:**
+- `Ctrl+N` - New note
+- `Ctrl+Tab` - Next page
+- `Ctrl+F` - Find
+- `Esc` - Hide window
+
+**Slash commands:**
+- `/list` - Checklist mode
+- `/code` - Code mode
+- `/calc` - Calculator mode
+- `/timer` - Timer mode
+
+## Configuration
+
+Settings are stored in `~/.local/share/linnote/`.
+
+## Contributing
+
+Pull requests welcome. For major changes, open an issue first.
+
+## License
+
+[MIT](LICENSE)
+
+## Author
+
+sfnemis

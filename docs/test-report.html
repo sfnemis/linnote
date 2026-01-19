@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinNote - Test Report</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--success-bg);
+            color: var(--success);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 1px solid var(--success);
+        }
+
+        .badge svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Test Results Table */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .results-table {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+
+        .results-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .results-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .module-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .module-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-pass {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #34d399);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Bug Fixes Section */
+        .bug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .bug-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .bug-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .bug-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .bug-id {
+            background: var(--success-bg);
+            color: var(--success);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .bug-severity {
+            margin-left: auto;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .severity-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .severity-medium { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .severity-low { background: rgba(99, 102, 241, 0.2); color: #6366f1; }
+
+        .bug-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .bug-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Coverage Section */
+        .coverage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .coverage-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .coverage-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .coverage-check svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+        }
+
+        .coverage-pending {
+            background: var(--border);
+        }
+
+        .coverage-text {
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .timestamp {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">LinNote</div>
+            <p class="subtitle">Comprehensive Test Report</p>
+            <div class="badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                All Tests Passing
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats Overview -->
+        <div class="stats-grid animate-in">
+            <div class="stat-card">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Test Suites</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">157</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success">100%</div>
+                <div class="stat-label">Pass Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">9</div>
+                <div class="stat-label">Bugs Fixed</div>
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <h2 class="section-title animate-in delay-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V19.5a2.25 2.25 0 002.25 2.25h.75m0-3.75h3.75" />
+            </svg>
+            Test Results by Module
+        </h2>
+
+        <div class="results-table animate-in delay-1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Tests</th>
+                        <th>Coverage</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">M</div>
+                                MathEvaluator
+                            </div>
+                        </td>
+                        <td>33</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">U</div>
+                                UnitConverter
+                            </div>
+                        </td>
+                        <td>34</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">T</div>
+                                TextAnalyzer
+                            </div>
+                        </td>
+                        <td>20</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">$</div>
+                                CurrencyConverter
+                            </div>
+                        </td>
+                        <td>15</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">⚙</div>
+                                Settings
+                            </div>
+                        </td>
+                        <td>22</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">💾</div>
+                                SqliteStorage
+                            </div>
+                        </td>
+                        <td>15</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="module-name">
+                                <div class="module-icon">🔐</div>
+                                Crypto
+                            </div>
+                        </td>
+                        <td>18</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pass">✓ 100%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bugs Fixed -->
+        <h2 class="section-title animate-in delay-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 12.75c1.148 0 2.278.08 3.383.237 1.037.146 1.866.966 1.866 2.013 0 3.728-2.35 6.75-5.25 6.75S6.75 18.728 6.75 15c0-1.046.83-1.867 1.866-2.013A24.204 24.204 0 0112 12.75zm0 0c2.883 0 5.647.508 8.207 1.44a23.91 23.91 0 01-1.152 6.06M12 12.75c-2.883 0-5.647.508-8.208 1.44a23.91 23.91 0 001.153 6.06M12 12.75V4.5M7.5 12.75H6a2.25 2.25 0 01-2.25-2.25v-.894c0-.628.458-1.144 1.055-1.294a20.18 20.18 0 015.532-.873 20.18 20.18 0 015.531.873c.597.15 1.055.666 1.055 1.294v.894A2.25 2.25 0 0118 12.75h-1.5m-9 0h9" />
+            </svg>
+            Bugs Identified & Fixed
+        </h2>
+
+        <div class="bug-grid animate-in delay-2">
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-medium">Medium</span>
+                </div>
+                <div class="bug-title">Scientific Notation Not Parsed</div>
+                <div class="bug-description">Expressions like <code>1e3</code> now correctly evaluate to 1000</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-low">Low</span>
+                </div>
+                <div class="bug-title">Power Operator ** Not Supported</div>
+                <div class="bug-description">Python-style power operator <code>3**2</code> now returns 9</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-medium">Medium</span>
+                </div>
+                <div class="bug-title">Percentage Operator Not Working</div>
+                <div class="bug-description">Expressions like <code>100*20%</code> now correctly return 20</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-high">High</span>
+                </div>
+                <div class="bug-title">File Paths Detected as Math</div>
+                <div class="bug-description">Paths like <code>/home/user/file.txt</code> no longer trigger math evaluation</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-medium">Medium</span>
+                </div>
+                <div class="bug-title">Functions Not Detected</div>
+                <div class="bug-description"><code>sqrt(16)</code> now correctly recognized as math expression</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-medium">Medium</span>
+                </div>
+                <div class="bug-title">Fluid Ounce Conversion Missing</div>
+                <div class="bug-description"><code>500 ml to fl oz</code> now converts correctly</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-low">Low</span>
+                </div>
+                <div class="bug-title">Case-Sensitive Categories</div>
+                <div class="bug-description"><code>unitsInCategory("Length")</code> now works regardless of case</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-medium">Medium</span>
+                </div>
+                <div class="bug-title">Negative Number Extraction</div>
+                <div class="bug-description"><code>sum("-5 + 10 - 3")</code> now correctly returns 2</div>
+            </div>
+            <div class="bug-card">
+                <div class="bug-header">
+                    <span class="bug-id">FIXED</span>
+                    <span class="bug-severity severity-low">Low</span>
+                </div>
+                <div class="bug-title">Modulo vs Percentage Conflict</div>
+                <div class="bug-description"><code>10%3</code> returns 1 (modulo), <code>50%</code> returns 0.5 (percentage)</div>
+            </div>
+        </div>
+
+        <!-- Test Coverage -->
+        <h2 class="section-title animate-in delay-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.044A3.745 3.745 0 0112 21a3.745 3.745 0 00-3.068-1.593 3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.044-3.296A3.745 3.745 0 013 12a3.745 3.745 0 011.593-3.068 3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.044A3.746 3.746 0 0112 3a3.746 3.746 0 013.068 1.593 3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.044 3.296A3.745 3.745 0 0121 12z" />
+            </svg>
+            Test Coverage Areas
+        </h2>
+
+        <div class="coverage-grid animate-in delay-3">
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Mathematical Expression Evaluation</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Unit Conversion (34 conversions)</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Currency Conversion Parsing</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Text Analysis & Statistics</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">AES-256 Encryption/Decryption</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Password Hashing & Verification</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">SQLite CRUD Operations</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Settings Persistence</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Unicode & Special Characters</span>
+            </div>
+            <div class="coverage-item">
+                <div class="coverage-check">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <span class="coverage-text">Edge Cases & Error Handling</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>LinNote Test Report • Qt Test Framework 6.10.1</p>
+        <p class="timestamp">Generated: January 19, 2026</p>
+    </footer>
+</body>
+</html>

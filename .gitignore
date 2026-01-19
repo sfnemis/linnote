@@ -1,0 +1,55 @@
+# Build directories
+build/
+build-*/
+cmake-build-*/
+
+# Qt generated files
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.moc
+
+# Compiled files
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+
+# Executables
+LinNote
+linnote
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.clangd/
+compile_commands.json
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+
+# Generated
+generated/
+*.autogen/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Local config
+.env
+.env.local
+checkpoints/

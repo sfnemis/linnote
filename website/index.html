@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinNote - Fast Notes for Linux</title>
+    <meta name="description" content="A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #16161d;
+            --surface2: #1e1e28;
+            --text: #e4e4e7;
+            --subtext: #71717a;
+            --accent: #8b5cf6;
+            --accent2: #06b6d4;
+            --pink: #ec4899;
+            --green: #22c55e;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 50%, rgba(6, 182, 212, 0.1), transparent),
+                radial-gradient(ellipse 50% 30% at 20% 80%, rgba(236, 72, 153, 0.1), transparent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--subtext);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 10px 20px;
+            background: var(--accent);
+            color: white !important;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: #7c3aed;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 50%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--subtext);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--surface);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface2);
+            border-color: var(--accent);
+        }
+
+        /* Install command */
+        .install-cmd {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 500px;
+        }
+
+        .install-cmd code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--green);
+        }
+
+        .install-cmd button {
+            padding: 8px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .install-cmd button:hover {
+            background: #7c3aed;
+        }
+
+        /* Hero visual */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+        }
+
+        .app-preview {
+            width: 200px;
+            height: 200px;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(139, 92, 246, 0.3);
+            border: none;
+        }
+
+        .floating-badge {
+            position: absolute;
+            padding: 8px 14px;
+            background: rgba(22, 22, 29, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            left: 50%;
+            top: 50%;
+        }
+
+        /* Perfect circular orbit - 6 badges at 60° intervals */
+        .badge-1 {
+            transform: translate(-50%, -50%) translate(0, -120px);
+        }
+
+        .badge-2 {
+            transform: translate(-50%, -50%) translate(130px, -75px);
+        }
+
+        .badge-3 {
+            transform: translate(-50%, -50%) translate(130px, 75px);
+        }
+
+        .badge-4 {
+            transform: translate(-50%, -50%) translate(0, 120px);
+        }
+
+        .badge-5 {
+            transform: translate(-50%, -50%) translate(-130px, 75px);
+        }
+
+        .badge-6 {
+            transform: translate(-50%, -50%) translate(-130px, -75px);
+        }
+
+        /* Support banner */
+        .support-banner {
+            padding: 24px 0;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .support-banner .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .support-banner span {
+            font-weight: 500;
+        }
+
+        .support-banner span strong {
+            color: var(--pink);
+        }
+
+        .support-btns {
+            display: flex;
+            gap: 12px;
+        }
+
+        .support-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--pink), #f97316);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .support-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .support-btn.github {
+            background: linear-gradient(135deg, #6e40c9, var(--accent));
+        }
+
+        .star-btn {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--accent);
+            transition: all 0.2s;
+        }
+
+        .star-btn:hover {
+            background: var(--accent);
+        }
+
+        /* Features */
+        .features {
+            padding: 120px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--subtext);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--subtext);
+            font-size: 0.95rem;
+        }
+
+        /* Modes */
+        .modes {
+            padding: 80px 0;
+            background: var(--surface);
+        }
+
+        .modes-list {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .mode-chip {
+            padding: 12px 24px;
+            background: var(--surface2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .mode-chip:hover {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--subtext);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+
+            .hero-text p {
+                margin: 0 auto 40px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .install-cmd {
+                margin: 0 auto;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gradient-bg"></div>
+
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">
+                <img src="logo.png" alt="LinNote">
+                LinNote
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="https://github.com/sfnemis/linnote/blob/main/docs/USER_GUIDE.md">Docs</a>
+                <a href="https://github.com/sfnemis/linnote">GitHub</a>
+                <a href="#support" class="nav-cta">Support</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>The fastest scratchpad for Linux</h1>
+                        <p>A keyboard-driven note-taking app with built-in calculator, timers, and more. Built for KDE
+                            Plasma with Qt6.</p>
+
+                        <div class="hero-buttons">
+                            <a href="https://github.com/sfnemis/linnote" class="btn-primary">
+                                ⭐ Star on GitHub
+                            </a>
+                            <a href="https://github.com/sfnemis/linnote/blob/main/docs/USER_GUIDE.md"
+                                class="btn-secondary">
+                                📖 Documentation
+                            </a>
+                        </div>
+
+                        <div class="install-cmd">
+                            <code id="cmd">curl -fsSL https://linnote.app/install.sh | bash</code>
+                            <button onclick="copyCmd()">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual">
+                        <img src="logo.png" alt="LinNote" class="app-preview">
+                        <div class="floating-badge badge-1">📝 Plain Text</div>
+                        <div class="floating-badge badge-2">✅ Checklist</div>
+                        <div class="floating-badge badge-3">💻 Code</div>
+                        <div class="floating-badge badge-4">🧮 Calculator</div>
+                        <div class="floating-badge badge-5">⏱️ Timer</div>
+                        <div class="floating-badge badge-6">� Markdown</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="support-banner" id="support">
+            <div class="container">
+                <span>❤️ <strong>Support the project</strong> — Your contribution keeps LinNote alive!</span>
+                <div class="support-btns">
+                    <a href="https://www.shopier.com/sfnemis/43380031" class="support-btn">🛒 Shopier</a>
+                    <a href="https://github.com/sponsors/sfnemis" class="support-btn github">💖 Sponsor</a>
+                    <a href="https://github.com/sfnemis/linnote" class="star-btn">⭐ Star</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Everything you need</h2>
+                    <p>Powerful features packed into a lightweight app</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧮</div>
+                        <h3>Smart Calculator</h3>
+                        <p>Type math expressions and get instant results. Variables, functions, percentages.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💱</div>
+                        <h3>Currency Conversion</h3>
+                        <p>Real-time exchange rates for 30+ currencies including crypto.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📐</div>
+                        <h3>Unit Conversion</h3>
+                        <p>Convert length, weight, temperature, volume, and more instantly.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Built-in Timers</h3>
+                        <p>Stopwatch, countdown, and Pomodoro for maximum productivity.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📷</div>
+                        <h3>OCR Capture</h3>
+                        <p>Extract text from any area of your screen with Tesseract.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Encryption</h3>
+                        <p>Protect sensitive notes with master password and recovery key.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modes">
+            <div class="container">
+                <div class="section-header">
+                    <h2>6 Note Modes</h2>
+                    <p>Switch modes instantly with slash commands</p>
+                </div>
+
+                <div class="modes-list">
+                    <span class="mode-chip">📝 Plain Text</span>
+                    <span class="mode-chip">✅ Checklist</span>
+                    <span class="mode-chip">💻 Code</span>
+                    <span class="mode-chip">🧮 Calculator</span>
+                    <span class="mode-chip">⏱️ Timer</span>
+                    <span class="mode-chip">📑 Markdown</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Made with ❤️ for Linux — <a href="https://github.com/sfnemis/linnote">GitHub</a> · <a
+                    href="https://github.com/sfnemis/linnote/blob/main/LICENSE">MIT License</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function copyCmd() {
+            const cmd = document.getElementById('cmd').textContent;
+            navigator.clipboard.writeText(cmd).then(() => {
+                const btn = event.target;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

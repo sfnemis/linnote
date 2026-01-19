@@ -1,0 +1,27 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/icons">
+    <file>icons/pin.svg</file>
+    <file>icons/pin_active.svg</file>
+    <file>icons/export.svg</file>
+    <file>icons/settings.svg</file>
+    <file>icons/add.svg</file>
+    <file>icons/delete.svg</file>
+    <file>icons/rename.svg</file>
+    <file>icons/lock.svg</file>
+    <file>icons/unlock.svg</file>
+    <file>icons/first.svg</file>
+    <file>icons/prev.svg</file>
+    <file>icons/next.svg</file>
+    <file>icons/last.svg</file>
+  </qresource>
+  <qresource prefix="/app">
+    <file>icons/app/linnote-16.png</file>
+    <file>icons/app/linnote-32.png</file>
+    <file>icons/app/linnote-48.png</file>
+    <file>icons/app/linnote-64.png</file>
+    <file>icons/app/linnote-128.png</file>
+    <file>icons/app/linnote-256.png</file>
+    <file>icons/app/linnote-512.png</file>
+  </qresource>
+</RCC>
