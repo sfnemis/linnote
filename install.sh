@@ -10,13 +10,13 @@
 
 set -e
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+# Colors (using $'...' for proper escape sequences)
+RED=$'\033[0;31m'
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+BLUE=$'\033[0;34m'
+CYAN=$'\033[0;36m'
+NC=$'\033[0m'
 
 # Config
 REPO_URL="https://github.com/sfnemis/linnote.git"
@@ -211,6 +211,13 @@ EOF
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
     fi
+    
+    # Update KDE Plasma menu cache
+    if command -v kbuildsycoca6 &> /dev/null; then
+        kbuildsycoca6 2>/dev/null || true
+    elif command -v kbuildsycoca5 &> /dev/null; then
+        kbuildsycoca5 2>/dev/null || true
+    fi
 }
 
 # Setup PATH automatically
@@ -280,6 +287,9 @@ uninstall() {
     rm -f "$DESKTOP_DIR/linnote.desktop"
     print_success "Desktop entry removed"
     
+    # Remove autostart entry
+    rm -f "$HOME/.config/autostart/linnote.desktop"
+    
     # Remove icons
     rm -f "$ICON_DIR/16x16/apps/linnote.png"
     rm -f "$ICON_DIR/32x32/apps/linnote.png"
@@ -290,26 +300,27 @@ uninstall() {
     rm -f "$ICON_DIR/512x512/apps/linnote.png"
     print_success "Icons removed"
     
-    # Remove user data
-    if [ -d "$HOME/.local/share/linnote" ]; then
-        echo ""
-        read -p "Remove user data (notes, settings)? [y/N] " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rm -rf "$HOME/.local/share/linnote"
-            print_success "User data removed"
-        else
-            print_warning "User data preserved at ~/.local/share/linnote"
-        fi
-    fi
+    # Remove ALL user data locations
+    print_step "Removing user data..."
+    rm -rf "$HOME/.local/share/linnote"
+    rm -rf "$HOME/.local/share/LinNote"
+    rm -rf "$HOME/.local/share/sfnemis/LinNote"
+    rm -f "$HOME/.local/state/LinNotestaterc"
+    rm -rf "$HOME/.cache/drkonqi/crashes/LinNote.*"
+    print_success "User data removed"
     
-    # Update desktop database
+    # Update caches
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
     fi
+    if command -v kbuildsycoca6 &> /dev/null; then
+        kbuildsycoca6 2>/dev/null || true
+    elif command -v kbuildsycoca5 &> /dev/null; then
+        kbuildsycoca5 2>/dev/null || true
+    fi
     
     echo ""
-    print_success "LinNote has been uninstalled"
+    print_success "LinNote has been completely uninstalled"
 }
 
 # Main
