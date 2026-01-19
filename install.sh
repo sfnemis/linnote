@@ -268,8 +268,15 @@ cleanup() {
 uninstall() {
     print_header "Uninstalling LinNote"
     
+    # Remove binary
     rm -f "$INSTALL_DIR/$APP_NAME"
+    print_success "Binary removed"
+    
+    # Remove desktop entry
     rm -f "$DESKTOP_DIR/linnote.desktop"
+    print_success "Desktop entry removed"
+    
+    # Remove icons
     rm -f "$ICON_DIR/16x16/apps/linnote.png"
     rm -f "$ICON_DIR/32x32/apps/linnote.png"
     rm -f "$ICON_DIR/48x48/apps/linnote.png"
@@ -277,7 +284,27 @@ uninstall() {
     rm -f "$ICON_DIR/128x128/apps/linnote.png"
     rm -f "$ICON_DIR/256x256/apps/linnote.png"
     rm -f "$ICON_DIR/512x512/apps/linnote.png"
+    print_success "Icons removed"
     
+    # Remove user data
+    if [ -d "$HOME/.local/share/linnote" ]; then
+        echo ""
+        read -p "Remove user data (notes, settings)? [y/N] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            rm -rf "$HOME/.local/share/linnote"
+            print_success "User data removed"
+        else
+            print_warning "User data preserved at ~/.local/share/linnote"
+        fi
+    fi
+    
+    # Update desktop database
+    if command -v update-desktop-database &> /dev/null; then
+        update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+    fi
+    
+    echo ""
     print_success "LinNote has been uninstalled"
 }
 
@@ -297,10 +324,18 @@ main() {
     esac
     
     echo -e "${CYAN}"
-    echo "  ╦   ╦ ╔╗╔ ╔╗╔ ╔═╗ ╔╦╗ ╔═╗"
-    echo "  ║   ║ ║║║ ║║║ ║ ║  ║  ║╣ "
-    echo "  ╩═╝ ╩ ╝╚╝ ╝╚╝ ╚═╝  ╩  ╚═╝"
+    echo "         .--.        "
+    echo "        |o_o |       "
+    echo "        |:_/ |       "
+    echo "       //   \\ \\      "
+    echo "      (|     | )     "
+    echo "     /'\\_   _/\"`\\    "
+    echo "     \\___)=(___/    "
     echo -e "${NC}"
+    echo -e "  ${CYAN}╦   ╦ ╔╗╔ ╔╗╔ ╔═╗ ╔╦╗ ╔═╗${NC}"
+    echo -e "  ${CYAN}║   ║ ║║║ ║║║ ║ ║  ║  ║╣ ${NC}"
+    echo -e "  ${CYAN}╩═╝ ╩ ╝╚╝ ╝╚╝ ╚═╝  ╩  ╚═╝${NC}"
+    echo ""
     echo "  Quick Notes for Linux"
     echo ""
     
@@ -313,7 +348,7 @@ main() {
     
     echo ""
     print_header "Installation Complete! 🎉"
-    echo "  Run LinNote with: ${CYAN}linnote${NC}"
+    echo -e "  Run LinNote with: ${CYAN}linnote${NC}"
     echo "  Or find it in your applications menu"
     echo ""
 }
