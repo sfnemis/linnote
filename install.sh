@@ -169,13 +169,13 @@ install_app() {
     print_success "Binary installed to $INSTALL_DIR/$APP_NAME"
     
     # Copy desktop entry
-    cat > "$DESKTOP_DIR/linnote.desktop" << 'EOF'
+    cat > "$DESKTOP_DIR/linnote.desktop" << EOF
 [Desktop Entry]
 Type=Application
 Name=LinNote
 GenericName=Quick Notes
 Comment=A quick scratchpad for Linux with global hotkey support
-Exec=linnote %U
+Exec=$INSTALL_DIR/$APP_NAME %U
 Icon=linnote
 Terminal=false
 Categories=Utility;TextEditor;

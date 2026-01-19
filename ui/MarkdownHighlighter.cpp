@@ -23,7 +23,7 @@ void MarkdownHighlighter::setupFormats() {
 
   // Code format - monospace, background
   m_codeFormat.setForeground(QColor("#a6e3a1")); // Green
-  m_codeFormat.setFontFamily("monospace");
+  m_codeFormat.setFontFamilies(QStringList{QStringLiteral("monospace")});
 
   // Link format
   m_linkFormat.setForeground(QColor("#74c7ec")); // Sapphire
