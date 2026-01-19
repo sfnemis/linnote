@@ -343,37 +343,75 @@ cleanup() {
 uninstall() {
     print_header "Uninstalling LinNote"
     
-    # Remove binary
-    rm -f "$INSTALL_DIR/$APP_NAME"
-    print_success "Binary removed"
+    echo -e "${CYAN}"
+    echo "         .--.        "
+    echo "        |o_o |       "
+    echo "        |:_/ |       "
+    echo "       //   \\ \\      "
+    echo "      (|     | )     "
+    echo "     /'\\_   _/\"\`\\    "
+    echo "     \\___)=(___/    "
+    echo -e "${NC}"
+    echo "  Goodbye friend... 👋"
+    echo ""
+    sleep 1
     
-    # Remove desktop entry
-    rm -f "$DESKTOP_DIR/linnote.desktop"
-    print_success "Desktop entry removed"
+    # Animated removal process
+    local items=("Binary" "Desktop entry" "Autostart" "Icons" "User data" "Cache")
+    local paths=(
+        "$INSTALL_DIR/$APP_NAME"
+        "$DESKTOP_DIR/linnote.desktop"
+        "$HOME/.config/autostart/linnote.desktop"
+        "icons"
+        "data"
+        "cache"
+    )
     
-    # Remove autostart entry
-    rm -f "$HOME/.config/autostart/linnote.desktop"
+    local frames=("(o< " "(o> " "(o^ " "(;_; " "(T_T " "(o< ")
+    local i=0
     
-    # Remove icons
-    rm -f "$ICON_DIR/16x16/apps/linnote.png"
-    rm -f "$ICON_DIR/32x32/apps/linnote.png"
-    rm -f "$ICON_DIR/48x48/apps/linnote.png"
-    rm -f "$ICON_DIR/64x64/apps/linnote.png"
-    rm -f "$ICON_DIR/128x128/apps/linnote.png"
-    rm -f "$ICON_DIR/256x256/apps/linnote.png"
-    rm -f "$ICON_DIR/512x512/apps/linnote.png"
-    print_success "Icons removed"
-    
-    # Remove ALL user data locations
-    print_step "Removing user data..."
-    rm -rf "$HOME/.local/share/linnote"
-    rm -rf "$HOME/.local/share/LinNote"
-    rm -rf "$HOME/.local/share/sfnemis/LinNote"
-    rm -f "$HOME/.local/state/LinNotestaterc"
-    rm -rf "$HOME/.cache/drkonqi/crashes/LinNote.*"
-    print_success "User data removed"
+    for item in "${items[@]}"; do
+        local frame="${frames[$((i % ${#frames[@]}))]}"
+        printf "\r  ${CYAN}%s${NC} Removing %s...     " "$frame" "$item"
+        sleep 0.3
+        
+        case "$item" in
+            "Binary")
+                rm -f "$INSTALL_DIR/$APP_NAME"
+                ;;
+            "Desktop entry")
+                rm -f "$DESKTOP_DIR/linnote.desktop"
+                ;;
+            "Autostart")
+                rm -f "$HOME/.config/autostart/linnote.desktop"
+                ;;
+            "Icons")
+                rm -f "$ICON_DIR/16x16/apps/linnote.png"
+                rm -f "$ICON_DIR/32x32/apps/linnote.png"
+                rm -f "$ICON_DIR/48x48/apps/linnote.png"
+                rm -f "$ICON_DIR/64x64/apps/linnote.png"
+                rm -f "$ICON_DIR/128x128/apps/linnote.png"
+                rm -f "$ICON_DIR/256x256/apps/linnote.png"
+                rm -f "$ICON_DIR/512x512/apps/linnote.png"
+                ;;
+            "User data")
+                rm -rf "$HOME/.local/share/linnote"
+                rm -rf "$HOME/.local/share/LinNote"
+                rm -rf "$HOME/.local/share/sfnemis/LinNote"
+                rm -f "$HOME/.local/state/LinNotestaterc"
+                ;;
+            "Cache")
+                find "$HOME/.cache/drkonqi/crashes" -name "LinNote.*" -delete 2>/dev/null || true
+                ;;
+        esac
+        
+        printf "\r  ${GREEN}✓${NC} %s removed              \n" "$item"
+        ((i++))
+    done
     
     # Update caches
+    echo ""
+    echo -e "  ${BLUE}(o<${NC} Updating system caches..."
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
     fi
@@ -384,7 +422,10 @@ uninstall() {
     fi
     
     echo ""
-    print_success "LinNote has been completely uninstalled"
+    echo -e "  ${CYAN}(^_^)/${NC} LinNote has been completely uninstalled!"
+    echo ""
+    echo "  We hope to see you again! 🐧"
+    echo ""
 }
 
 # Main
