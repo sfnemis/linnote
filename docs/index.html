@@ -700,21 +700,25 @@
 
     <script>
         function copyCmd() {
-            const cmd = document.getElementById('cmd').textContent;
-            navigator.clipboard.writeText(cmd).then(() => {
-                const btn = event.target;
-                btn.textContent = '✓ Copied!';
+            const cmd = document.getElementById('cmd');
+            const originalText = cmd.textContent;
+            const btn = event.target;
+
+            navigator.clipboard.writeText(originalText).then(() => {
+                // Change code text to success message
+                cmd.textContent = '✅ Copied to clipboard!';
+                cmd.style.color = '#22c55e';
+
+                // Change button
+                btn.textContent = '✓';
                 btn.style.background = '#22c55e';
 
-                // Show toast
-                const toast = document.getElementById('toast');
-                toast.classList.add('show');
-
                 setTimeout(() => {
+                    cmd.textContent = originalText;
+                    cmd.style.color = '';
                     btn.textContent = 'Copy';
                     btn.style.background = '';
-                    toast.classList.remove('show');
-                }, 2500);
+                }, 2000);
             });
         }
     </script>
