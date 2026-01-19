@@ -209,15 +209,52 @@ EOF
     fi
 }
 
-# Check PATH
-check_path() {
-    if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-        print_warning "$INSTALL_DIR is not in your PATH"
-        echo ""
-        echo "Add this line to your ~/.bashrc or ~/.zshrc:"
-        echo -e "${CYAN}export PATH=\"\$HOME/.local/bin:\$PATH\"${NC}"
-        echo ""
+# Setup PATH automatically
+setup_path() {
+    if [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then
+        print_success "$INSTALL_DIR is already in PATH"
+        return
     fi
+    
+    print_step "Adding $INSTALL_DIR to PATH..."
+    
+    local path_line='export PATH="$HOME/.local/bin:$PATH"'
+    local added=false
+    
+    # Add to .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+        if ! grep -q '.local/bin' "$HOME/.bashrc"; then
+            echo "" >> "$HOME/.bashrc"
+            echo "# LinNote - added by installer" >> "$HOME/.bashrc"
+            echo "$path_line" >> "$HOME/.bashrc"
+            added=true
+        fi
+    fi
+    
+    # Add to .zshrc if it exists
+    if [ -f "$HOME/.zshrc" ]; then
+        if ! grep -q '.local/bin' "$HOME/.zshrc"; then
+            echo "" >> "$HOME/.zshrc"
+            echo "# LinNote - added by installer" >> "$HOME/.zshrc"
+            echo "$path_line" >> "$HOME/.zshrc"
+            added=true
+        fi
+    fi
+    
+    # Create .bashrc if neither exists
+    if [ ! -f "$HOME/.bashrc" ] && [ ! -f "$HOME/.zshrc" ]; then
+        echo "$path_line" >> "$HOME/.bashrc"
+        added=true
+    fi
+    
+    if [ "$added" = true ]; then
+        print_success "PATH configured - restart terminal or run: source ~/.bashrc"
+    else
+        print_success "PATH already configured in shell config"
+    fi
+    
+    # Also export for current session
+    export PATH="$INSTALL_DIR:$PATH"
 }
 
 # Cleanup
@@ -272,7 +309,7 @@ main() {
     build_app
     install_app
     cleanup
-    check_path
+    setup_path
     
     echo ""
     print_header "Installation Complete! 🎉"
