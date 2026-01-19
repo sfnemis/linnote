@@ -249,16 +249,46 @@
 
         .floating-badge {
             position: absolute;
-            padding: 8px 14px;
-            background: rgba(22, 22, 29, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50px;
+            backdrop-filter: blur(12px);
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             left: 50%;
             top: 50%;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .floating-badge:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Perfect circular orbit - 6 badges at 60° intervals */
@@ -266,24 +296,48 @@
             transform: translate(-50%, -50%) translate(0, -120px);
         }
 
+        .badge-1:hover {
+            transform: translate(-50%, -50%) translate(0, -120px) scale(1.1);
+        }
+
         .badge-2 {
             transform: translate(-50%, -50%) translate(130px, -75px);
+        }
+
+        .badge-2:hover {
+            transform: translate(-50%, -50%) translate(130px, -75px) scale(1.1);
         }
 
         .badge-3 {
             transform: translate(-50%, -50%) translate(130px, 75px);
         }
 
+        .badge-3:hover {
+            transform: translate(-50%, -50%) translate(130px, 75px) scale(1.1);
+        }
+
         .badge-4 {
             transform: translate(-50%, -50%) translate(0, 120px);
+        }
+
+        .badge-4:hover {
+            transform: translate(-50%, -50%) translate(0, 120px) scale(1.1);
         }
 
         .badge-5 {
             transform: translate(-50%, -50%) translate(-130px, 75px);
         }
 
+        .badge-5:hover {
+            transform: translate(-50%, -50%) translate(-130px, 75px) scale(1.1);
+        }
+
         .badge-6 {
             transform: translate(-50%, -50%) translate(-130px, -75px);
+        }
+
+        .badge-6:hover {
+            transform: translate(-50%, -50%) translate(-130px, -75px) scale(1.1);
         }
 
         /* Support banner */
@@ -631,13 +685,26 @@
         </div>
     </footer>
 
+    <!-- Toast notification -->
+    <div id="toast" class="toast">✅ Copied to clipboard!</div>
+
     <script>
         function copyCmd() {
             const cmd = document.getElementById('cmd').textContent;
             navigator.clipboard.writeText(cmd).then(() => {
                 const btn = event.target;
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 2000);
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#22c55e';
+
+                // Show toast
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.style.background = '';
+                    toast.classList.remove('show');
+                }, 2500);
             });
         }
     </script>
