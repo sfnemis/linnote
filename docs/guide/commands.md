@@ -1,46 +1,63 @@
-# Slash Commands
+# Slash Commands & Keywords
 
-LinNote supports two ways to execute commands:
-1. **Slash commands** - Type `/` followed by the command (e.g., `/list`)
-2. **Keywords** - Type just the keyword (e.g., `list`)
+LinNote uses **keywords** to switch modes and perform actions. Just type the keyword directly - no special prefix needed!
 
-Both work the same way!
+## How It Works
+
+1. Type a keyword (e.g., `list`)
+2. Press Enter
+3. Action executes
+
+> **Tip:** Typing `/` opens a popup menu showing all available commands. But you can also just type the keyword directly without `/`.
+
+---
 
 ## Mode Switching
 
-| Command | Keyword | Action |
-|---------|---------|--------|
-| `/plain` | `plain` | Plain Text mode |
-| `/text` | `text` | Plain Text mode |
-| `/list` | `list` | Checklist mode |
-| `/checklist` | `checklist` | Checklist mode |
-| `/code` | `code` | Code mode |
-| `/calc` | `calc` | Calculator (Math) mode |
-| `/timer` | `timer` | Timer mode |
-| `/md` | `md` | Markdown mode |
-| `/markdown` | `markdown` | Markdown mode |
+| Keyword | Action |
+|---------|--------|
+| `plain` | Switch to Plain Text mode |
+| `text` | Switch to Plain Text mode |
+| `list` | Switch to Checklist mode |
+| `checklist` | Switch to Checklist mode |
+| `code` | Switch to Code mode |
+| `calc` | Switch to Calculator (Math) mode |
+| `timer` | Switch to Timer mode |
+| `md` | Switch to Markdown mode |
+| `markdown` | Switch to Markdown mode |
+
+### Example
+
+```
+list
+```
+Switches current note to Checklist mode.
+
+---
 
 ## Text Analysis
 
 Analyze numbers in your current note:
 
-| Command | Keyword | Action |
-|---------|---------|--------|
-| `/sum` | `sum` | Sum all numbers |
-| `/avg` | `avg` | Average of numbers |
-| `/count` | `count` | Count numbers |
+| Keyword | Action |
+|---------|--------|
+| `sum` | Sum all numbers in the note |
+| `avg` | Calculate average |
+| `count` | Count how many numbers |
 
-### Examples
+### Example: Sum
 
 ```
-I bought:
-- Apples: 25
-- Oranges: 30
-- Bananas: 15
+Groceries:
+Milk 4.50
+Bread 2.30
+Eggs 6.00
 
 sum
 ```
-**Result:** `Sum: 70`
+**Result:** `Sum: 12.80`
+
+### Example: Average
 
 ```
 Test scores:
@@ -53,53 +70,78 @@ avg
 ```
 **Result:** `Average: 86.25`
 
+### Example: Count
+
+```
+Items: 5
+Price: 10
+Tax: 2
+
+count
+```
+**Result:** `Count: 3`
+
+---
+
 ## Timer Commands
 
-| Command | Action |
+| Keyword | Action |
 |---------|--------|
-| `timer` | Start stopwatch (if enabled in settings) |
+| `timer` | Start stopwatch (if enabled) |
 | `timer sw` | Start stopwatch |
-| `timer stopwatch` | Start stopwatch |
 | `timer 5` | 5 minute countdown |
 | `timer 5m` | 5 minute countdown |
 | `timer 5s` | 5 second countdown |
 | `timer 5:30` | 5 min 30 sec countdown |
-| `timer 10 : laundry` | 10 min timer named "laundry" |
-| `timer pomo` | Pomodoro (uses settings) |
-| `timer 52 17` | Custom Pomodoro: 52min work, 17min break |
+| `timer 10 : laundry` | Named timer |
+| `timer pomo` | Pomodoro timer |
+| `timer 52 17` | Custom Pomodoro (52min work, 17min break) |
 | `timer breathe` | Breathing exercise |
 | `timer p` | Pause/Resume |
 | `timer r` | Reset |
 | `timer s` | Stop |
 
+### Example
+
+```
+timer 25 : focus session
+```
+Starts a 25-minute countdown named "focus session".
+
+---
+
 ## AutoPaste
 
-Automatically paste clipboard content:
-
-| Command | Action |
+| Keyword | Action |
 |---------|--------|
-| `paste` | Paste with newline separator |
+| `paste` | Paste clipboard items (newline separator) |
 | `paste(,)` | Paste with comma separator |
 | `paste(;)` | Paste with semicolon separator |
 | `paste( )` | Paste with space separator |
 
-### Example Usage
+### Example
 
-Copy multiple items to clipboard one by one, then:
+Copy items to clipboard, then:
 ```
 paste(, )
 ```
 **Result:** `item1, item2, item3`
 
+---
+
 ## Utility Commands
 
-| Command | Keyword | Action |
-|---------|---------|--------|
-| `/settings` | `settings` | Open settings dialog |
-| `/ocr` | `ocr` | Screen text capture |
+| Keyword | Action |
+|---------|--------|
+| `settings` | Open settings dialog |
+| `ocr` | Capture text from screen |
+
+---
 
 ## Custom Aliases
 
-You can create custom aliases for keywords in Settings → Keywords.
+Create your own shortcuts in Settings → Keywords.
 
-Example: Set `l` as alias for `list` → typing `l` switches to Checklist mode.
+**Example:** Set `l` as alias for `list`
+
+Now typing just `l` switches to Checklist mode.

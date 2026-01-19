@@ -1,6 +1,6 @@
 # LinNote Documentation
 
-Welcome to the LinNote documentation! LinNote is a fast, keyboard-driven scratchpad for Linux built with Qt6.
+Welcome to LinNote documentation! LinNote is a fast, keyboard-driven scratchpad for Linux built with Qt6.
 
 ## Quick Install
 
@@ -23,14 +23,14 @@ curl -fsSL https://linnote.app/install.sh | bash
 
 1. Install LinNote using the command above
 2. Launch from your application menu or run `linnote`
-3. Start typing! Use `/` to access slash commands
+3. Start typing! Type keywords like `list`, `code`, `calc` to switch modes
 
 ## Navigation
 
-Use the sidebar to explore different features:
+Use the sidebar to explore:
 
 - **Note Modes** - Learn about each mode
-- **Slash Commands** - Quick actions with `/`
+- **Keywords** - Quick actions (list, code, calc, timer, etc.)
 - **Calculator** - Math, variables, functions
 - **Conversions** - Currency and units
 - **Timer** - Pomodoro and stopwatch

@@ -10,10 +10,10 @@ curl -fsSL https://linnote.app/install.sh | bash
 
 ### Supported Distributions
 
-- **Arch Linux** / Manjaro
-- **Debian** / Ubuntu / Linux Mint
-- **Fedora** / CentOS / RHEL
-- **openSUSE**
+- Arch Linux / Manjaro
+- Debian / Ubuntu / Linux Mint
+- Fedora / CentOS / RHEL
+- openSUSE
 
 ### Requirements
 
@@ -32,20 +32,25 @@ Or run from terminal:
 linnote
 ```
 
-## First Run Setup
-
-On first launch, you'll see:
-
-1. **Welcome screen** with quick tips
-2. **Theme selection** - Choose light or dark
-3. **Shortcut setup** - Configure global hotkey
-
 ## Basic Usage
 
 - **Type anywhere** - Just start typing
-- **Slash commands** - Type `/` for quick actions
-- **Mode switching** - Use `/code`, `/list`, `/calc`, etc.
+- **Keywords** - Type `list`, `code`, `calc` to switch modes
+- **Menu** - Type `/` to open command popup
 - **Save** - Notes auto-save, or press `Ctrl+S`
+
+## Mode Switching
+
+Type the keyword and press Enter:
+
+| Keyword | Mode |
+|---------|------|
+| `plain` | Plain Text |
+| `list` | Checklist |
+| `code` | Code |
+| `calc` | Calculator |
+| `timer` | Timer |
+| `md` | Markdown |
 
 ## Quick Tips
 
@@ -54,5 +59,5 @@ On first launch, you'll see:
 | New note | `Ctrl+N` |
 | Save | `Ctrl+S` |
 | Search | `Ctrl+F` |
-| Settings | `Ctrl+,` or `/settings` |
-| Mode switch | `/code`, `/list`, `/calc` |
+| Settings | `Ctrl+,` |
+| Open menu | Type `/` |

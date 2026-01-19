@@ -1,28 +1,24 @@
 # Note Modes
 
-LinNote has 6 specialized note modes. Switch between them using slash commands or keywords.
+LinNote has 6 specialized note modes. Switch between them by typing the keyword and pressing Enter.
 
 ---
 
 ## 📝 Plain Text
 
-The default mode for general notes and quick writing.
+The default mode for general notes.
 
-**Switch to this mode:**
+**Activate:**
 ```
 plain
-```
-or
-```
-/text
 ```
 
 ### Features
 - Clean, distraction-free writing
 - Auto-save
-- Word and character count in status bar
+- Word and character count
 
-### Usage Scenario
+### Usage Example
 
 ```
 Meeting Notes - January 20
@@ -31,13 +27,13 @@ Attendees: John, Sarah, Mike
 
 Key Points:
 - Q4 targets exceeded by 15%
-- New product launch scheduled for March
+- New product launch in March
 - Budget review next week
 
 Action Items:
 - John: Prepare sales report
-- Sarah: Contact marketing team
-- Mike: Update project timeline
+- Sarah: Contact marketing
+- Mike: Update timeline
 ```
 
 ---
@@ -46,13 +42,9 @@ Action Items:
 
 Interactive todo lists with checkboxes.
 
-**Switch to this mode:**
+**Activate:**
 ```
 list
-```
-or
-```
-/checklist
 ```
 
 ### Syntax
@@ -62,21 +54,21 @@ or
 ```
 
 ### Features
-- Click checkbox to toggle
-- Progress percentage in status bar
-- Filter completed/pending items
+- Click to toggle checkboxes
+- Progress percentage shown
+- Filter completed items
 
-### Usage Scenario
+### Usage Example
 
 ```
 [ ] Morning workout
 [x] Check emails
-[x] Team standup meeting
-[ ] Review pull requests
+[x] Team standup
+[ ] Review PRs
 [ ] Prepare presentation
-[x] Lunch with client
+[x] Lunch meeting
 [ ] Code review
-[ ] Update documentation
+[ ] Update docs
 ```
 
 **Progress: 3/8 (37.5%)**
@@ -85,32 +77,26 @@ or
 
 ## 💻 Code
 
-Syntax-highlighted code editing with line numbers.
+Syntax-highlighted code editing.
 
-**Switch to this mode:**
+**Activate:**
 ```
 code
 ```
-or
-```
-/code
-```
 
 ### Features
-- Syntax highlighting for 20+ languages
+- Syntax highlighting (20+ languages)
 - Line numbers
 - Auto-indentation
 - Bracket matching
-- Tab size: 4 spaces
 
 ### Supported Languages
-C, C++, Python, JavaScript, TypeScript, Rust, Go, Java, Kotlin, Swift, Ruby, PHP, HTML, CSS, JSON, YAML, XML, SQL, Bash, Markdown
+C, C++, Python, JavaScript, TypeScript, Rust, Go, Java, Kotlin, Swift, Ruby, PHP, HTML, CSS, JSON, YAML, SQL, Bash
 
-### Usage Scenario
+### Usage Example
 
 ```python
 def fibonacci(n):
-    """Generate Fibonacci sequence up to n"""
     a, b = 0, 1
     result = []
     while a < n:
@@ -118,44 +104,34 @@ def fibonacci(n):
         a, b = b, a + b
     return result
 
-# Usage
 print(fibonacci(100))
-# Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 ```
 
 ---
 
-## 🧮 Calculator (Math)
+## 🧮 Calculator
 
-Live mathematical evaluation with variables and functions.
+Live mathematical evaluation.
 
-**Switch to this mode:**
+**Activate:**
 ```
 calc
-```
-or
-```
-/calc
 ```
 
 ### Features
 - Real-time calculation
 - Variables
-- Mathematical functions
+- Math functions
 - Percentages
 - Currency conversion
 - Unit conversion
 
-### Usage Scenario
+### Usage Example
 
 ```
-Shopping Budget Calculation
-===========================
-
 budget = 500
 tax_rate = 18
 
-Item Prices:
 laptop = 350
 mouse = 25
 keyboard = 45
@@ -171,13 +147,6 @@ total = subtotal + tax =
 
 remaining = budget - total =
 // Result: 4.4
-
-What is 20% of budget =
-// Result: 100
-
-Convert to Euro:
-495.6 USD to EUR =
-// Result: ~458 EUR
 ```
 
 ---
@@ -186,87 +155,59 @@ Convert to Euro:
 
 Built-in productivity timers.
 
-**Switch to this mode:**
+**Activate:**
 ```
 timer
-```
-or
-```
-/timer
 ```
 
 ### Timer Types
 
-1. **Stopwatch** - Elapsed time counter
-2. **Countdown** - Timer that counts to zero
-3. **Pomodoro** - Work/break intervals
-4. **Breathing** - Guided breathing exercise
+- **Stopwatch:** `timer sw`
+- **Countdown:** `timer 25` (25 minutes)
+- **Pomodoro:** `timer pomo`
+- **Breathing:** `timer breathe`
 
-### Usage Scenarios
-
-**Stopwatch:**
-```
-timer sw
-```
-Starts counting up. Perfect for tracking how long a task takes.
-
-**Countdown:**
-```
-timer 25
-```
-25 minute countdown. Great for meetings or focused work.
+### Usage Example
 
 ```
-timer 5:30 : pasta
+timer 25 : deep work
 ```
-5 minutes 30 seconds timer named "pasta".
+Starts 25-minute timer named "deep work".
 
-**Pomodoro:**
 ```
 timer pomo
 ```
-Uses your settings (default: 25min work, 5min break).
+Starts Pomodoro session (25min work, 5min break).
 
-```
-timer 52 17
-```
-Custom Pomodoro: 52 minutes work, 17 minutes break (based on research).
-
-**Breathing:**
 ```
 timer breathe
 ```
-Guided 4-4-4 breathing pattern for relaxation.
+Guided 4-4-4 breathing exercise.
 
 ---
 
 ## 📑 Markdown
 
-Formatted text with live Markdown rendering.
+Formatted text with live rendering.
 
-**Switch to this mode:**
+**Activate:**
 ```
 md
-```
-or
-```
-/markdown
 ```
 
 ### Features
 - Live preview
 - Headings (H1-H6)
-- Bold, italic, strikethrough
-- Lists (bullet and numbered)
+- Bold, italic
+- Lists
 - Code blocks
 - Links
-- Blockquotes
 - Tables
 
-### Usage Scenario
+### Usage Example
 
 ```markdown
-# Project README
+# Project Title
 
 ## Overview
 This is a **sample project** for demonstration.
@@ -274,24 +215,12 @@ This is a **sample project** for demonstration.
 ## Features
 - Fast performance
 - Easy to use
-- *Fully documented*
+- Fully documented
 
 ## Installation
-
-```bash
-npm install my-package
-```
-
-## Usage
-
-| Command | Description |
-|---------|-------------|
-| `start` | Start server |
-| `build` | Build project |
-
-> Note: Requires Node.js 18+
+Run the install script.
 
 ## Links
-- [Documentation](https://example.com/docs)
-- [GitHub](https://github.com/example)
+- Documentation: example.com/docs
+- GitHub: github.com/example
 ```

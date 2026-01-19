@@ -1,6 +1,11 @@
 # Calculator
 
-LinNote's built-in calculator evaluates expressions in real-time. Works in any mode, but Calculator mode (`calc`) is optimized for math.
+LinNote's calculator evaluates expressions in real-time.
+
+**Activate:**
+```
+calc
+```
 
 ## Basic Usage
 
@@ -37,9 +42,6 @@ Type any expression. Add `=` at the end to see the result:
 
 what is 15% of 200 =
 // Result: 30
-
-25 is what percent of 100 =
-// Result: 25%
 ```
 
 ## Variables
@@ -61,8 +63,6 @@ total = subtotal - discount_amount =
 // Result: 450
 ```
 
-Variables persist within the same note.
-
 ## Functions
 
 | Function | Description | Example |
@@ -74,7 +74,6 @@ Variables persist within the same note.
 | `tan(x)` | Tangent | `tan(0) = 0` |
 | `log(x)` | Natural log | `log(e) = 1` |
 | `log10(x)` | Log base 10 | `log10(100) = 2` |
-| `exp(x)` | e^x | `exp(1) = 2.718...` |
 | `floor(x)` | Round down | `floor(3.7) = 3` |
 | `ceil(x)` | Round up | `ceil(3.2) = 4` |
 | `round(x)` | Round nearest | `round(3.5) = 4` |
@@ -88,28 +87,29 @@ Variables persist within the same note.
 | `pi` | 3.14159265359 |
 | `e` | 2.71828182846 |
 
-## Text Analysis Commands
+---
 
-Analyze numbers in your note using keywords:
+## Text Analysis Keywords
+
+Analyze numbers in your note:
 
 ### sum
 
-Adds all numbers in the current note:
+Adds all numbers:
 
 ```
 Groceries:
 Milk 4.50
 Bread 2.30
 Eggs 6.00
-Butter 3.20
 
 sum
 ```
-**Result:** `Sum: 16.00`
+**Result:** `Sum: 12.80`
 
 ### avg
 
-Calculates average of all numbers:
+Calculates average:
 
 ```
 Test Scores:
@@ -117,30 +117,31 @@ Test Scores:
 92
 78
 88
-95
 
 avg
 ```
-**Result:** `Average: 87.6`
+**Result:** `Average: 85.75`
 
 ### count
 
-Counts how many numbers are in the note:
+Counts numbers:
 
 ```
-Random data:
-apple 5
-banana 3
-cherry 8
-date 2
+Items in list:
+5 apples
+3 bananas
+8 oranges
 
 count
 ```
-**Result:** `Count: 4`
+**Result:** `Count: 3`
+
+---
 
 ## Practical Examples
 
 ### Tip Calculator
+
 ```
 bill = 85.50
 tip_percent = 18
@@ -156,30 +157,10 @@ per_person = total / people =
 // Result: 25.22
 ```
 
-### Loan Payment
-```
-principal = 250000
-annual_rate = 6.5
-years = 30
-
-monthly_rate = annual_rate / 100 / 12 =
-payments = years * 12 =
-
-// Monthly payment formula simplified
-monthly = principal * monthly_rate =
-// Result: ~1,580
-```
-
 ### Area Calculation
+
 ```
-// Circle area
 radius = 5
 area = pi * radius^2 =
 // Result: 78.54
-
-// Rectangle
-width = 12
-height = 8
-rect_area = width * height =
-// Result: 96
 ```
