@@ -293,6 +293,10 @@ cleanup() {
 uninstall() {
     print_header "Uninstalling LinNote"
     
+    # Cache sudo credentials once at the start
+    print_step "Requesting administrator access..."
+    sudo -v || { print_error "sudo access required for complete uninstall"; }
+    
     echo -e "${CYAN}"
     echo "         .--.        "
     echo "        |o_o |       "
