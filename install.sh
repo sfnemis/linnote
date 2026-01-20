@@ -193,6 +193,13 @@ MimeType=x-scheme-handler/linnote;
 EOF
     print_success "Desktop entry installed"
     
+    # CRITICAL: Also install to system-wide location for KDE Plasma
+    # Some systems have XDG_DATA_DIRS that doesn't include ~/.local/share
+    if [ -w /usr/share/applications ] || command -v sudo &> /dev/null; then
+        sudo cp "$DESKTOP_DIR/linnote.desktop" /usr/share/applications/ 2>/dev/null || true
+        print_success "Desktop entry installed system-wide"
+    fi
+    
     # Copy icons
     if [ -d "$BUILD_DIR/resources/icons/app" ]; then
         cp "$BUILD_DIR/resources/icons/app/linnote-16.png" "$ICON_DIR/16x16/apps/linnote.png" 2>/dev/null || true
@@ -210,14 +217,15 @@ EOF
         gtk-update-icon-cache -f -t "$ICON_DIR" 2>/dev/null || true
     fi
     
-    # Update desktop database
+    # Update desktop database (both user and system)
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+        sudo update-desktop-database /usr/share/applications 2>/dev/null || true
     fi
     
     # Update KDE Plasma menu cache
     if command -v kbuildsycoca6 &> /dev/null; then
-        kbuildsycoca6 2>/dev/null || true
+        kbuildsycoca6 --noincremental 2>/dev/null || true
     elif command -v kbuildsycoca5 &> /dev/null; then
         kbuildsycoca5 2>/dev/null || true
     fi
