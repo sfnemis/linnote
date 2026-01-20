@@ -331,9 +331,11 @@ uninstall() {
                 ;;
             "Desktop entry")
                 rm -f "$DESKTOP_DIR/linnote.desktop"
+                sudo rm -f /usr/share/applications/linnote.desktop 2>/dev/null || true
                 ;;
             "Autostart")
                 rm -f "$HOME/.config/autostart/linnote.desktop"
+                rm -f "$HOME/.config/menus/applications-merged/linnote.menu"
                 ;;
             "Icons")
                 rm -f "$ICON_DIR/16x16/apps/linnote.png"
@@ -364,24 +366,27 @@ uninstall() {
     echo -e "  ${BLUE}(o<${NC} Updating system caches..."
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+        sudo update-desktop-database /usr/share/applications 2>/dev/null || true
     fi
     if command -v kbuildsycoca6 &> /dev/null; then
-        kbuildsycoca6 2>/dev/null || true
+        kbuildsycoca6 --noincremental 2>/dev/null || true
     elif command -v kbuildsycoca5 &> /dev/null; then
-        kbuildsycoca5 2>/dev/null || true
+        kbuildsycoca5 --noincremental 2>/dev/null || true
     fi
     
     echo ""
     echo -e "  ${CYAN}(^_^)/${NC} LinNote has been completely uninstalled!"
     echo ""
     echo "  Removed files:"
-    echo "    • Binary:       ~/.local/bin/linnote"
-    echo "    • Desktop:      ~/.local/share/applications/linnote.desktop"
-    echo "    • Autostart:    ~/.config/autostart/linnote.desktop"
-    echo "    • Icons:        ~/.local/share/icons/hicolor/*/apps/linnote.png"
-    echo "    • User data:    ~/.local/share/linnote/"
-    echo "    • State:        ~/.local/state/LinNotestaterc"
-    echo "    • Crash logs:   ~/.cache/drkonqi/crashes/LinNote.*"
+    echo "    • Binary:         ~/.local/bin/linnote"
+    echo "    • Desktop (user): ~/.local/share/applications/linnote.desktop"
+    echo "    • Desktop (sys):  /usr/share/applications/linnote.desktop"
+    echo "    • Menu config:    ~/.config/menus/applications-merged/linnote.menu"
+    echo "    • Autostart:      ~/.config/autostart/linnote.desktop"
+    echo "    • Icons:          ~/.local/share/icons/hicolor/*/apps/linnote.png"
+    echo "    • User data:      ~/.local/share/linnote/"
+    echo "    • State:          ~/.local/state/LinNotestaterc"
+    echo "    • Crash logs:     ~/.cache/drkonqi/crashes/LinNote.*"
     echo ""
     echo "  We hope to see you again! 🐧"
     echo ""
