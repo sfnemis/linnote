@@ -358,7 +358,7 @@ uninstall() {
         esac
         
         printf "\r  ${GREEN}✓${NC} %s removed              \n" "$item"
-        ((i++))
+        i=$((i + 1))
     done
     
     # Update caches
