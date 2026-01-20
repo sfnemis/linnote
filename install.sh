@@ -185,7 +185,7 @@ Comment=A quick scratchpad for Linux with global hotkey support
 Exec=$INSTALL_DIR/$APP_NAME %U
 Icon=linnote
 Terminal=false
-Categories=Qt;KDE;Utility;
+Categories=Qt;KDE;Utility;X-KDE-Utilities-Desktop;
 Keywords=notes;scratchpad;clipboard;paste;calculator;
 StartupNotify=true
 StartupWMClass=LinNote
@@ -365,6 +365,15 @@ uninstall() {
     
     echo ""
     echo -e "  ${CYAN}(^_^)/${NC} LinNote has been completely uninstalled!"
+    echo ""
+    echo "  Removed files:"
+    echo "    • Binary:       ~/.local/bin/linnote"
+    echo "    • Desktop:      ~/.local/share/applications/linnote.desktop"
+    echo "    • Autostart:    ~/.config/autostart/linnote.desktop"
+    echo "    • Icons:        ~/.local/share/icons/hicolor/*/apps/linnote.png"
+    echo "    • User data:    ~/.local/share/linnote/"
+    echo "    • State:        ~/.local/state/LinNotestaterc"
+    echo "    • Crash logs:   ~/.cache/drkonqi/crashes/LinNote.*"
     echo ""
     echo "  We hope to see you again! 🐧"
     echo ""
