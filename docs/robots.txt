@@ -1,0 +1,8 @@
+# LinNote Website
+# https://linnote.app
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://linnote.app/sitemap.xml

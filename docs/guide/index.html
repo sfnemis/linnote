@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LinNote Documentation</title>
+    <meta name="description" content="LinNote User Guide - A fast, keyboard-driven scratchpad for Linux">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../icon.png">
+
+    <!-- Docsify themes -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.min.css">
+
+    <style>
+        :root {
+            --base-background-color: #0a0a0f;
+            --sidebar-background: #16161d;
+            --sidebar-nav-link-color: #a6adc8;
+            --sidebar-nav-link-color--active: #8b5cf6;
+            --sidebar-nav-link-border-color--active: #8b5cf6;
+            --link-color: #8b5cf6;
+            --link-color--hover: #a78bfa;
+            --heading-color: #e4e4e7;
+            --code-inline-background: #1e1e28;
+            --code-inline-color: #22c55e;
+            --search-input-background-color: #1e1e28;
+            --search-input-border-color: #313244;
+            --search-result-keyword-background: rgba(139, 92, 246, 0.3);
+        }
+
+        .app-name-link img {
+            width: 40px;
+            border-radius: 10px;
+            margin-right: 10px;
+        }
+
+        .sidebar-nav>ul>li>a {
+            font-weight: 600;
+        }
+
+        .markdown-section h1 {
+            color: #8b5cf6;
+        }
+
+        .markdown-section h2 {
+            border-bottom: 1px solid #313244;
+            padding-bottom: 10px;
+        }
+
+        /* Back to home button */
+        .back-home {
+            position: fixed;
+            top: 20px;
+            right: 90px;
+            padding: 10px 20px;
+            background: #8b5cf6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 100;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .back-home:hover {
+            background: #7c3aed;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .back-home {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../" class="back-home">← Back to Home</a>
+
+    <div id="app"></div>
+
+    <script>
+        window.$docsify = {
+            name: '<img src="../logo.png" alt="LinNote">LinNote',
+            nameLink: '../',
+            repo: 'https://github.com/sfnemis/linnote',
+            loadSidebar: true,
+            subMaxLevel: 3,
+            search: {
+                placeholder: 'Search...',
+                noData: 'No results',
+                depth: 3
+            },
+            auto2top: true,
+            coverpage: false,
+            themeColor: '#8b5cf6',
+            homepage: 'home.md'
+        }
+    </script>
+
+    <!-- Docsify -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+
+    <!-- Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cpp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+</body>
+
+</html>

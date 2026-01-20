@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=LinNote
+GenericName=Quick Notes
+Comment=Fast scratchpad for Linux
+Exec=linnote %U
+Icon=linnote
+Terminal=false
+Categories=Utility;TextEditor;
+Keywords=notes;scratchpad;clipboard;
+StartupNotify=true
+StartupWMClass=LinNote
+MimeType=x-scheme-handler/linnote;
