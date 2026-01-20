@@ -195,8 +195,8 @@ EOF
     
     # CRITICAL: Also install to system-wide location for KDE Plasma
     # Some systems have XDG_DATA_DIRS that doesn't include ~/.local/share
-    if [ -w /usr/share/applications ] || command -v sudo &> /dev/null; then
-        sudo cp "$DESKTOP_DIR/linnote.desktop" /usr/share/applications/ 2>/dev/null || true
+    # Use sudo -n (non-interactive) to avoid password prompts
+    if sudo -n cp "$DESKTOP_DIR/linnote.desktop" /usr/share/applications/ 2>/dev/null; then
         print_success "Desktop entry installed system-wide"
     fi
     
@@ -220,7 +220,7 @@ EOF
     # Update desktop database (both user and system)
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
-        sudo update-desktop-database /usr/share/applications 2>/dev/null || true
+        sudo -n update-desktop-database /usr/share/applications 2>/dev/null || true
     fi
     
     # Update KDE Plasma menu cache
@@ -293,9 +293,11 @@ cleanup() {
 uninstall() {
     print_header "Uninstalling LinNote"
     
-    # Cache sudo credentials once at the start
-    print_step "Requesting administrator access..."
-    sudo -v || { print_error "sudo access required for complete uninstall"; }
+    # Try to get sudo access (silent, optional)
+    local has_sudo=false
+    if sudo -n true 2>/dev/null; then
+        has_sudo=true
+    fi
     
     echo -e "${CYAN}"
     echo "       ╭──────╮      "
@@ -336,7 +338,7 @@ uninstall() {
                 ;;
             "Desktop entry")
                 rm -f "$DESKTOP_DIR/linnote.desktop"
-                sudo rm -f /usr/share/applications/linnote.desktop 2>/dev/null || true
+                sudo -n rm -f /usr/share/applications/linnote.desktop 2>/dev/null || true
                 ;;
             "Autostart")
                 rm -f "$HOME/.config/autostart/linnote.desktop"
@@ -371,7 +373,7 @@ uninstall() {
     echo -e "  ${BLUE}(o<${NC} Updating system caches..."
     if command -v update-desktop-database &> /dev/null; then
         update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
-        sudo update-desktop-database /usr/share/applications 2>/dev/null || true
+        sudo -n update-desktop-database /usr/share/applications 2>/dev/null || true
     fi
     if command -v kbuildsycoca6 &> /dev/null; then
         kbuildsycoca6 --noincremental 2>/dev/null || true
