@@ -175,21 +175,21 @@ install_app() {
     chmod +x "$INSTALL_DIR/$APP_NAME"
     print_success "Binary installed to $INSTALL_DIR/$APP_NAME"
     
-    # Copy desktop entry with KDE-compatible categories
+    # Copy desktop entry (original working format)
     cat > "$DESKTOP_DIR/linnote.desktop" << EOF
 [Desktop Entry]
 Type=Application
 Name=LinNote
 GenericName=Quick Notes
 Comment=A quick scratchpad for Linux with global hotkey support
-Exec=$INSTALL_DIR/$APP_NAME %U
+Exec=linnote %U
 Icon=linnote
 Terminal=false
-Categories=Qt;KDE;Utility;X-KDE-Utilities-Desktop;
-Keywords=notes;scratchpad;clipboard;paste;calculator;
+Categories=Utility;TextEditor;
+Keywords=notes;scratchpad;clipboard;paste;
 StartupNotify=true
 StartupWMClass=LinNote
-X-KDE-StartupNotify=true
+MimeType=x-scheme-handler/linnote;
 EOF
     print_success "Desktop entry installed"
     
