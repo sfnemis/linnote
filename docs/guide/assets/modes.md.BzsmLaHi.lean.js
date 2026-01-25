@@ -1,0 +1,1 @@
+import{_ as s,o as e,c as n,ag as i}from"./chunks/framework.CoHhbRn3.js";const k=JSON.parse('{"title":"Note Modes","description":"","frontmatter":{},"headers":[],"relativePath":"modes.md","filePath":"modes.md"}'),t={name:"modes.md"};function l(p,a,h,o,r,d){return e(),n("div",null,[...a[0]||(a[0]=[i("",66)])])}const g=s(t,[["render",l]]);export{k as __pageData,g as default};

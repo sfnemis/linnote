@@ -1,0 +1,1 @@
+import{_ as e,o as a,c as i,ag as s}from"./chunks/framework.CoHhbRn3.js";const u=JSON.parse('{"title":"Timer","description":"","frontmatter":{},"headers":[],"relativePath":"timer.md","filePath":"timer.md"}'),o={name:"timer.md"};function r(n,t,d,l,p,c){return a(),i("div",null,[...t[0]||(t[0]=[s("",44)])])}const m=e(o,[["render",r]]);export{u as __pageData,m as default};
