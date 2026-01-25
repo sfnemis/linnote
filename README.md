@@ -24,10 +24,20 @@ A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
 
 ## Installation
 
-### Quick Install (Recommended)
+### Arch Linux (AUR)
+
+[![AUR version](https://img.shields.io/aur/version/linnote?logo=archlinux&label=AUR)](https://aur.archlinux.org/packages/linnote)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sfnemis/linnote/main/install.sh | bash
+yay -S linnote
+# or
+paru -S linnote
+```
+
+### Universal Install (Debian, Fedora, openSUSE, etc.)
+
+```bash
+curl -fsSL https://linnote.app/install.sh | bash
 ```
 
 This will:
