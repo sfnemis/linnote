@@ -913,15 +913,35 @@
                             </div>
                         </div>
 
-                        <div class="install-cmd">
-                            <code id="cmd">curl -fsSL https://linnote.app/install.sh | bash</code>
-                            <button onclick="copyCmd(this)">Copy</button>
+                        <!-- Install Options Tabs -->
+                        <div class="install-tabs" style="max-width: 580px;">
+                            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                <button class="install-tab active" onclick="switchInstallTab('universal')"
+                                    id="tab-universal"
+                                    style="padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                                    🐧 Universal
+                                </button>
+                                <button class="install-tab" onclick="switchInstallTab('arch')" id="tab-arch"
+                                    style="padding: 8px 16px; background: rgba(139, 92, 246, 0.15); color: var(--text); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                                    🔷 Arch Linux (AUR)
+                                </button>
+                            </div>
+
+                            <div id="install-universal" class="install-cmd">
+                                <code id="cmd">curl -fsSL https://linnote.app/install.sh | bash</code>
+                                <button onclick="copyCmd(this)">Copy</button>
+                            </div>
+
+                            <div id="install-arch" class="install-cmd" style="display: none;">
+                                <code id="cmd-arch">yay -S linnote</code>
+                                <button onclick="copyCmd(this)">Copy</button>
+                            </div>
                         </div>
+
                         <p style="font-size: 0.85rem; color: var(--subtext); margin-top: 12px; max-width: 520px;">
                             <strong style="color: var(--pink);">GNOME users:</strong> F12 hotkey must be added manually
                             in Settings → Keyboard → Custom Shortcuts.
-                            <a href="guide/#/shortcuts?id=gnome-users-manual-shortcut-setup"
-                                style="color: var(--accent);">Learn more →</a>
+                            <a href="guide/shortcuts" style="color: var(--accent);">Learn more →</a>
                         </p>
                     </div>
 
@@ -1076,30 +1096,60 @@
             });
 
         const INSTALL_CMD = 'curl -fsSL https://linnote.app/install.sh | bash';
+        const INSTALL_CMD_ARCH = 'yay -S linnote';
+
+        function switchInstallTab(tab) {
+            const universalTab = document.getElementById('tab-universal');
+            const archTab = document.getElementById('tab-arch');
+            const universalCmd = document.getElementById('install-universal');
+            const archCmd = document.getElementById('install-arch');
+
+            if (tab === 'universal') {
+                universalTab.style.background = 'var(--accent)';
+                universalTab.style.color = 'white';
+                universalTab.style.border = 'none';
+                archTab.style.background = 'rgba(139, 92, 246, 0.15)';
+                archTab.style.color = 'var(--text)';
+                archTab.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+                universalCmd.style.display = 'flex';
+                archCmd.style.display = 'none';
+            } else {
+                archTab.style.background = 'var(--accent)';
+                archTab.style.color = 'white';
+                archTab.style.border = 'none';
+                universalTab.style.background = 'rgba(139, 92, 246, 0.15)';
+                universalTab.style.color = 'var(--text)';
+                universalTab.style.border = '1px solid rgba(139, 92, 246, 0.3)';
+                archCmd.style.display = 'flex';
+                universalCmd.style.display = 'none';
+            }
+        }
 
         function copyCmd(btn) {
-            const cmd = document.getElementById('cmd');
+            const codeEl = btn.previousElementSibling;
+            const cmdText = codeEl.textContent;
+            const originalText = cmdText;
 
-            navigator.clipboard.writeText(INSTALL_CMD).then(() => {
+            navigator.clipboard.writeText(cmdText).then(() => {
                 // Track install copy event in Google Analytics
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'install_copy', {
                         'event_category': 'engagement',
-                        'event_label': 'curl_command'
+                        'event_label': cmdText.includes('yay') ? 'aur_command' : 'curl_command'
                     });
                 }
 
                 // Change code text to success message
-                cmd.textContent = '✅ Copied to clipboard!';
-                cmd.style.color = '#22c55e';
+                codeEl.textContent = '✅ Copied to clipboard!';
+                codeEl.style.color = '#22c55e';
 
                 // Change button
                 btn.textContent = '✓';
                 btn.style.background = '#22c55e';
 
                 setTimeout(() => {
-                    cmd.textContent = INSTALL_CMD;
-                    cmd.style.color = '';
+                    codeEl.textContent = originalText;
+                    codeEl.style.color = '';
                     btn.textContent = 'Copy';
                     btn.style.background = '';
                 }, 2000);
