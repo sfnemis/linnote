@@ -909,16 +909,8 @@
                                 <span style="font-size: 1.2rem;">📦</span>
                                 <span style="font-size: 1rem; font-weight: 700; color: #22c55e;"><span
                                         id="dl-number">...</span></span>
-                                <span style="font-size: 0.85rem; color: var(--subtext);">installs</span>
+                                <span style="font-size: 0.85rem; color: var(--subtext);">downloads</span>
                             </div>
-                            <a href="https://aur.archlinux.org/packages/linnote" target="_blank" rel="noopener"
-                                id="aur-count"
-                                style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, rgba(23, 147, 209, 0.15), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(23, 147, 209, 0.3); border-radius: 50px; backdrop-filter: blur(10px); text-decoration: none; transition: all 0.3s;">
-                                <span style="font-size: 1.2rem;">🔷</span>
-                                <span style="font-size: 1rem; font-weight: 700; color: #1793d1;"><span
-                                        id="aur-votes">...</span></span>
-                                <span style="font-size: 0.85rem; color: var(--subtext);">AUR votes</span>
-                            </a>
                         </div>
 
                         <!-- Install Options Tabs -->
@@ -1101,19 +1093,6 @@
             })
             .catch(() => {
                 document.getElementById('download-count').style.display = 'none';
-            });
-
-        // Fetch AUR vote count
-        fetch('https://aur.archlinux.org/rpc/v5/info?arg[]=linnote')
-            .then(res => res.json())
-            .then(data => {
-                if (data.results && data.results.length > 0) {
-                    const votes = data.results[0].NumVotes || 0;
-                    document.getElementById('aur-votes').textContent = votes.toLocaleString();
-                }
-            })
-            .catch(() => {
-                document.getElementById('aur-count').style.display = 'none';
             });
 
         const INSTALL_CMD = 'curl -fsSL https://linnote.app/install.sh | bash';
