@@ -53,3 +53,8 @@ Thumbs.db
 .env
 .env.local
 checkpoints/
+
+# VitePress Documentation
+docs/guide/node_modules/
+docs/guide/.vitepress/dist/
+docs/guide/.vitepress/cache/

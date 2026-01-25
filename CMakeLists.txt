@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(LinNote VERSION 1.0.0 LANGUAGES CXX)
+project(linnote VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -152,8 +152,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Install targets
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
-install(FILES org.example.LinNote.desktop DESTINATION share/applications)
-# install(FILES icons/linnote.svg DESTINATION share/icons/hicolor/scalable/apps)
+install(FILES linnote.desktop DESTINATION share/applications)
+
+# Install icons for all sizes
+foreach(SIZE 16 32 48 64 128 256 512)
+    install(FILES resources/icons/app/linnote-${SIZE}.png
+            DESTINATION share/icons/hicolor/${SIZE}x${SIZE}/apps
+            RENAME linnote.png)
+endforeach()
 
 # Testing support
 option(BUILD_TESTS "Build unit tests" OFF)

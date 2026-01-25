@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/sfnemis/linnote/main/install.sh | b
 This will:
 - Detect your distro (Arch, Debian, Fedora, openSUSE)
 - Install dependencies
-- Build from source
+- Download pre-built binary from GitHub Releases
 - Set up desktop entry and icons
 
 ### Manual Build

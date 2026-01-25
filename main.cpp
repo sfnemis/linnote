@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   unsetenv("DESKTOP_STARTUP_ID");
 
   QApplication app(argc, argv);
-  app.setApplicationName("LinNote");
+  app.setApplicationName("linnote");
   app.setApplicationVersion("1.0");
   app.setOrganizationName("LinNote");
   app.setOrganizationDomain("linnote.app");

@@ -4,5 +4,5 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://linnote.app/sitemap.xml
+# Sitemap (VitePress generated)
+Sitemap: https://linnote.app/guide/sitemap.xml

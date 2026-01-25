@@ -1,0 +1,117 @@
+/* LinNote Custom Theme - Matches main site (linnote.app) colors */
+
+:root {
+  /* Primary accent - Purple (#8b5cf6) */
+  --vp-c-brand-1: #8b5cf6;
+  --vp-c-brand-2: #a78bfa;
+  --vp-c-brand-3: #7c3aed;
+  --vp-c-brand-soft: rgba(139, 92, 246, 0.14);
+
+  /* Backgrounds - Match main site */
+  --vp-c-bg: #0a0a0f;
+  --vp-c-bg-soft: #16161d;
+  --vp-c-bg-mute: #1e1e28;
+  --vp-c-bg-alt: #16161d;
+
+  /* Text colors */
+  --vp-c-text-1: #e4e4e7;
+  --vp-c-text-2: #a6adc8;
+  --vp-c-text-3: #71717a;
+
+  /* Borders */
+  --vp-c-border: #313244;
+  --vp-c-divider: #313244;
+  --vp-c-gutter: #1e1e28;
+
+  /* Code blocks */
+  --vp-code-block-bg: #1e1e28;
+  --vp-code-line-highlight-color: rgba(139, 92, 246, 0.15);
+  --vp-c-code-link-color: #8b5cf6;
+
+  /* Navbar */
+  --vp-nav-bg-color: rgba(10, 10, 15, 0.8);
+
+  /* Sidebar */
+  --vp-sidebar-bg-color: #16161d;
+
+  /* Button colors */
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-bg: #8b5cf6;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-hover-bg: #7c3aed;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #ffffff;
+  --vp-button-brand-active-bg: #6d28d9;
+
+  /* Home hero gradient - matches main site */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #e4e4e7 0%, #8b5cf6 50%, #06b6d4 100%);
+  --vp-home-hero-image-background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent);
+  --vp-home-hero-image-filter: blur(40px);
+}
+
+/* Force dark theme styles */
+.dark {
+  --vp-c-bg: #0a0a0f;
+  --vp-c-bg-soft: #16161d;
+  --vp-c-bg-mute: #1e1e28;
+}
+
+/* Navbar backdrop blur - like main site */
+.VPNav {
+  backdrop-filter: blur(20px) !important;
+  background: rgba(10, 10, 15, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Sidebar styling */
+.VPSidebar {
+  background: #16161d !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Active sidebar link */
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: #8b5cf6 !important;
+}
+
+/* Code inline styling */
+.vp-doc :not(pre) > code {
+  background: #1e1e28;
+  color: #22c55e;
+}
+
+/* Links */
+.vp-doc a {
+  color: #8b5cf6;
+}
+
+.vp-doc a:hover {
+  color: #a78bfa;
+}
+
+/* Headings */
+.vp-doc h1 {
+  color: #8b5cf6;
+}
+
+.vp-doc h2 {
+  border-bottom: 1px solid #313244;
+  padding-bottom: 10px;
+}
+
+/* Search box styling */
+.DocSearch {
+  --docsearch-primary-color: #8b5cf6 !important;
+  --docsearch-modal-background: #16161d !important;
+  --docsearch-searchbox-background: #1e1e28 !important;
+  --docsearch-hit-background: #1e1e28 !important;
+}
+
+/* Local search styling */
+.VPLocalSearchBox {
+  --vp-local-search-bg: #16161d;
+  --vp-local-search-highlight-bg: rgba(139, 92, 246, 0.3);
+}

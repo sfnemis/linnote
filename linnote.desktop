@@ -9,5 +9,5 @@ Terminal=false
 Categories=Utility;TextEditor;
 Keywords=notes;scratchpad;clipboard;
 StartupNotify=true
-StartupWMClass=LinNote
+StartupWMClass=linnote
 MimeType=x-scheme-handler/linnote;
