@@ -36,9 +36,6 @@ All notable changes to this project will be documented in this file.
   written by 1.0.0 keeps working and is rewritten when the password changes.
 - Note contents, clipboard contents and passwords are no longer written to
   the system log, and debug output is compiled out of release builds.
-- The FreeCryptoAPI key that shipped inside the application is gone. The
-  field starts empty and crypto rates fall back to CoinGecko, which needs no
-  key. If you had not set your own key, nothing changes for you.
 
 ### Added
 
