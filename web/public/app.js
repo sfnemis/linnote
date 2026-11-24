@@ -200,3 +200,79 @@
   });
   if (pal) pal.addEventListener("click", function (e) { if (e.target === pal) close(); });
 })();
+
+/* Screenshot lightbox. Click a tour screenshot to read it full size, then
+   Escape, the backdrop or the close button to leave, and the arrow keys to
+   walk the ten shots. */
+(function () {
+  var lb = document.getElementById("lightbox");
+  if (!lb) return;
+  var img = document.getElementById("lbImg");
+  var title = document.getElementById("lbTitle");
+  var count = document.getElementById("lbCount");
+  var closeBtn = document.getElementById("lbClose");
+  var prevBtn = document.getElementById("lbPrev");
+  var nextBtn = document.getElementById("lbNext");
+
+  var shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
+  if (!shots.length) return;
+
+  var index = 0;
+  var lastFocus = null;
+
+  function show(i) {
+    index = (i + shots.length) % shots.length;
+    var source = shots[index].querySelector("img");
+    img.src = source.getAttribute("src");
+    img.alt = source.getAttribute("alt") || "";
+    title.textContent = source.getAttribute("alt") || "";
+    count.textContent = (index + 1) + " / " + shots.length;
+  }
+
+  function open(i) {
+    // Opening while already open would capture the dialog's own close button
+    // as the element to restore focus to, so it only moves the image.
+    if (!lb.hidden) { show(i); return; }
+    lastFocus = document.activeElement;
+    show(i);
+    lb.hidden = false;
+    // The page must not scroll behind the dialog. A class rather than a
+    // saved inline value: saving one means a second open can save "hidden"
+    // and leave the page unscrollable for good.
+    document.body.classList.add("lb-open");
+    closeBtn.focus();
+  }
+
+  function close() {
+    lb.hidden = true;
+    document.body.classList.remove("lb-open");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  shots.forEach(function (btn, i) {
+    btn.addEventListener("click", function () { open(i); });
+  });
+
+  closeBtn.addEventListener("click", close);
+  prevBtn.addEventListener("click", function () { show(index - 1); });
+  nextBtn.addEventListener("click", function () { show(index + 1); });
+
+  // A click on the backdrop closes; a click on the image or a control does not.
+  lb.addEventListener("click", function (e) {
+    if (e.target === lb || e.target.classList.contains("lb-fig")) close();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (lb.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); close(); return; }
+    if (e.key === "ArrowLeft") { e.preventDefault(); show(index - 1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); show(index + 1); return; }
+    if (e.key === "Tab") {
+      // Keep the focus inside the dialog.
+      var order = [closeBtn, prevBtn, nextBtn];
+      var at = order.indexOf(document.activeElement);
+      e.preventDefault();
+      order[(at + (e.shiftKey ? -1 : 1) + order.length) % order.length].focus();
+    }
+  });
+})();
