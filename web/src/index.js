@@ -45,12 +45,11 @@ async function buildStats() {
 }
 
 async function statsResponse(request, ctx) {
-  const cache = caches.default;
-  const key = new Request(new URL("/api/stats", request.url).toString(), { method: "GET" });
-
-  const hit = await cache.match(key);
-  if (hit) return hit;
-
+  // One cache layer only, on the GitHub fetch in gh(), which Cloudflare
+  // expires on its own. A second layer here, caches.default keyed on
+  // /api/stats, kept serving the same payload long after its s-maxage had
+  // passed, so the version chip on the page still read 2.0.1 hours after
+  // 2.0.2 was released and nothing short of a purge could move it.
   let body, status;
   try {
     body = await buildStats();
@@ -70,7 +69,6 @@ async function statsResponse(request, ctx) {
       "access-control-allow-origin": "https://linnote.app",
     },
   });
-  if (!body.error) ctx.waitUntil(cache.put(key, res.clone()));
   return res;
 }
 
