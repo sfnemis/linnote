@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2026-11-24
+
+### Fixed
+
+- The uninstaller asks before it runs, lists what goes and what stays, and
+  keeps your notes unless you also pass `--purge`. Until now it deleted the
+  notes database on the first keystroke with no confirmation and no backup.
+  `--yes` is there for scripted removals, and it refuses to guess when
+  there is no terminal to ask on.
+- Uninstalling no longer corrupts another application's KDE global
+  shortcuts. The old cleanup deleted LinNote's section and the header of
+  whatever section followed it.
+- The Qt SVG package is no longer required. It was added on the assumption
+  that the toolbar used the SVG files in the resource bundle; it does not,
+  and nothing in the code ever loaded them.
+- The README shows a wget command as well, because a minimal Ubuntu or
+  Debian install has no curl and so cannot run the documented one.
+
 ## [2.0.0] - 2026-11-24
 
 ### Security
@@ -54,12 +72,6 @@ All notable changes to this project will be documented in this file.
   built on. 1.0.0 handed the Arch build to Fedora, RHEL and openSUSE too,
   where a different Qt or glibc can stop it from starting. Arch is pointed
   at its AUR package and anything else at the Flatpak or a source build.
-- The uninstaller asks before it runs, lists what goes and what stays, and
-  keeps your notes unless you also pass `--purge`. It used to delete the
-  notes database on the first keystroke with no confirmation and no backup.
-- Uninstalling no longer corrupts another application's KDE global
-  shortcuts. The old cleanup deleted LinNote's section *and* the header of
-  whatever section came after it.
 - Typing `timer` switches the page to timer mode. It used to start a
   stopwatch without changing the mode, and with stopwatch auto-start
   turned off it did nothing at all.

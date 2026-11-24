@@ -52,6 +52,15 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="2.0.1" date="2026-11-24">
+      <description>
+        <p>
+          The uninstaller asks before it removes anything and keeps your
+          notes unless you ask for them to go. It used to delete them with
+          no confirmation.
+        </p>
+      </description>
+    </release>
     <release version="2.0.0" date="2026-11-24">
       <description>
         <p>
