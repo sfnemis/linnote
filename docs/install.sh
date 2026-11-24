@@ -4,6 +4,7 @@
 set -e
 
 VERSION="2.0.0"
+ASSUME_YES="no"
 INSTALL_DIR="/usr/local/bin"
 
 # Track installation (silent, non-blocking)
@@ -269,17 +270,21 @@ uninstall() {
         echo "    run with --purge as well if you want those deleted too"
     fi
     echo ""
-    if [ -t 0 ]; then
+    local answer=""
+    if [ "$ASSUME_YES" = "yes" ]; then
+        answer="yes"
+        echo "  --yes given, continuing without asking."
+    elif [ -t 0 ]; then
         printf "  Type yes to continue: "
         read -r answer
+    elif { true >/dev/tty; } 2>/dev/null; then
+        # Piped from curl, so stdin is the script. Ask on the terminal.
+        printf "  Type yes to continue: " > /dev/tty
+        read -r answer < /dev/tty
     else
-        # Piped from curl, so there is no terminal to ask on.
-        if [ -r /dev/tty ]; then
-            printf "  Type yes to continue: "
-            read -r answer < /dev/tty
-        else
-            answer=""
-        fi
+        echo "  There is no terminal to confirm on, so nothing was removed."
+        echo "  Run it from a terminal, or add --yes if you are scripting it."
+        exit 1
     fi
     if [ "$answer" != "yes" ]; then
         echo ""
@@ -375,11 +380,13 @@ uninstall() {
 main() {
     case "${1:-}" in
         --uninstall|-u)
-            if [ "${2:-}" = "--purge" ]; then
-                uninstall yes
-            else
-                uninstall no
-            fi
+            PURGE_ARG="no"
+            ASSUME_YES="no"
+            for arg in "$@"; do
+                [ "$arg" = "--purge" ] && PURGE_ARG="yes"
+                [ "$arg" = "--yes" ] && ASSUME_YES="yes"
+            done
+            uninstall "$PURGE_ARG"
             exit 0
             ;;
     esac
