@@ -872,12 +872,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
       }
 
       if (!onInteractive) {
-        // ═══════════════════════════════════════════════════════════════════
         // Cross-Desktop Compatibility: Suppress focus-out during drag
         // On Wayland (especially GNOME), startSystemMove() transfers focus
         // to the compositor, triggering focusChanged. Without this flag,
         // the window would auto-hide during drag.
-        // ═══════════════════════════════════════════════════════════════════
         m_suppressFocusOut = true;
 
         // Use Qt 5.15+ startSystemMove for Wayland compatibility
@@ -898,11 +896,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Reset focus suppression after drag
   // This restores normal auto-hide behavior after window move completes.
   // Use a short delay to allow the compositor to return focus properly.
-  // ═══════════════════════════════════════════════════════════════════════════
   if (m_suppressFocusOut) {
     QTimer::singleShot(100, this, [this]() { m_suppressFocusOut = false; });
   }
@@ -995,11 +991,9 @@ void MainWindow::openSettingsDialog() {
   // Suppress focus-out during settings dialog
   m_suppressFocusOut = true;
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Standalone Settings Dialog
   // Using nullptr as parent makes the dialog a separate window, allowing users
   // to see the main app while changing theme settings (live preview).
-  // ═══════════════════════════════════════════════════════════════════════════
   SettingsDialog *dialog = new SettingsDialog(nullptr);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint);
@@ -1218,11 +1212,9 @@ void MainWindow::updatePinButtonState() {
     m_pinButton->setText(QStringLiteral("📍")); // Pinned emoji
     m_pinButton->setStyleSheet(pinnedStyle);
 
-    // ═══════════════════════════════════════════════════════════════════════
     // Cross-Desktop Compatibility: Professional DE-Aware Tooltips
     // KDE: True always-on-top (z-order control via KWin)
     // GNOME/Others: Stay Visible mode (prevents auto-hide, no z-order control)
-    // ═══════════════════════════════════════════════════════════════════════
     if (LinNote::supportsAlwaysOnTop()) {
       // KDE Plasma: Full always-on-top support via KWin DBus scripting
       m_pinButton->setToolTip(tr("Always on Top: ON (Ctrl+T)"));
@@ -1259,11 +1251,9 @@ void MainWindow::updateToolbarVisibility() {
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Suppress focus-out during resize
   // On Wayland (especially GNOME), QSizeGrip interaction may transfer focus
   // to the compositor, triggering auto-hide. We suppress this during resize.
-  // ═══════════════════════════════════════════════════════════════════════════
   if (watched == m_sizeGrip) {
     if (event->type() == QEvent::MouseButtonPress) {
       m_suppressFocusOut = true;

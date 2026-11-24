@@ -5,7 +5,7 @@
 #include <QString>
 
 /**
- * @brief AES-256-CBC encryption helper for per-note encryption
+ * @brief Encryption and password hashing helpers for per-note encryption
  */
 class Crypto {
 public:

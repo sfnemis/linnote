@@ -20,9 +20,7 @@ print_step() { echo -e "  ${BLUE}▶${NC} $1"; }
 print_success() { echo -e "  ${GREEN}✓${NC} $1"; }
 print_error() { echo -e "  ${RED}✗${NC} $1"; exit 1; }
 
-# ============================================================================
 # Detect Distribution
-# ============================================================================
 detect_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
@@ -32,12 +30,10 @@ detect_distro() {
     fi
 }
 
-# ============================================================================
 # Install Dependencies
 # - Qt6/KF6 runtime libraries
 # - Tesseract OCR with language packs
 # - GNOME: AppIndicator extension note
-# ============================================================================
 install_dependencies() {
     local distro=$(detect_distro)
     
@@ -107,10 +103,8 @@ install_dependencies() {
     fi
 }
 
-# ============================================================================
 # Download Binary
 # Selects appropriate binary based on distribution family
-# ============================================================================
 download_binary() {
     local distro=$(detect_distro)
     local BINARY_NAME=""
@@ -151,9 +145,7 @@ download_binary() {
     print_success "Binary installed to $INSTALL_DIR/linnote"
 }
 
-# ============================================================================
 # Install Desktop Entry (to /usr/share/applications/)
-# ============================================================================
 install_desktop_entry() {
     print_step "Installing desktop entry..."
     
@@ -176,9 +168,7 @@ EOF
     print_success "Desktop entry installed to /usr/share/applications/"
 }
 
-# ============================================================================
 # Install Icons
-# ============================================================================
 install_icons() {
     print_step "Installing icons..."
     
@@ -200,9 +190,7 @@ install_icons() {
 }
 
 
-# ============================================================================
 # Update Caches
-# ============================================================================
 update_caches() {
     print_step "Updating menu cache..."
     
@@ -213,9 +201,7 @@ update_caches() {
     print_success "Menu cache updated"
 }
 
-# ============================================================================
 # Uninstall
-# ============================================================================
 uninstall() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -293,9 +279,7 @@ uninstall() {
     echo ""
 }
 
-# ============================================================================
 # Main
-# ============================================================================
 main() {
     case "${1:-}" in
         --uninstall|-u)

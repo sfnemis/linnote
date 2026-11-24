@@ -28,10 +28,8 @@
 static const QString SOCKET_NAME = "linnote-single-instance";
 
 int main(int argc, char *argv[]) {
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Pre-Application Initialization
   // These must be called BEFORE QApplication is created
-  // ═══════════════════════════════════════════════════════════════════════════
 
   // Suppress Wayland protocol noise (zwp_text_input warnings, etc.)
   QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.wayland*=false"));
@@ -46,16 +44,12 @@ int main(int argc, char *argv[]) {
   app.setOrganizationName("LinNote");
   app.setOrganizationDomain("linnote.app");
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Desktop File Name for GNOME Dock
   // This ensures the app icon and name display correctly in GNOME's dock
-  // ═══════════════════════════════════════════════════════════════════════════
   app.setDesktopFileName("linnote");
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: Style Hardening for GTK-based Desktops
   // Prevents theme collision artifacts (popup ghosting, dropdown bugs)
-  // ═══════════════════════════════════════════════════════════════════════════
   if (LinNote::isGtkBasedDesktop()) {
     app.setStyle(QStyleFactory::create(QStringLiteral("Fusion")));
     qDebug() << "LinNote: Using Fusion style for"
@@ -202,11 +196,9 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Desktop Compatibility: System Tray Availability Guard
   // Vanilla GNOME has no system tray - requires extension or fallback to
   // DockOnly
-  // ═══════════════════════════════════════════════════════════════════════════
   TrayIcon trayIcon(&mainWindow);
   Settings::DisplayMode displayMode = Settings::instance()->displayMode();
 

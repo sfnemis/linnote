@@ -74,30 +74,24 @@ inline DesktopEnvironment detectDesktopEnvironment() {
   QString current = QString::fromUtf8(xdgCurrent).toUpper();
   QString session = QString::fromUtf8(xdgSession).toUpper();
 
-  // ═══════════════════════════════════════════════════════════════════
   // KDE Detection
   // XDG_CURRENT_DESKTOP can be "KDE" or "X-KDE" or include "PLASMA"
   // KDE_FULL_SESSION is set in all KDE sessions
-  // ═══════════════════════════════════════════════════════════════════
   if (current.contains("KDE") || current.contains("PLASMA") ||
       session.contains("KDE") || session.contains("PLASMA") ||
       !kdeSession.isEmpty()) {
     return DesktopEnvironment::KDE;
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // GNOME Detection
   // Includes: GNOME, ubuntu:GNOME, Unity, Pop (Pop!_OS)
-  // ═══════════════════════════════════════════════════════════════════
   if (current.contains("GNOME") || current.contains("UNITY") ||
       current.contains("UBUNTU") || current.contains("POP") ||
       session.contains("GNOME") || !gnomeLegacy.isEmpty()) {
     return DesktopEnvironment::GNOME;
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // Other Desktop Environments
-  // ═══════════════════════════════════════════════════════════════════
   if (current.contains("XFCE") || session.contains("XFCE")) {
     return DesktopEnvironment::Xfce;
   }

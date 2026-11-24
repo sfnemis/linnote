@@ -1,9 +1,7 @@
 #include "Theme.h"
 #include <QApplication>
 
-// ============================================================================
 // Theme StyleSheet Generation
-// ============================================================================
 
 QString Theme::styleSheet(bool isDark, int transparency) const {
   ThemeColors c = colors(isDark);
@@ -380,9 +378,7 @@ QString Theme::styleSheet(bool isDark, int transparency) const {
       .arg(highlightRgba);
 }
 
-// ============================================================================
 // ThemeManager Singleton
-// ============================================================================
 
 ThemeManager &ThemeManager::instance() {
   static ThemeManager instance;

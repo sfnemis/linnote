@@ -51,9 +51,7 @@ static bool getKeywordColor(const QString &text, QColor &outColor) {
   return false;
 }
 
-// ============================================================================
 // KeywordHighlighter
-// ============================================================================
 
 KeywordHighlighter::KeywordHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent) {
@@ -124,9 +122,7 @@ void KeywordHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-// ============================================================================
 // ChecklistHighlighter
-// ============================================================================
 
 ChecklistHighlighter::ChecklistHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent) {
@@ -209,9 +205,7 @@ void ChecklistHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-// ============================================================================
 // MathHighlighter
-// ============================================================================
 
 MathHighlighter::MathHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent), m_evaluator(nullptr) {
@@ -280,9 +274,7 @@ void MathHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-// ============================================================================
 // ModeHelper
-// ============================================================================
 
 ModeHelper::ModeHelper(QPlainTextEdit *editor, QObject *parent)
     : QObject(parent), m_editor(editor), m_mode(NoteMode::PlainText),

@@ -72,11 +72,9 @@ QString OcrHelper::extractText(const QImage &image, const QString &language) {
 void OcrHelper::captureAndExtract(const QString &language) {
   m_language = language;
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Desktop-specific screenshot capture:
   // - KDE: Use spectacle directly (immediate area selection)
   // - GNOME/Others: Use XDG Portal (native integration)
-  // ═══════════════════════════════════════════════════════════════════════════
 
   if (LinNote::detectDesktopEnvironment() == LinNote::DesktopEnvironment::KDE) {
     captureViaSpectacle();

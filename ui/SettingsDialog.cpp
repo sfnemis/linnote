@@ -136,11 +136,9 @@ void SettingsDialog::onCategoryChanged(int row) {
 void SettingsDialog::updateDynamicStyles() {
   bool isDark = Settings::instance()->darkMode();
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Cross-Platform Widget Styling
   // Ubuntu GNOME doesn't inherit Qt dark theme properly, so we set explicit
   // colors for all input widgets to ensure consistent appearance.
-  // ═══════════════════════════════════════════════════════════════════════════
 
   QString bgColor = isDark ? "#1e1e2e" : "#f5f5f5";
   QString textColor = isDark ? "#cdd6f4" : "#2e3436";
