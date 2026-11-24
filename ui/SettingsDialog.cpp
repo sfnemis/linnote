@@ -807,6 +807,29 @@ QWidget *SettingsDialog::createCalculatorPage() {
           &SettingsDialog::onAutoMathToggled);
   layout->addWidget(m_autoMathCheck);
 
+  // Decimal separator (GitHub issue #7). "Auto" follows the system locale,
+  // which is what most users outside the English-speaking world want.
+  QHBoxLayout *sepRow = new QHBoxLayout();
+  sepRow->addWidget(new QLabel(tr("Decimal separator:")));
+  m_decimalSeparatorCombo = new QComboBox();
+  m_decimalSeparatorCombo->addItem(tr("Automatic (system locale)"),
+                                   QStringLiteral("auto"));
+  m_decimalSeparatorCombo->addItem(tr("Dot    1.5 + 2.3 = 3.8"),
+                                   QStringLiteral("dot"));
+  m_decimalSeparatorCombo->addItem(tr("Comma    1,5 + 2,3 = 3,8"),
+                                   QStringLiteral("comma"));
+  m_decimalSeparatorCombo->setToolTip(
+      tr("With a comma, write function arguments with a semicolon: "
+         "sum(1; 2; 3,5)"));
+  connect(m_decimalSeparatorCombo, &QComboBox::currentIndexChanged, this,
+          [this](int index) {
+            Settings::instance()->setDecimalSeparatorMode(
+                m_decimalSeparatorCombo->itemData(index).toString());
+          });
+  sepRow->addWidget(m_decimalSeparatorCombo);
+  sepRow->addStretch();
+  layout->addLayout(sepRow);
+
   m_currencyCheck = new QCheckBox(tr("Enable currency conversion"));
   connect(m_currencyCheck, &QCheckBox::toggled, this,
           &SettingsDialog::onCurrencyToggled);
@@ -1326,6 +1349,11 @@ void SettingsDialog::loadSettings() {
 
   // Calculator
   m_autoMathCheck->setChecked(s->autoMathEnabled());
+  {
+    const int sepIndex =
+        m_decimalSeparatorCombo->findData(s->decimalSeparatorMode());
+    m_decimalSeparatorCombo->setCurrentIndex(sepIndex < 0 ? 0 : sepIndex);
+  }
   m_currencyCheck->setChecked(s->currencyConversionEnabled());
   m_currencyCombo->setCurrentText(s->baseCurrency());
   m_apiKeyEdit->setText(s->currencyApiKey());

@@ -147,6 +147,7 @@ private:
 
   // Calculator page
   QCheckBox *m_autoMathCheck;
+  QComboBox *m_decimalSeparatorCombo;
   QCheckBox *m_currencyCheck;
   QComboBox *m_currencyCombo;
   QComboBox *m_providerCombo;

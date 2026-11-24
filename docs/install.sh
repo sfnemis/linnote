@@ -176,17 +176,20 @@ install_icons() {
     
     local ICON_DIR="$HOME/.local/share/icons/hicolor"
     local ICON_BASE="https://raw.githubusercontent.com/sfnemis/linnote/main/resources/icons/app"
-    
-    for size in 16 32 48 64 128 256; do
+
+    # Every size, in both the user and the system theme. Installing only the
+    # 128px icon system-wide, which is what LinNote 1.0.0 did, leaves the
+    # desktop scaling one bitmap up to 256 and beyond: that is the blurry
+    # icon reported in GitHub issue #4.
+    for size in 16 32 48 64 128 256 512; do
         mkdir -p "$ICON_DIR/${size}x${size}/apps"
-        curl -fsSL "$ICON_BASE/linnote-${size}.png" -o "$ICON_DIR/${size}x${size}/apps/linnote.png" 2>/dev/null || true
+        if curl -fsSL "$ICON_BASE/linnote-${size}.png" \
+                -o "$ICON_DIR/${size}x${size}/apps/linnote.png" 2>/dev/null; then
+            sudo mkdir -p "/usr/share/icons/hicolor/${size}x${size}/apps"
+            sudo cp "$ICON_DIR/${size}x${size}/apps/linnote.png" \
+                "/usr/share/icons/hicolor/${size}x${size}/apps/" 2>/dev/null || true
+        fi
     done
-    
-    # Also copy to system icons
-    if [ -f "$ICON_DIR/128x128/apps/linnote.png" ]; then
-        sudo mkdir -p /usr/share/icons/hicolor/128x128/apps
-        sudo cp "$ICON_DIR/128x128/apps/linnote.png" /usr/share/icons/hicolor/128x128/apps/ 2>/dev/null || true
-    fi
     
     print_success "Icons installed"
 }

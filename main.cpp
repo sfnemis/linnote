@@ -18,14 +18,95 @@
 #include <QLocalSocket>
 #include <QLoggingCategory>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include <QStyleFactory>
 #include <QSystemTrayIcon>
 #include <QTextStream>
 #include <QUrl>
 #include <QUrlQuery>
 #include <cstdlib> // for unsetenv
+#include <unistd.h>
+#include <vector>
 
 static const QString SOCKET_NAME = "linnote-single-instance";
+
+namespace {
+
+// The GlobalShortcuts portal refuses a request it cannot tie to an
+// installed desktop file. For an unsandboxed process it works that out
+// from the systemd user scope the process runs in, which is what the
+// desktop environment creates when an app is started from the menu.
+// Started from a terminal or from a plain autostart entry there is no such
+// scope, CreateSession gets no response at all, and the global hotkey
+// silently never binds. That is GitHub issue #4.
+//
+// Measured on Fedora 45 with GNOME 51: launched from a shell, only
+// CreateSession goes out and nothing comes back; launched inside
+// "systemd-run --user --scope --slice=app.slice --unit=app-linnote-...",
+// the portal answers Response 0 and BindShortcuts follows.
+//
+// So put ourselves in such a scope once, before anything else runs.
+bool alreadyInAppScope() {
+  QFile cgroup(QStringLiteral("/proc/self/cgroup"));
+  if (!cgroup.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    return true; // cannot tell; do not re-exec on a guess
+  }
+  const QString text = QString::fromUtf8(cgroup.readAll());
+  return text.contains(QStringLiteral("app-")) &&
+         text.contains(QStringLiteral(".scope"));
+}
+
+void reExecInsideAppScope(int argc, char *argv[]) {
+  if (qEnvironmentVariableIsSet("LINNOTE_NO_SCOPE")) {
+    return; // explicit opt out, and the guard against looping forever
+  }
+  if (alreadyInAppScope()) {
+    return;
+  }
+  const QString runtimeDir =
+      QString::fromLocal8Bit(qgetenv("XDG_RUNTIME_DIR"));
+  if (runtimeDir.isEmpty() ||
+      !QFile::exists(runtimeDir + QStringLiteral("/systemd"))) {
+    return; // no systemd user instance, nothing to join
+  }
+  const QString systemdRun = QStandardPaths::findExecutable(
+      QStringLiteral("systemd-run"));
+  if (systemdRun.isEmpty()) {
+    return;
+  }
+
+  QStringList args{QStringLiteral("--user"),
+                   QStringLiteral("--scope"),
+                   QStringLiteral("--quiet"),
+                   QStringLiteral("--slice=app.slice"),
+                   QStringLiteral("--unit=app-linnote-%1")
+                       .arg(QCoreApplication::applicationPid()),
+                   QStringLiteral("--setenv=LINNOTE_NO_SCOPE=1"),
+                   QCoreApplication::applicationFilePath()};
+  for (int i = 1; i < argc; ++i) {
+    args << QString::fromLocal8Bit(argv[i]);
+  }
+
+  // Replace this process, so there is exactly one LinNote either way.
+  QByteArray program = systemdRun.toLocal8Bit();
+  QList<QByteArray> storage;
+  std::vector<char *> raw;
+  storage.reserve(args.size() + 1);
+  storage.append(program);
+  for (const QString &a : std::as_const(args)) {
+    storage.append(a.toLocal8Bit());
+  }
+  raw.reserve(storage.size() + 1);
+  for (QByteArray &a : storage) {
+    raw.push_back(a.data());
+  }
+  raw.push_back(nullptr);
+  execv(program.constData(), raw.data());
+  // execv only returns on failure: carry on without a scope rather than
+  // leaving the user with no app at all.
+}
+
+} // namespace
 
 int main(int argc, char *argv[]) {
   // Cross-Desktop Compatibility: Pre-Application Initialization
@@ -37,6 +118,14 @@ int main(int argc, char *argv[]) {
   // Prevent GNOME startup notification cursor hang (30s loading cursor)
   // This must be done before QApplication creation
   unsetenv("DESKTOP_STARTUP_ID");
+
+  // Must happen before QApplication so the replacement process builds the
+  // whole GUI itself. applicationFilePath() needs argv, so set that up.
+  QCoreApplication::setApplicationName(QStringLiteral("linnote"));
+  {
+    QCoreApplication probe(argc, argv);
+    reExecInsideAppScope(argc, argv);
+  }
 
   QApplication app(argc, argv);
   app.setApplicationName("linnote");
