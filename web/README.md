@@ -32,10 +32,22 @@ The probe is not optional. It asserts that every public path answers 200 and
 that a list of paths that must never be published answers 404. It exits
 non-zero on either failure.
 
-## Custom domain
+## The guides
 
-linnote.app sits in a different Cloudflare account than the token above, so
-the custom domain is not attached by this config yet. Once the zone is
-reachable, put the routes back in `wrangler.jsonc` and redeploy. Until then
-the Worker answers on its workers.dev hostname and GitHub Pages still serves
-the live domain from `docs/`.
+The source is `web/guide` (VitePress) and it builds straight into
+`web/public/guide`, which is what the Worker serves. Edit the markdown,
+run `npm run build` in `web/guide`, then deploy. The workflow in
+`.github/workflows/deploy-guide.yml` does the build and commit on push.
+
+## Domain and rollback
+
+linnote.app lives in a different Cloudflare account than the other projects,
+so this Worker is deployed there with a token scoped to that account, kept at
+`~/.cloudflare/linnote-token`. The hostnames are attached with Worker routes
+rather than custom domains: a custom domain hands the hostname's DNS to
+Workers, and on the apex that published AAAA with no A, which no IPv4 client
+could reach.
+
+GitHub Pages is switched off and `docs/` is gone, so this Worker is the only
+thing serving linnote.app. Rolling back means going to a previous Worker
+version with `scripts/rollback.sh`; Cloudflare keeps them.

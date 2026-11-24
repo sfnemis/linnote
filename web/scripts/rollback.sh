@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
-# Hands linnote.app back to GitHub Pages. Deletes the two Worker routes and
-# nothing else: the DNS records were never changed, so Pages answers again
-# as soon as the routes are gone. Nothing to wait for.
+# Rolls the site back to the previous Worker version.
+#
+# This used to delete the two Worker routes and let GitHub Pages answer.
+# That fallback is gone: docs/ was deleted and Pages is switched off, so
+# deleting the routes now leaves linnote.app with nothing behind it.
+# Cloudflare keeps previous Worker versions instead, which is a better
+# rollback anyway: it is instant and needs no DNS propagation.
 set -euo pipefail
-TOKEN=$(cat ~/.cloudflare/linnote-token)
-ZONE=4a930a6827b27050aa2fa1c582345ba0
-API=https://api.cloudflare.com/client/v4
-curl -fsS -H "Authorization: Bearer $TOKEN" "$API/zones/$ZONE/workers/routes" \
- | python3 -c "
-import sys,json
-for r in json.load(sys.stdin)['result']:
-    if r.get('script')=='linnote-site': print(r['id'], r['pattern'])" \
- | while read -r id pattern; do
-     curl -fsS -X DELETE "$API/zones/$ZONE/workers/routes/$id" -H "Authorization: Bearer $TOKEN" >/dev/null
-     echo "removed route $pattern"
-   done
-echo "linnote.app is back on GitHub Pages."
+cd "$(dirname "$0")/.."
+export CLOUDFLARE_API_TOKEN=$(cat ~/.cloudflare/linnote-token)
+export CLOUDFLARE_ACCOUNT_ID=0c140265fee9d14ccf1998f36fbbc883
+
+echo "Versions Cloudflare still holds:"
+npx --yes wrangler versions list
+
+echo
+echo "Rolling back to the previous one. Pass a version id as the first"
+echo "argument to pick a different one."
+npx --yes wrangler rollback ${1:+"$1"}
+
+echo
+echo "Check it landed:"
+echo "  ./scripts/check-public.sh https://linnote.app \$(dig +short linnote.app | head -1)"
