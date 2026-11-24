@@ -685,8 +685,8 @@ void MainWindow::onEditorContentChanged() {
 
       // Check for command (with / prefix) OR keyword (without /)
       if (m_slashCommand->isCommand(lastLine)) {
-        qDebug() << "onEditorContentChanged: Found command/keyword:"
-                 << lastLine;
+        qDebug() << "onEditorContentChanged: recognised a command or "
+                    "keyword on the last line";
 
         // Set guard BEFORE execute to prevent re-entrancy
         m_updatingEditor = true;

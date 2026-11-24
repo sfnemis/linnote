@@ -1,179 +1,347 @@
 #include "storage/Crypto.h"
+#include <QByteArray>
+#include <QCryptographicHash>
+#include <QStringList>
 #include <QTest>
+
+#include <openssl/evp.h>
+
+// These tests exist because a round-trip assertion proves nothing about a
+// cipher: decrypt(encrypt(x)) == x holds just as well for a repeating-key
+// XOR, which is what LinNote 1.0.0 actually shipped while its own header
+// claimed AES-256-CBC. So every test below either checks a property that
+// only authenticated encryption satisfies, or compares against an
+// independent implementation, or pins a format with a fixed vector.
 
 class TestCrypto : public QObject {
   Q_OBJECT
 
 private slots:
-  void initTestCase();
-  void cleanupTestCase();
+  // Format of what we write now
+  void testCiphertextIsVersionTagged();
+  void testPasswordHashIsPbkdf2Tagged();
 
-  // Password hashing tests
-  void testHashPassword();
-  void testHashPasswordConsistency();
-  void testHashPasswordDifferentInputs();
+  // The key derivation, checked against OpenSSL rather than against itself
+  void testStoredHashMatchesOpenSslPbkdf2();
 
-  // Password verification tests
-  void testVerifyPassword();
-  void testVerifyPasswordWrong();
+  // Properties a repeating-key XOR cannot satisfy
+  void testWrongPasswordIsReportedNotGuessed();
+  void testTamperedCiphertextIsRejected();
+  void testVersionRelabelIsRejected();
+  void testOnePlaintextByteChangesManyCiphertextBytes();
+  void testSamePlaintextEncryptsDifferentlyEachTime();
+  void testCiphertextIsLongerThanPlaintextByATag();
 
-  // Encryption tests
-  void testEncryptDecrypt();
-  void testEncryptDecryptDifferentKeys();
-  void testEncryptDecryptLongText();
-  void testEncryptDecryptSpecialChars();
+  // Reading what 1.0.0 wrote, and migrating it
+  void testLegacyCiphertextIsStillReadable();
+  void testLegacyPasswordHashStillVerifies();
+  void testIsLegacyClassifiesBothFormats();
+  void testLegacyBlobReEncryptsToCurrentFormat();
+  void testCurrentHashAndLegacyHashDoNotCrossVerify();
 
-  // Salt generation tests
-  void testGenerateSalt();
-  void testGenerateSaltUniqueness();
-
-  // Edge cases
-  void testEmptyPassword();
-  void testEmptyData();
+  // Round trips and edge cases
+  void testRoundTrip();
+  void testRoundTripUnicode();
+  void testRoundTripLongText();
+  void testRoundTripSpecialChars();
   void testVeryLongPassword();
-  void testUnicodePassword();
-  void testUnicodeText();
+  void testEmptyInputs();
+  void testSaltIsRandomAndRightLength();
 
 private:
-  QString m_testPassword = "TestPassword123!";
-  QString m_testData = "This is some test data to encrypt.";
-};
-
-void TestCrypto::initTestCase() {
-  // Nothing to initialize
-}
-
-void TestCrypto::cleanupTestCase() {
-  // Nothing to cleanup
-}
-
-// ============ Password Hashing ============
-
-void TestCrypto::testHashPassword() {
-  QString hash = Crypto::hashPassword(m_testPassword);
-  QVERIFY(!hash.isEmpty());
-  QVERIFY(hash != m_testPassword);
-  QVERIFY(hash.contains(":")); // Format is salt:hash
-}
-
-void TestCrypto::testHashPasswordConsistency() {
-  // With the same salt, should produce same hash
-  QString salt = Crypto::generateSalt();
-  QString hash1 = Crypto::hashPassword(m_testPassword, salt);
-  QString hash2 = Crypto::hashPassword(m_testPassword, salt);
-  QCOMPARE(hash1, hash2);
-}
-
-void TestCrypto::testHashPasswordDifferentInputs() {
-  QString hash1 = Crypto::hashPassword("password1");
-  QString hash2 = Crypto::hashPassword("password2");
-  QVERIFY(hash1 != hash2);
-}
-
-// ============ Password Verification ============
-
-void TestCrypto::testVerifyPassword() {
-  QString hash = Crypto::hashPassword(m_testPassword);
-  QVERIFY(Crypto::verifyPassword(m_testPassword, hash));
-}
-
-void TestCrypto::testVerifyPasswordWrong() {
-  QString hash = Crypto::hashPassword(m_testPassword);
-  QVERIFY(!Crypto::verifyPassword("WrongPassword", hash));
-}
-
-// ============ Encryption ============
-
-void TestCrypto::testEncryptDecrypt() {
-  QString encrypted = Crypto::encrypt(m_testData, m_testPassword);
-  QVERIFY(!encrypted.isEmpty());
-  QVERIFY(encrypted != m_testData);
-
-  QString decrypted = Crypto::decrypt(encrypted, m_testPassword);
-  QCOMPARE(decrypted, m_testData);
-}
-
-void TestCrypto::testEncryptDecryptDifferentKeys() {
-  QString encrypted = Crypto::encrypt(m_testData, "key1");
-  QString decrypted = Crypto::decrypt(encrypted, "key2");
-
-  // Decryption with wrong key should fail or produce garbage
-  QVERIFY(decrypted != m_testData);
-}
-
-void TestCrypto::testEncryptDecryptLongText() {
-  QString longText;
-  for (int i = 0; i < 1000; i++) {
-    longText += "This is line " + QString::number(i) + " of the test.\n";
+  // Produced by re-implementing the LinNote 1.0.0 algorithm independently
+  // (salt as raw bytes, 5000 rounds of sha256(key + salt||password), then
+  // a repeating-key XOR) and encoding the result the way 1.0.0 did.
+  static QString legacyBlob() {
+    return QStringLiteral(
+        "000102030405060708090a0b0c0d0e0f:"
+        "0f0e0d0c0b0a09080706050403020100:"
+        "z6TnoW5uTjsdTIjJoRS3Dy3NOooVrPzrkXX3SooBdx77rPu1LyxJJklU1536UakSKt9s"
+        "jVS34e2RYfdbkRx4HuG6/a5hYA==");
+  }
+  static QString legacyPlain() {
+    return QStringLiteral("Ariza notu: 2+2=4 ve biraz daha uzun bir metin, "
+                          "32 bayttan uzun olsun.");
+  }
+  static QString legacyPassword() {
+    return QStringLiteral("correct horse battery staple");
+  }
+  // Produced by the same independent re-implementation of 1.0.0's
+  // hashPassword (salt as hex TEXT, 10000 rounds).
+  static QString legacyHash() {
+    return QStringLiteral("000102030405060708090a0b0c0d0e0f:"
+                          "df535b4dea589f85dfbcd8dc501b91abe44cc2e0c29143e619"
+                          "dfe815c96d3572");
   }
 
-  QString encrypted = Crypto::encrypt(longText, m_testPassword);
-  QVERIFY(!encrypted.isEmpty());
+  QString m_password = QStringLiteral("TestPassword123!");
+  QString m_data = QStringLiteral("This is some test data to encrypt.");
+};
 
-  QString decrypted = Crypto::decrypt(encrypted, m_testPassword);
-  QCOMPARE(decrypted, longText);
+void TestCrypto::testCiphertextIsVersionTagged() {
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  QVERIFY(!blob.isEmpty());
+  QVERIFY(blob.startsWith(QStringLiteral("v2:")));
+  const QStringList parts = blob.split(':');
+  QCOMPARE(parts.size(), 5);
+  QCOMPARE(parts.at(0), QStringLiteral("v2"));
+  QCOMPARE(parts.at(1).toInt(), Crypto::currentIterations());
+  QCOMPARE(parts.at(2).size(), 32); // 16 byte salt, hex
+  QCOMPARE(parts.at(3).size(), 24); // 12 byte nonce, hex
+  QVERIFY(!parts.at(4).isEmpty());
 }
 
-void TestCrypto::testEncryptDecryptSpecialChars() {
-  QString specialData = "Special chars: !@#$%^&*(){}[]|\\:\";<>?,./~`";
-
-  QString encrypted = Crypto::encrypt(specialData, m_testPassword);
-  QString decrypted = Crypto::decrypt(encrypted, m_testPassword);
-  QCOMPARE(decrypted, specialData);
+void TestCrypto::testPasswordHashIsPbkdf2Tagged() {
+  const QString hash = Crypto::hashPassword(m_password);
+  QVERIFY(hash.startsWith(QStringLiteral("pbkdf2-sha256$")));
+  const QStringList parts = hash.split('$');
+  QCOMPARE(parts.size(), 4);
+  QCOMPARE(parts.at(1).toInt(), Crypto::currentIterations());
+  QCOMPARE(parts.at(2).size(), 32); // 16 byte salt, hex
+  QCOMPARE(parts.at(3).size(), 64); // 32 byte hash, hex
+  QVERIFY(Crypto::verifyPassword(m_password, hash));
+  QVERIFY(!Crypto::verifyPassword(QStringLiteral("WrongPassword"), hash));
 }
 
-// ============ Salt Generation ============
+void TestCrypto::testStoredHashMatchesOpenSslPbkdf2() {
+  // Two independent PBKDF2 implementations must agree: ours goes through
+  // Qt's QPasswordDigestor, this one through OpenSSL. A hand-rolled hash
+  // chain, which is what 1.0.0 used, fails this.
+  const QString hash = Crypto::hashPassword(m_password);
+  const QStringList parts = hash.split('$');
+  QCOMPARE(parts.size(), 4);
 
-void TestCrypto::testGenerateSalt() {
-  QString salt = Crypto::generateSalt();
-  QVERIFY(!salt.isEmpty());
-  QVERIFY(salt.length() >= 16); // At least 16 chars for 8 bytes hex-encoded
+  const int iterations = parts.at(1).toInt();
+  const QByteArray salt = QByteArray::fromHex(parts.at(2).toLatin1());
+  const QByteArray expected = QByteArray::fromHex(parts.at(3).toLatin1());
+  QCOMPARE(salt.size(), 16);
+  QCOMPARE(expected.size(), 32);
+
+  const QByteArray pw = m_password.toUtf8();
+  QByteArray fromOpenSsl(expected.size(), Qt::Uninitialized);
+  const int rc = PKCS5_PBKDF2_HMAC(
+      pw.constData(), static_cast<int>(pw.size()),
+      reinterpret_cast<const unsigned char *>(salt.constData()),
+      static_cast<int>(salt.size()), iterations, EVP_sha256(),
+      static_cast<int>(fromOpenSsl.size()),
+      reinterpret_cast<unsigned char *>(fromOpenSsl.data()));
+  QCOMPARE(rc, 1);
+  QCOMPARE(fromOpenSsl.toHex(), expected.toHex());
 }
 
-void TestCrypto::testGenerateSaltUniqueness() {
-  QString salt1 = Crypto::generateSalt();
-  QString salt2 = Crypto::generateSalt();
-  QVERIFY(salt1 != salt2);
+void TestCrypto::testWrongPasswordIsReportedNotGuessed() {
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  bool ok = true;
+  const QString out = Crypto::decrypt(blob, QStringLiteral("wrong"), &ok);
+  // XOR returned plausible-looking garbage here and reported success.
+  QVERIFY(!ok);
+  QVERIFY(out.isEmpty());
 }
 
-// ============ Edge Cases ============
+void TestCrypto::testTamperedCiphertextIsRejected() {
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  const QStringList parts = blob.split(':');
+  QCOMPARE(parts.size(), 5);
 
-void TestCrypto::testEmptyPassword() {
-  QString hash = Crypto::hashPassword("");
-  QVERIFY(!hash.isEmpty());
+  QByteArray body = QByteArray::fromBase64(parts.at(4).toLatin1());
+  QVERIFY(body.size() > 16);
+
+  // Flip one bit in the ciphertext body, then one in the tag at the end.
+  // Both must fail.
+  const QList<int> offsets = {0, static_cast<int>(body.size() / 2),
+                              static_cast<int>(body.size() - 1)};
+  for (int offset : offsets) {
+    QByteArray broken = body;
+    broken[offset] = static_cast<char>(broken[offset] ^ 0x01);
+    const QString tampered =
+        parts.at(0) + ":" + parts.at(1) + ":" + parts.at(2) + ":" +
+        parts.at(3) + ":" + QString::fromLatin1(broken.toBase64());
+    bool ok = true;
+    const QString out = Crypto::decrypt(tampered, m_password, &ok);
+    QVERIFY2(!ok, qPrintable(QStringLiteral("accepted a flipped bit at %1")
+                                 .arg(offset)));
+    QVERIFY(out.isEmpty());
+  }
 }
 
-void TestCrypto::testEmptyData() {
-  QString encrypted = Crypto::encrypt("", m_testPassword);
-  QString decrypted = Crypto::decrypt(encrypted, m_testPassword);
-  QCOMPARE(decrypted, QString(""));
+void TestCrypto::testVersionRelabelIsRejected() {
+  // The version string is authenticated, so a blob cannot be presented as
+  // a different version without the tag failing. Relabelling to the legacy
+  // three-field shape must not succeed either.
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  const QStringList parts = blob.split(':');
+  const QString relabelled = parts.at(2) + ":" + parts.at(3) + ":" +
+                             parts.at(4); // looks like a 1.0.0 blob
+  bool ok = true;
+  const QString out = Crypto::decrypt(relabelled, m_password, &ok);
+  QVERIFY(out != m_data);
+}
+
+void TestCrypto::testOnePlaintextByteChangesManyCiphertextBytes() {
+  // The direct repeating-key XOR detector. Under XOR, changing one
+  // plaintext byte changes exactly one ciphertext byte at the same offset.
+  // Under a real cipher with a fresh nonce, nearly every byte changes.
+  QString a(200, QLatin1Char('a'));
+  QString b = a;
+  b[40] = QLatin1Char('b');
+
+  const QString blobA = Crypto::encrypt(a, m_password);
+  const QString blobB = Crypto::encrypt(b, m_password);
+
+  const QByteArray bodyA =
+      QByteArray::fromBase64(blobA.split(':').at(4).toLatin1());
+  const QByteArray bodyB =
+      QByteArray::fromBase64(blobB.split(':').at(4).toLatin1());
+  QCOMPARE(bodyA.size(), bodyB.size());
+
+  int differing = 0;
+  for (int i = 0; i < bodyA.size(); ++i) {
+    if (bodyA[i] != bodyB[i]) {
+      ++differing;
+    }
+  }
+  QVERIFY2(differing > bodyA.size() / 2,
+           qPrintable(QStringLiteral("only %1 of %2 ciphertext bytes changed")
+                          .arg(differing)
+                          .arg(bodyA.size())));
+}
+
+void TestCrypto::testSamePlaintextEncryptsDifferentlyEachTime() {
+  const QString one = Crypto::encrypt(m_data, m_password);
+  const QString two = Crypto::encrypt(m_data, m_password);
+  QVERIFY(one != two);
+  bool ok = false;
+  QCOMPARE(Crypto::decrypt(one, m_password, &ok), m_data);
+  QVERIFY(ok);
+  QCOMPARE(Crypto::decrypt(two, m_password, &ok), m_data);
+  QVERIFY(ok);
+}
+
+void TestCrypto::testCiphertextIsLongerThanPlaintextByATag() {
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  const QByteArray body =
+      QByteArray::fromBase64(blob.split(':').at(4).toLatin1());
+  QCOMPARE(body.size(), m_data.toUtf8().size() + 16);
+}
+
+void TestCrypto::testLegacyCiphertextIsStillReadable() {
+  // A note locked by LinNote 1.0.0 must still open, or the upgrade
+  // destroys data.
+  bool ok = false;
+  const QString out = Crypto::decrypt(legacyBlob(), legacyPassword(), &ok);
+  QCOMPARE(out, legacyPlain());
+  QVERIFY(ok);
+}
+
+void TestCrypto::testLegacyPasswordHashStillVerifies() {
+  QVERIFY(Crypto::verifyPassword(legacyPassword(), legacyHash()));
+  QVERIFY(!Crypto::verifyPassword(QStringLiteral("nope"), legacyHash()));
+}
+
+void TestCrypto::testIsLegacyClassifiesBothFormats() {
+  QVERIFY(Crypto::isLegacy(legacyBlob()));
+  QVERIFY(Crypto::isLegacy(legacyHash()));
+  QVERIFY(!Crypto::isLegacy(Crypto::encrypt(m_data, m_password)));
+  QVERIFY(!Crypto::isLegacy(Crypto::hashPassword(m_password)));
+  QVERIFY(!Crypto::isLegacy(QString()));
+}
+
+void TestCrypto::testLegacyBlobReEncryptsToCurrentFormat() {
+  bool ok = false;
+  const QString recovered =
+      Crypto::decrypt(legacyBlob(), legacyPassword(), &ok);
+  QVERIFY(ok);
+  QCOMPARE(recovered, legacyPlain());
+
+  const QString migrated = Crypto::encrypt(recovered, legacyPassword());
+  QVERIFY(!Crypto::isLegacy(migrated));
+
+  bool ok2 = false;
+  QCOMPARE(Crypto::decrypt(migrated, legacyPassword(), &ok2), legacyPlain());
+  QVERIFY(ok2);
+
+  // And the migrated blob now rejects a wrong password instead of
+  // returning garbage.
+  bool ok3 = true;
+  QVERIFY(Crypto::decrypt(migrated, QStringLiteral("wrong"), &ok3).isEmpty());
+  QVERIFY(!ok3);
+}
+
+void TestCrypto::testCurrentHashAndLegacyHashDoNotCrossVerify() {
+  const QString current = Crypto::hashPassword(legacyPassword());
+  QVERIFY(Crypto::verifyPassword(legacyPassword(), current));
+  QVERIFY(Crypto::verifyPassword(legacyPassword(), legacyHash()));
+  QVERIFY(current != legacyHash());
+}
+
+void TestCrypto::testRoundTrip() {
+  bool ok = false;
+  const QString blob = Crypto::encrypt(m_data, m_password);
+  QCOMPARE(Crypto::decrypt(blob, m_password, &ok), m_data);
+  QVERIFY(ok);
+}
+
+void TestCrypto::testRoundTripUnicode() {
+  const QString text =
+      QStringLiteral("Türkçe karakterler: ğüşıöç ĞÜŞİÖÇ ve 日本語 ve emoji 🔒");
+  const QString password = QStringLiteral("şifre-ÇÖĞÜŞİ-123");
+  bool ok = false;
+  QCOMPARE(Crypto::decrypt(Crypto::encrypt(text, password), password, &ok),
+           text);
+  QVERIFY(ok);
+}
+
+void TestCrypto::testRoundTripLongText() {
+  QString text;
+  for (int i = 0; i < 1000; ++i) {
+    text += QStringLiteral("Line %1 of a long note.\n").arg(i);
+  }
+  bool ok = false;
+  QCOMPARE(Crypto::decrypt(Crypto::encrypt(text, m_password), m_password, &ok),
+           text);
+  QVERIFY(ok);
+}
+
+void TestCrypto::testRoundTripSpecialChars() {
+  const QString text =
+      QStringLiteral("!@#$%^&*()_+-=[]{}|;':\",./<>?\\`~\n\ttabs and newlines");
+  bool ok = false;
+  QCOMPARE(Crypto::decrypt(Crypto::encrypt(text, m_password), m_password, &ok),
+           text);
+  QVERIFY(ok);
 }
 
 void TestCrypto::testVeryLongPassword() {
-  QString longPassword;
-  for (int i = 0; i < 1000; i++) {
-    longPassword += "a";
-  }
-
-  QString hash = Crypto::hashPassword(longPassword);
-  QVERIFY(!hash.isEmpty());
-  QVERIFY(Crypto::verifyPassword(longPassword, hash));
+  const QString password(5000, QLatin1Char('x'));
+  const QString hash = Crypto::hashPassword(password);
+  QVERIFY(Crypto::verifyPassword(password, hash));
+  bool ok = false;
+  QCOMPARE(Crypto::decrypt(Crypto::encrypt(m_data, password), password, &ok),
+           m_data);
+  QVERIFY(ok);
 }
 
-void TestCrypto::testUnicodePassword() {
-  QString unicodePassword = "密码測試パスワード";
-
-  QString hash = Crypto::hashPassword(unicodePassword);
-  QVERIFY(!hash.isEmpty());
-  QVERIFY(Crypto::verifyPassword(unicodePassword, hash));
+void TestCrypto::testEmptyInputs() {
+  bool ok = true;
+  QVERIFY(Crypto::encrypt(QString(), m_password).isEmpty());
+  QVERIFY(Crypto::encrypt(m_data, QString()).isEmpty());
+  QVERIFY(Crypto::decrypt(QString(), m_password, &ok).isEmpty());
+  QVERIFY(!ok);
+  ok = true;
+  QVERIFY(Crypto::decrypt(QStringLiteral("v2:1:2:3:4"), QString(), &ok)
+              .isEmpty());
+  QVERIFY(!ok);
+  QVERIFY(!Crypto::verifyPassword(m_password, QString()));
+  QVERIFY(!Crypto::verifyPassword(m_password, QStringLiteral("garbage")));
 }
 
-void TestCrypto::testUnicodeText() {
-  QString unicodeText = "Türkçe: Merhaba Dünya, العربية: مرحبا, 中文: 你好世界";
-
-  QString encrypted = Crypto::encrypt(unicodeText, m_testPassword);
-  QString decrypted = Crypto::decrypt(encrypted, m_testPassword);
-  QCOMPARE(decrypted, unicodeText);
+void TestCrypto::testSaltIsRandomAndRightLength() {
+  const QString a = Crypto::generateSalt();
+  const QString b = Crypto::generateSalt();
+  QCOMPARE(a.size(), 32); // 16 bytes, hex
+  QVERIFY(a != b);
+  QCOMPARE(Crypto::generateSalt(32).size(), 64);
+  QVERIFY(Crypto::generateSalt(0).isEmpty());
 }
 
 QTEST_MAIN(TestCrypto)

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 # Find Qt6 Test and required components
 find_package(Qt6 REQUIRED COMPONENTS Test Core Sql Network Widgets Gui)
+find_package(OpenSSL REQUIRED COMPONENTS Crypto)
 
 # Set automation options
 set(CMAKE_AUTOMOC ON)
@@ -67,7 +68,7 @@ add_executable(test_crypto
     storage/test_crypto.cpp
     ${CMAKE_SOURCE_DIR}/storage/Crypto.cpp
 )
-target_link_libraries(test_crypto PRIVATE Qt6::Test Qt6::Core)
+target_link_libraries(test_crypto PRIVATE Qt6::Test Qt6::Core OpenSSL::Crypto)
 add_test(NAME CryptoTests COMMAND test_crypto)
 
 # Test for SqliteStorage

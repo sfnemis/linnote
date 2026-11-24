@@ -88,7 +88,9 @@ void ClipboardManager::pollClipboard() {
   if (!newContent.isEmpty() && newContent != m_lastContent) {
     m_lastContent = newContent;
     emit contentReceived(newContent);
-    qDebug() << "ClipboardManager: New content received:"
-             << newContent.left(50);
+    // Log the size only. This fires on every clipboard change, so the
+    // content here is whatever the user last copied, passwords included.
+    qDebug() << "ClipboardManager: new content received, length"
+             << newContent.length();
   }
 }

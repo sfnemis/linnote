@@ -43,9 +43,9 @@ install_dependencies() {
         arch|manjaro|endeavouros|garuda|cachyos)
             # Arch-based: Qt6 and KF6 libs
             sudo pacman -S --needed --noconfirm \
-                qt6-base qt6-wayland \
+                qt6-base qt6-svg qt6-wayland \
                 kf6-kwindowsystem kf6-kglobalaccel \
-                layer-shell-qt 2>/dev/null || true
+                layer-shell-qt openssl 2>/dev/null || true
             # OCR support (separate for visibility)
             print_step "Installing OCR support..."
             sudo pacman -S --needed --noconfirm \
@@ -58,26 +58,28 @@ install_dependencies() {
             sudo apt-get update -qq 2>/dev/null
             sudo apt-get install -y -qq \
                 libqt6core6t64 libqt6widgets6t64 libqt6gui6t64 libqt6dbus6t64 libqt6sql6t64 \
+                libqt6svg6 libqt6sql6-sqlite \
                 libkf6windowsystem6 libkf6globalaccel6 \
                 tesseract-ocr tesseract-ocr-eng tesseract-ocr-tur 2>/dev/null || \
             sudo apt-get install -y -qq \
                 libqt6core6 libqt6widgets6 libqt6gui6 libqt6dbus6 libqt6sql6 \
+                libqt6svg6 libqt6sql6-sqlite \
                 libkf6windowsystem6 libkf6globalaccel6 \
                 tesseract-ocr tesseract-ocr-eng tesseract-ocr-tur 2>/dev/null || true
             ;;
         fedora)
             # Fedora: Qt6 and KF6 libs + Tesseract
             sudo dnf install -y -q \
-                qt6-qtbase qt6-qtwayland \
+                qt6-qtbase qt6-qtsvg qt6-qtwayland \
                 kf6-kwindowsystem kf6-kglobalaccel \
-                layer-shell-qt \
+                layer-shell-qt openssl-libs \
                 tesseract tesseract-langpack-eng tesseract-langpack-tur 2>/dev/null || true
             ;;
         opensuse*|suse*)
             # openSUSE
             sudo zypper install -y \
-                libQt6Core6 libQt6Widgets6 libQt6Gui6 \
-                kf6-kwindowsystem kf6-kglobalaccel \
+                libQt6Core6 libQt6Widgets6 libQt6Gui6 libQt6Svg6 \
+                libQt6Sql6 kf6-kwindowsystem kf6-kglobalaccel \
                 tesseract-ocr tesseract-ocr-traineddata-eng 2>/dev/null || true
             ;;
         *)

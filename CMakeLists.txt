@@ -13,6 +13,11 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--copy-dt-needed-entri
 # Find Qt6
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets DBus Network Sql)
 
+# OpenSSL libcrypto provides AES-256-GCM for note encryption. Qt has no
+# symmetric cipher API, and libcrypto is already installed on every target
+# distribution because the system depends on it.
+find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+
 # Find KDE Frameworks
 find_package(KF6WindowSystem QUIET)
 find_package(KF6GlobalAccel QUIET)
@@ -98,6 +103,7 @@ set(HEADERS
     storage/Export.h
     storage/NoteStorage.h
     storage/SqliteStorage.h
+    storage/Crypto.h
 
 )
 
@@ -116,6 +122,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::DBus
     Qt6::Network
     Qt6::Sql
+    OpenSSL::Crypto
 )
 
 # Link KDE Frameworks if available
@@ -140,6 +147,13 @@ if(LayerShellQt_FOUND)
 else()
     message(STATUS "LayerShellQt not found - Wayland always-on-top disabled")
 endif()
+
+# qDebug is compiled out of every build except Debug. The app logs note
+# and clipboard contents through qDebug in places, and the journal outlives
+# the process. qWarning and qCritical are kept so real faults still show.
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
+)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -626,11 +626,20 @@ void PageSelector::lockCurrentPage() {
     QString password = dialog.password();
     QString hash = Crypto::hashPassword(password);
 
-    // ENCRYPT the content
+    // ENCRYPT the content. Never log the plaintext or the ciphertext: a
+    // debug line puts the note in the journal, which outlives the process.
     QString originalContent = current.content();
-    qDebug() << "Original content to encrypt:" << originalContent.left(50);
     QString encryptedContent = Crypto::encrypt(originalContent, password);
-    qDebug() << "Encrypted content:" << encryptedContent.left(80);
+
+    if (encryptedContent.isEmpty() && !originalContent.isEmpty()) {
+      QMessageBox::warning(this, tr("Lock Failed"),
+                           tr("The note could not be encrypted, so it has "
+                              "been left unlocked."));
+      if (mainWin) {
+        mainWin->setSuppressFocusOut(false);
+      }
+      return;
+    }
 
     // Save encrypted content and hash
     m_manager->updateNoteContent(current.id(), encryptedContent);
@@ -694,24 +703,35 @@ void PageSelector::unlockCurrentPage() {
       return;
     }
 
-    // DECRYPT the content
+    // DECRYPT the content. Nothing here is logged, neither the ciphertext
+    // nor its length.
     QString encryptedContent = current.content();
-    fprintf(stderr, "[UNLOCK] Encrypted content: %s\n",
-            encryptedContent.toStdString().c_str());
-    fflush(stderr);
+    bool decrypted = false;
+    QString decryptedContent =
+        Crypto::decrypt(encryptedContent, password, &decrypted);
 
-    QString decryptedContent = Crypto::decrypt(encryptedContent, password);
-    fprintf(stderr, "[UNLOCK] Decrypted content len: %lld\n",
-            (long long)decryptedContent.length());
-    fflush(stderr);
-
-    if (decryptedContent.isEmpty() && !encryptedContent.isEmpty()) {
+    if (!decrypted && !encryptedContent.isEmpty()) {
       QMessageBox::warning(this, tr("Decryption Failed"),
                            tr("Could not decrypt the content."));
       if (mainWin) {
         mainWin->setSuppressFocusOut(false);
       }
       return;
+    }
+
+    // A note locked by LinNote 1.0.0 is stored with the old unauthenticated
+    // format. The password is in hand and the plaintext is verified, so
+    // rewrite both the note and its password hash now. If either write
+    // fails the note stays readable in the old format, so this cannot lose
+    // data.
+    if (Crypto::isLegacy(encryptedContent) ||
+        Crypto::isLegacy(current.passwordHash())) {
+      const QString upgraded = Crypto::encrypt(decryptedContent, password);
+      if (!upgraded.isEmpty()) {
+        m_manager->updateNoteContent(current.id(), upgraded);
+        m_manager->setNotePasswordHash(current.id(),
+                                       Crypto::hashPassword(password));
+      }
     }
 
     // SESSION UNLOCK - don't modify storage, just cache decrypted content
@@ -796,12 +816,35 @@ void PageSelector::changePasswordCurrentPage() {
 
     // Decrypt content with old password
     QString encryptedContent = current.content();
-    QString decryptedContent = Crypto::decrypt(encryptedContent, oldPassword);
+    bool decrypted = false;
+    QString decryptedContent =
+        Crypto::decrypt(encryptedContent, oldPassword, &decrypted);
+
+    if (!decrypted && !encryptedContent.isEmpty()) {
+      QMessageBox::warning(this, tr("Password Not Changed"),
+                           tr("The note could not be decrypted, so the "
+                              "password was left unchanged."));
+      if (mainWin) {
+        mainWin->setSuppressFocusOut(false);
+      }
+      return;
+    }
 
     // Re-encrypt with new password
     QString newEncryptedContent =
         Crypto::encrypt(decryptedContent, newPassword);
     QString newHash = Crypto::hashPassword(newPassword);
+
+    // Writing an empty ciphertext over a non-empty note would destroy it.
+    if (newEncryptedContent.isEmpty() && !decryptedContent.isEmpty()) {
+      QMessageBox::warning(this, tr("Password Not Changed"),
+                           tr("The note could not be re-encrypted, so the "
+                              "password was left unchanged."));
+      if (mainWin) {
+        mainWin->setSuppressFocusOut(false);
+      }
+      return;
+    }
 
     // Update storage
     m_manager->updateNoteContent(current.id(), newEncryptedContent);
