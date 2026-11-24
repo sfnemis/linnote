@@ -50,6 +50,9 @@ All notable changes to this project will be documented in this file.
 - The installer refuses to install a binary built for another CPU
   architecture instead of reporting success and leaving a program that
   cannot run.
+- Typing `timer` switches the page to timer mode. It used to start a
+  stopwatch without changing the mode, and with stopwatch auto-start
+  turned off it did nothing at all.
 
 ### Changed
 

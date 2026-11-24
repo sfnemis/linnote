@@ -308,8 +308,17 @@ bool SlashCommand::execute(const QString &command) {
       return true;
     }
 
-    // Plain "timer" = stopwatch (if enabled in settings)
+    // Plain "timer" = switch the page to Timer mode, and start the
+    // stopwatch if the user asked for that in settings. Before 2.0.0 this
+    // branch only started the stopwatch, so the documented "timer" keyword
+    // left the page in plain text, and with auto-start off it did nothing
+    // visible at all.
     if (args.isEmpty()) {
+      if (m_manager->currentIndex() >= 0) {
+        Note note = m_manager->currentNote();
+        m_manager->updateNoteMode(note.id(), NoteMode::Timer);
+        emit modeChanged(static_cast<int>(NoteMode::Timer));
+      }
       if (Settings::instance()->timerAutoStartStopwatch()) {
         emit timerStartStopwatch();
         qDebug() << "SlashCommand: Stopwatch started";
