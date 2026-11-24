@@ -56,7 +56,12 @@ install_dependencies() {
         debian|ubuntu|linuxmint|pop|kubuntu|elementary|zorin)
             # Debian/Ubuntu-based: Qt6 and KF6 libs + Tesseract
             # Note: Package names differ between Ubuntu versions (t64 suffix in 24.04)
-            sudo apt-get update -qq 2>/dev/null
+            # Never fatal. The script runs under `set -e`, and this was the
+            # one package command without a guard: a repository that cannot
+            # be reached, a held dpkg lock or a sudo timeout killed the
+            # installer here, with stderr sent to /dev/null, so the user saw
+            # "Installing dependencies for ubuntu..." and nothing more.
+            sudo apt-get update -qq 2>/dev/null || true
             sudo apt-get install -y -qq \
                 libqt6core6t64 libqt6widgets6t64 libqt6gui6t64 libqt6dbus6t64 libqt6sql6t64 \
                 libqt6sql6-sqlite \
@@ -205,7 +210,8 @@ download_binary() {
         print_step "No published checksums for v${VERSION}, installing unverified"
     fi
 
-    sudo install -m 755 "$TEMP_FILE" "$INSTALL_DIR/linnote"
+    sudo install -m 755 "$TEMP_FILE" "$INSTALL_DIR/linnote" ||
+        print_error "could not write $INSTALL_DIR/linnote. Run this in a terminal so sudo can ask for your password."
     print_success "Binary installed to $INSTALL_DIR/linnote"
 }
 
