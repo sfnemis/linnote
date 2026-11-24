@@ -1,0 +1,91 @@
+{
+    "result": [
+        {
+            "id": "8d9a7c7167ad39a5f4652318dcb78b5b",
+            "name": "linnote.app",
+            "type": "A",
+            "content": "185.199.108.153",
+            "proxiable": true,
+            "proxied": true,
+            "ttl": 1,
+            "settings": {},
+            "meta": {},
+            "comment": null,
+            "tags": [],
+            "created_on": "2026-01-19T21:18:40.233473Z",
+            "modified_on": "2026-01-21T12:27:53.261221Z"
+        },
+        {
+            "id": "5b747a1794af8c902b03198d1830caf5",
+            "name": "linnote.app",
+            "type": "A",
+            "content": "185.199.109.153",
+            "proxiable": true,
+            "proxied": true,
+            "ttl": 1,
+            "settings": {},
+            "meta": {},
+            "comment": null,
+            "tags": [],
+            "created_on": "2026-01-19T21:18:50.151047Z",
+            "modified_on": "2026-01-21T12:27:49.561684Z"
+        },
+        {
+            "id": "fb1940a39b113915a1bda8859436ec8d",
+            "name": "linnote.app",
+            "type": "A",
+            "content": "185.199.110.153",
+            "proxiable": true,
+            "proxied": true,
+            "ttl": 1,
+            "settings": {},
+            "meta": {},
+            "comment": null,
+            "tags": [],
+            "created_on": "2026-01-19T21:18:57.78967Z",
+            "modified_on": "2026-01-21T12:27:42.076303Z"
+        },
+        {
+            "id": "ce4520b1f2102320e2f27fc8a946a7b8",
+            "name": "linnote.app",
+            "type": "A",
+            "content": "185.199.111.153",
+            "proxiable": true,
+            "proxied": true,
+            "ttl": 1,
+            "settings": {},
+            "meta": {},
+            "comment": null,
+            "tags": [],
+            "created_on": "2026-01-19T21:19:05.022067Z",
+            "modified_on": "2026-01-21T12:27:38.065476Z"
+        },
+        {
+            "id": "6a3d59cf244698b3827d8af913167863",
+            "name": "www.linnote.app",
+            "type": "CNAME",
+            "content": "sfnemis.github.io",
+            "proxiable": true,
+            "proxied": true,
+            "ttl": 1,
+            "settings": {
+                "flatten_cname": false
+            },
+            "meta": {},
+            "comment": null,
+            "tags": [],
+            "created_on": "2026-01-19T21:20:28.738817Z",
+            "modified_on": "2026-01-21T12:27:57.442206Z"
+        }
+    ],
+    "success": true,
+    "errors": [],
+    "messages": [],
+    "result_info": {
+        "page": 1,
+        "per_page": 100,
+        "count": 5,
+        "total_count": 5,
+        "total_pages": 1
+    }
+}

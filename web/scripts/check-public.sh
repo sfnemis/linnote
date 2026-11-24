@@ -5,9 +5,18 @@ set -u
 BASE="${1:-https://linnote.app}"
 fail=0
 
+# Optional: pin the hostname to an IP, so a broken local resolver cannot be
+# mistaken for a broken site. Pass the IP as the second argument.
+HOST=$(printf '%s' "$BASE" | sed -E 's#^https?://([^/]+).*#\1#')
+RESOLVE=()
+if [ "${2:-}" != "" ]; then
+  RESOLVE=(--resolve "$HOST:443:$2")
+  echo "pinning $HOST to $2"
+fi
+
 want() { # want <code> <path>
   local want=$1 path=$2 got
-  got=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$BASE$path")
+  got=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "${RESOLVE[@]}" "$BASE$path?cb=$$$RANDOM")
   if [ "$got" = "$want" ]; then
     printf '  ok   %-3s %s\n' "$got" "$path"
   else
@@ -34,5 +43,5 @@ for p in /CLAUDE.md /CLAUDE.local.md /AGENTS.md /.git/config /.gitignore /packag
 done
 
 echo "stats payload:"
-curl -s --max-time 15 "$BASE/api/stats" | head -c 300; echo
+curl -s --max-time 15 "${RESOLVE[@]}" "$BASE/api/stats" | head -c 300; echo
 exit $fail

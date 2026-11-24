@@ -16,13 +16,16 @@
 
   "observability": { "enabled": true },
 
-  "workers_dev": true
+  // No workers.dev subdomain in this account, and none is needed.
+  "workers_dev": false,
 
-  // linnote.app lives in a different Cloudflare account than the token used
-  // here, so the custom domain is attached separately. Once the zone is
-  // reachable, add:
-  //   "routes": [
-  //     { "pattern": "linnote.app",     "custom_domain": true },
-  //     { "pattern": "www.linnote.app", "custom_domain": true }
-  //   ]
+  // Routes, deliberately, not custom domains. A custom domain replaces the
+  // hostname's DNS with a record Workers owns, which cannot be edited back
+  // and took the apex out of service while it settled. A route leaves DNS
+  // exactly as GitHub Pages had it and intercepts at the edge, so rolling
+  // back is deleting two routes with no DNS propagation to wait for.
+  "routes": [
+    { "pattern": "linnote.app/*",     "zone_name": "linnote.app" },
+    { "pattern": "www.linnote.app/*", "zone_name": "linnote.app" }
+  ]
 }
