@@ -4,5 +4,11 @@
 User-agent: *
 Allow: /
 
-# Sitemap (VitePress generated)
-Sitemap: https://linnote.app/guide/sitemap.xml
+# The raw Markdown sources are served by GitHub Pages as text/markdown. They
+# duplicate the guide pages, so keep them out of the index.
+Disallow: /USER_GUIDE.md
+Disallow: /COMPARISON.md
+
+# sitemap.xml is an index: it points at the root pages and at the sitemap
+# VitePress generates for the guide.
+Sitemap: https://linnote.app/sitemap.xml
