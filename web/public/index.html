@@ -142,10 +142,11 @@
 
         <div class="install-card rv">
           <h3>📦 Flatpak</h3>
-          <p>For immutable systems. Download the bundle from the latest release, then install it. OCR does not work in the sandbox yet.</p>
+          <p>For immutable systems. LinNote has its own signed repository, so a flatpak update keeps it current. OCR does not work in the sandbox yet.</p>
           <div class="cmd">
-            <code>flatpak install linnote-2.0.1.flatpak</code>
-            <button class="copy" data-copy="flatpak install linnote-2.0.1.flatpak">Copy</button>
+            <code>flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo
+flatpak install --user linnote app.linnote.LinNote</code>
+            <button class="copy" data-copy="flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo&#10;flatpak install --user linnote app.linnote.LinNote">Copy</button>
           </div>
         </div>
       </div>

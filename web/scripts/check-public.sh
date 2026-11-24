@@ -28,7 +28,10 @@ want() { # want <code> <path>
 echo "Probing $BASE"
 echo "must be reachable:"
 for p in / /install.sh /USER_GUIDE.md /COMPARISON.md /robots.txt /icon.png /logo.png \
-         /app.css /app.js /tokens.css /guide/ /screenshots/01-calculator.png /api/stats; do
+         /app.css /app.js /tokens.css /guide/ /screenshots/01-calculator.png /api/stats \
+         /screenshots/store/sc-01-calculator.png \
+         /linnote.flatpakrepo \
+         /flatpak/config /flatpak/summary /flatpak/summary.sig; do
   want 200 "$p"
 done
 
@@ -38,7 +41,9 @@ for p in /CLAUDE.md /CLAUDE.local.md /AGENTS.md /.git/config /.gitignore /packag
          /project-docs/feature-requests.md /project-docs/agent-log.md \
          /.serena/project.yml /.claude/settings.json /wrangler.jsonc /src/index.js \
          /guide/package.json /guide/package-lock.json /guide/.vitepress/config.mjs \
-         /packaging/aur/PKGBUILD /dist/linnote-arch /.env; do
+         /packaging/aur/PKGBUILD /dist/linnote-arch /.env \
+         /flatpak-signing-secret.asc /linnote-signing-secret.asc \
+         /flatpak/.gpg /flatpak/tmp/; do
   want 404 "$p"
 done
 

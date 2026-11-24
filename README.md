@@ -36,7 +36,20 @@ paru -S linnote
 
 ### Flatpak
 
-Not on Flathub yet. The bundle is attached to the release:
+LinNote has its own Flatpak repository, so updates arrive the normal way:
+
+```bash
+flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo
+flatpak install --user linnote app.linnote.LinNote
+```
+
+Drop `--user` from both lines for a system-wide install, which asks for your
+password.
+
+The repository is signed, and the public key travels inside the
+`.flatpakrepo` file, so `flatpak update` verifies every build. It is not on
+Flathub. A single bundle is still attached to each release if you would
+rather not add a repository:
 
 ```bash
 flatpak install linnote-2.0.1.flatpak

@@ -15,6 +15,24 @@ curl -fsSL https://linnote.app/install.sh | bash
 - Fedora
 - openSUSE
 
+### Flatpak
+
+On an immutable system, or if you would rather keep LinNote in a sandbox,
+add its repository instead:
+
+```bash
+flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo
+flatpak install --user linnote app.linnote.LinNote
+```
+
+Drop `--user` from both lines to install for every account on the machine,
+which asks for your password. The repository is signed and the public key
+comes with the `.flatpakrepo` file, so `flatpak update` checks every build
+before it installs it. LinNote is not on Flathub.
+
+OCR does not work in the sandbox: it calls Tesseract on the host, and the
+sandbox cannot see it.
+
 ### Requirements
 
 - Qt6 runtime libraries
