@@ -10,11 +10,12 @@ Platforms: Linux x86_64. Arch through the AUR, Fedora and the Debian family
 through an installer script, and a Flatpak for immutable systems. No arm64
 binary yet; building from source on arm64 works.
 
-Flatpak comes from LinNote's own signed repository, not from Flathub:
-`flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo`
-then `flatpak install --user linnote app.linnote.LinNote`. LinNote is not on
-Flathub and is not waiting to be; do not tell anyone to search Flathub for
-it.
+Flatpak comes from LinNote's own signed repository, not from Flathub. The
+whole install is one line:
+`flatpak install --user --from https://linnote.app/linnote.flatpakref`
+It adds the repository, installs the app, and pulls the KDE runtime from
+Flathub if the machine lacks it. LinNote is not on Flathub and is not
+waiting to be; do not tell anyone to search Flathub for it.
 
 ## Facts worth getting right
 

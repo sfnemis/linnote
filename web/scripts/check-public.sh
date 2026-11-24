@@ -30,7 +30,7 @@ echo "must be reachable:"
 for p in / /install.sh /USER_GUIDE.md /COMPARISON.md /robots.txt /icon.png /logo.png \
          /app.css /app.js /tokens.css /guide/ /screenshots/01-calculator.png /api/stats \
          /screenshots/store/sc-01-calculator.png \
-         /linnote.flatpakrepo \
+         /linnote.flatpakrepo /linnote.flatpakref \
          /flatpak/config /flatpak/summary /flatpak/summary.sig; do
   want 200 "$p"
 done

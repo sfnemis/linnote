@@ -39,17 +39,18 @@ paru -S linnote
 LinNote has its own Flatpak repository, so updates arrive the normal way:
 
 ```bash
-flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo
-flatpak install --user linnote app.linnote.LinNote
+flatpak install --user --from https://linnote.app/linnote.flatpakref
 ```
 
-Drop `--user` from both lines for a system-wide install, which asks for your
-password.
+Drop `--user` for a system-wide install, which asks for your password. That
+one line adds the LinNote repository, pulls in the KDE runtime from Flathub
+if you do not have it already, and installs the app, so `flatpak update`
+keeps it current afterwards.
 
-The repository is signed, and the public key travels inside the
-`.flatpakrepo` file, so `flatpak update` verifies every build. It is not on
-Flathub. A single bundle is still attached to each release if you would
-rather not add a repository:
+The repository is signed and the public key travels inside the file, so
+every build is verified before it installs. LinNote is not on Flathub. A
+single bundle is still attached to each release if you would rather not add
+a repository:
 
 ```bash
 flatpak install linnote-2.0.1.flatpak

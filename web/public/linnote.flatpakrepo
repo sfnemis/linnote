@@ -6,4 +6,5 @@ Icon=https://linnote.app/icon.png
 Comment=Fast keyboard-driven scratchpad for Linux
 Description=The official LinNote Flatpak repository. Notes, checklists, markdown, code, a calculator that answers in place, timers, and an encrypted vault.
 DefaultBranch=stable
+RuntimeRepo=https://dl.flathub.org/repo/flathub.flatpakrepo
 GPGKey=mDMEawXIpRYJKwYBBAHaRw8BAQdAsU8aMPv+KYUs1gp3wzwptdU5iI50PiQFsjsynSaz4Ta0LUxpbk5vdGUgRmxhdHBhayBSZXBvc2l0b3J5IDxyZXBvQGxpbm5vdGUuYXBwPoiTBBMWCgA7FiEEmlvkCuNbh7MZDCDnJSxpTSqpb1gFAmsFyKUCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQJSxpTSqpb1hs7AD9GaX1dF2UCCv3Vu20EWsUjIqWm6tf7unWZhya688slhABAP9NbUT2G4GR8UdBZLpXkfKjuUMa+kDTZD69V56wPvwJ

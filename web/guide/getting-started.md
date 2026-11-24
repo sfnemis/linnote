@@ -21,14 +21,17 @@ On an immutable system, or if you would rather keep LinNote in a sandbox,
 add its repository instead:
 
 ```bash
-flatpak remote-add --user --if-not-exists --from linnote https://linnote.app/linnote.flatpakrepo
-flatpak install --user linnote app.linnote.LinNote
+flatpak install --user --from https://linnote.app/linnote.flatpakref
 ```
 
-Drop `--user` from both lines to install for every account on the machine,
-which asks for your password. The repository is signed and the public key
-comes with the `.flatpakrepo` file, so `flatpak update` checks every build
-before it installs it. LinNote is not on Flathub.
+Drop `--user` to install for every account on the machine, which asks for
+your password.
+
+That single line adds the LinNote repository, installs the app, and pulls
+the KDE runtime from Flathub if your machine does not have it yet. The
+repository is signed and the public key comes with the file, so every build
+is checked before it installs. Afterwards `flatpak update` keeps LinNote
+current like anything else. LinNote is not on Flathub.
 
 OCR does not work in the sandbox: it calls Tesseract on the host, and the
 sandbox cannot see it.
