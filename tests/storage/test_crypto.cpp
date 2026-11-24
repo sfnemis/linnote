@@ -183,6 +183,7 @@ void TestCrypto::testVersionRelabelIsRejected() {
   // three-field shape must not succeed either.
   const QString blob = Crypto::encrypt(m_data, m_password);
   const QStringList parts = blob.split(':');
+  QCOMPARE(parts.size(), 5);
   const QString relabelled = parts.at(2) + ":" + parts.at(3) + ":" +
                              parts.at(4); // looks like a 1.0.0 blob
   bool ok = true;
@@ -201,10 +202,12 @@ void TestCrypto::testOnePlaintextByteChangesManyCiphertextBytes() {
   const QString blobA = Crypto::encrypt(a, m_password);
   const QString blobB = Crypto::encrypt(b, m_password);
 
-  const QByteArray bodyA =
-      QByteArray::fromBase64(blobA.split(':').at(4).toLatin1());
-  const QByteArray bodyB =
-      QByteArray::fromBase64(blobB.split(':').at(4).toLatin1());
+  const QStringList fieldsA = blobA.split(':');
+  const QStringList fieldsB = blobB.split(':');
+  QCOMPARE(fieldsA.size(), 5);
+  QCOMPARE(fieldsB.size(), 5);
+  const QByteArray bodyA = QByteArray::fromBase64(fieldsA.at(4).toLatin1());
+  const QByteArray bodyB = QByteArray::fromBase64(fieldsB.at(4).toLatin1());
   QCOMPARE(bodyA.size(), bodyB.size());
 
   int differing = 0;
@@ -232,8 +235,9 @@ void TestCrypto::testSamePlaintextEncryptsDifferentlyEachTime() {
 
 void TestCrypto::testCiphertextIsLongerThanPlaintextByATag() {
   const QString blob = Crypto::encrypt(m_data, m_password);
-  const QByteArray body =
-      QByteArray::fromBase64(blob.split(':').at(4).toLatin1());
+  const QStringList parts = blob.split(':');
+  QCOMPARE(parts.size(), 5);
+  const QByteArray body = QByteArray::fromBase64(parts.at(4).toLatin1());
   QCOMPARE(body.size(), m_data.toUtf8().size() + 16);
 }
 

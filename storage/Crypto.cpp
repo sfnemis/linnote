@@ -139,9 +139,13 @@ QString Crypto::encrypt(const QString &plaintext, const QString &password) {
                   1;
 
   // Bind the version to the ciphertext, so a blob cannot be relabelled.
+  // The out pointer is null for an AAD-only update, but the out-length
+  // pointer must not be: both OpenSSL 3.5 and 4.0 reject a null outl with
+  // "passed a null parameter" and the whole encryption silently fails.
+  int aadWritten = 0;
   if (fine) {
     fine = EVP_EncryptUpdate(
-               ctx, nullptr, nullptr,
+               ctx, nullptr, &aadWritten,
                reinterpret_cast<const unsigned char *>(kVersionTag),
                static_cast<int>(sizeof(kVersionTag) - 1)) == 1;
   }
@@ -246,9 +250,11 @@ QString Crypto::decrypt(const QString &ciphertext, const QString &password,
                   reinterpret_cast<const unsigned char *>(nonce.constData())) ==
                   1;
 
+  // As in encrypt(): a null out-length pointer fails the AAD update.
+  int aadWritten = 0;
   if (fine) {
     fine = EVP_DecryptUpdate(
-               ctx, nullptr, nullptr,
+               ctx, nullptr, &aadWritten,
                reinterpret_cast<const unsigned char *>(kVersionTag),
                static_cast<int>(sizeof(kVersionTag) - 1)) == 1;
   }
