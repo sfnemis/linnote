@@ -1,23 +1,31 @@
-name: Deploy VitePress Guide
+name: Build the guides
 
+# linnote.app is served by the Cloudflare Worker in web/, whose web root is
+# web/public. The guides therefore have to be built into web/public/guide,
+# not into docs/guide, or an edit to a guide page would never reach the
+# live site.
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/guide/**'
+      - 'docs/guide/**.md'
+      - 'docs/guide/.vitepress/**'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: build-guides
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -27,23 +35,29 @@ jobs:
         working-directory: docs/guide
         run: npm ci
 
-      - name: Build VitePress
+      - name: Build
         working-directory: docs/guide
         run: npm run build
 
-      - name: Copy build to docs/guide (for GitHub Pages)
+      - name: Replace web/public/guide with the fresh build
         run: |
-          # Remove old static files except markdown sources
-          find docs/guide -maxdepth 1 -name "*.html" -delete 2>/dev/null || true
-          # Copy built files
-          cp -r docs/guide/.vitepress/dist/* docs/guide/
-          # Create .nojekyll for GitHub Pages
-          touch docs/guide/.nojekyll
+          # Replace rather than merge: copying over the old output leaves
+          # every superseded hashed bundle behind, which is how two copies
+          # of app.*.js and theme.*.js ended up committed.
+          rm -rf web/public/guide
+          mkdir -p web/public/guide
+          cp -r docs/guide/.vitepress/dist/. web/public/guide/
 
-      - name: Commit and push built files
+      - name: Commit the built guides
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/guide/
-          git diff --staged --quiet || git commit -m "build: deploy VitePress guide [skip ci]"
+          git add web/public/guide
+          git diff --staged --quiet && { echo "guides unchanged"; exit 0; }
+          git commit -m "build: rebuild the guides [skip ci]"
           git push
+
+      - name: Remind that the Worker still needs a deploy
+        run: |
+          echo "::notice::web/public/guide was rebuilt and committed."
+          echo "::notice::Run 'cd web && npx wrangler deploy' to put it live."
