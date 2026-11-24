@@ -56,6 +56,9 @@ A minimal Ubuntu or Debian install has no curl, so use wget there:
 wget -qO- https://linnote.app/install.sh | bash
 ```
 
+The script itself is `web/public/install.sh`, which is the file linnote.app
+serves. There is one copy on purpose: when it lived in two places they drifted.
+
 This will:
 - Detect your distro (Arch, Debian, Fedora, openSUSE)
 - Install dependencies
