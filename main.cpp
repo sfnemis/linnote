@@ -126,6 +126,28 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setApplicationName(QStringLiteral("linnote"));
   {
     QCoreApplication probe(argc, argv);
+
+    // --version and --help must not need a display. Handled here because
+    // QApplication aborts outright when it cannot reach one, so running
+    // "linnote --version" over ssh or in a build script used to dump core.
+    for (int i = 1; i < argc; ++i) {
+      const QString arg = QString::fromLocal8Bit(argv[i]);
+      if (arg == QLatin1String("--version") || arg == QLatin1String("-v")) {
+        QTextStream(stdout) << "linnote " << LINNOTE_VERSION << "\n";
+        return 0;
+      }
+      if (arg == QLatin1String("--help") || arg == QLatin1String("-h")) {
+        QTextStream(stdout)
+            << "linnote " << LINNOTE_VERSION << " - a quick scratchpad\n\n"
+            << "Usage: linnote [options] [linnote://url]\n\n"
+            << "  -n, --new <text>     create a new note with this text\n"
+            << "  -s, --search <text>  open and search for this text\n"
+            << "  -v, --version        print the version and exit\n"
+            << "  -h, --help           print this help and exit\n";
+        return 0;
+      }
+    }
+
     reExecInsideAppScope(argc, argv);
   }
 
