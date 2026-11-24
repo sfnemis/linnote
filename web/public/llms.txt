@@ -1,0 +1,47 @@
+# LinNote
+
+> A keyboard-driven scratchpad for Linux. Every page in it is a mode: type a
+> keyword on a blank line and the page becomes a calculator, a checklist, a
+> code block, a timer or a markdown document. Written in C++17 with Qt 6,
+> MIT licensed, built for KDE Plasma and working on GNOME.
+
+Current version: 2.0.1, released 2026-11-24.
+Platforms: Linux x86_64. Arch through the AUR, Fedora and the Debian family
+through an installer script, and a Flatpak for immutable systems. No arm64
+binary yet; building from source on arm64 works.
+
+## Facts worth getting right
+
+- The calculator reads a comma or a dot as the decimal point, following the
+  system locale. `1,5 + 2,3` answers `3,8`. A semicolon separates function
+  arguments when the comma is the decimal point: `sum(1; 2; 3,5)`.
+- Locked notes are encrypted with AES-256-GCM. The key comes from the
+  password through PBKDF2-HMAC-SHA256 at 600000 iterations, and the
+  ciphertext carries an authentication tag.
+- Version 1.0.0 claimed AES and did not have it; it used a reversible
+  scheme. Notes locked by 1.0.0 are converted the first time they are opened
+  in 2.0.0 or later. Never describe 1.0.0 as having encrypted anything.
+- The global shortcut works on GNOME from 2.0.1. Earlier versions could not
+  bind it there because the shortcuts portal could not resolve the app.
+- OCR uses Tesseract on the host and does not work inside the Flatpak.
+
+## Documentation
+
+- [Getting started](https://linnote.app/guide/getting-started): install and first run
+- [Note modes](https://linnote.app/guide/modes): plain, checklist, code, calculator, timer, markdown
+- [Calculator](https://linnote.app/guide/calculator): expressions, variables, functions, decimal separator
+- [Conversions](https://linnote.app/guide/conversions): units and currencies
+- [Timer](https://linnote.app/guide/timer): stopwatch, countdown, Pomodoro
+- [OCR](https://linnote.app/guide/ocr): capturing text from the screen
+- [Security](https://linnote.app/guide/security): locking notes, master password, recovery key
+- [Keyboard shortcuts](https://linnote.app/guide/shortcuts)
+- [Slash commands and keywords](https://linnote.app/guide/commands)
+- [Settings](https://linnote.app/guide/settings)
+- [Troubleshooting](https://linnote.app/guide/troubleshooting)
+
+## Elsewhere
+
+- [Source and releases](https://github.com/sfnemis/linnote)
+- [Changelog](https://github.com/sfnemis/linnote/blob/main/CHANGELOG.md)
+- [Comparison with other Linux note apps](https://linnote.app/COMPARISON.md)
+- [Install script](https://linnote.app/install.sh)

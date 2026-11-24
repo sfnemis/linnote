@@ -82,20 +82,49 @@
     }
   }
 
+  /* ---- mobile menu ------------------------------------------------- */
+  var navToggle = document.getElementById("navToggle");
+  var navLinks = document.getElementById("navLinks");
+  if (navToggle && navLinks) {
+    var closeNav = function () {
+      navLinks.removeAttribute("data-open");
+      navToggle.setAttribute("aria-expanded", "false");
+    };
+    navToggle.addEventListener("click", function () {
+      var open = navLinks.getAttribute("data-open") === "true";
+      if (open) { closeNav(); }
+      else {
+        navLinks.setAttribute("data-open", "true");
+        navToggle.setAttribute("aria-expanded", "true");
+      }
+    });
+    // Tapping a destination should close the panel behind it.
+    navLinks.addEventListener("click", function (e) {
+      if (e.target.tagName === "A") closeNav();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeNav();
+    });
+    document.addEventListener("click", function (e) {
+      if (!navLinks.contains(e.target) && e.target !== navToggle && !navToggle.contains(e.target)) closeNav();
+    });
+  }
+
   /* ---- ⌘K palette -------------------------------------------------- */
   var ITEMS = [
     { label: "Install", hint: "section", href: "#install" },
     { label: "See it in action", hint: "section", href: "#tour" },
     { label: "Features", hint: "section", href: "#features" },
     { label: "Support the project", hint: "section", href: "#support" },
-    { label: "Documentation", hint: "guide", href: "/guide/" },
+    { label: "Guides", hint: "guide", href: "/guide/" },
     { label: "Keyboard shortcuts", hint: "guide", href: "/guide/shortcuts" },
     { label: "User guide", hint: "markdown", href: "/USER_GUIDE.md" },
     { label: "Comparison with other apps", hint: "markdown", href: "/COMPARISON.md" },
     { label: "Source on GitHub", hint: "external", href: "https://github.com/sfnemis/linnote" },
     { label: "Releases and downloads", hint: "external", href: "https://github.com/sfnemis/linnote/releases" },
     { label: "Report a bug", hint: "external", href: "https://github.com/sfnemis/linnote/issues" },
-    { label: "install.sh", hint: "script", href: "/install.sh" }
+    { label: "install.sh", hint: "script", href: "/install.sh" },
+    { label: "LinNote for assistants (llms.txt)", hint: "markdown", href: "/llms.txt" }
   ];
 
   var pal = document.getElementById("pal");

@@ -14,13 +14,48 @@
 <meta property="og:url" content="https://linnote.app/" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://linnote.app/logo.png" />
+<meta property="og:site_name" content="LinNote" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image:alt" content="The LinNote penguin icon" />
+<link rel="alternate" type="text/markdown" href="/llms.txt" title="LinNote in plain markdown" />
 <link rel="icon" href="/icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/app.css" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LinNote","applicationCategory":"UtilitiesApplication","operatingSystem":"Linux","url":"https://linnote.app/","license":"https://github.com/sfnemis/linnote/blob/main/LICENSE","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "LinNote",
+  "alternateName": "LinNote scratchpad",
+  "description": "A keyboard-driven scratchpad for Linux. Each page is a mode: calculator, checklist, code, timer or markdown. Locked notes use AES-256-GCM with a PBKDF2 derived key.",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Note-taking",
+  "operatingSystem": "Linux",
+  "softwareVersion": "2.0.1",
+  "datePublished": "2026-01-20",
+  "dateModified": "2026-11-24",
+  "url": "https://linnote.app/",
+  "downloadUrl": "https://github.com/sfnemis/linnote/releases",
+  "softwareHelp": "https://linnote.app/guide/",
+  "codeRepository": "https://github.com/sfnemis/linnote",
+  "programmingLanguage": "C++",
+  "license": "https://github.com/sfnemis/linnote/blob/main/LICENSE",
+  "author": { "@type": "Person", "name": "sfnemis", "url": "https://github.com/sfnemis" },
+  "featureList": [
+    "Calculator with variables, functions and a comma or dot decimal separator",
+    "Unit and currency conversion on the same line",
+    "Checklist, code, markdown and timer page modes",
+    "Stopwatch, countdown and Pomodoro",
+    "OCR screen capture through Tesseract",
+    "Per-note encryption with AES-256-GCM and a PBKDF2 derived key",
+    "Global hotkey on KDE Plasma and GNOME",
+    "Export to TXT, Markdown, PDF, CSV and ZIP"
+  ],
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
 </script>
 </head>
 <body>
@@ -28,14 +63,15 @@
 <header class="nav">
   <div class="shell nav-in">
     <a class="brand" href="/"><img src="/icon.png" alt="" width="24" height="24" />LinNote</a>
-    <nav class="nav-links" aria-label="Primary">
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
       <a href="#install">Install</a>
       <a href="#features">Features</a>
-      <a href="/guide/">Docs</a>
+      <a href="/guide/">Guides</a>
       <a href="https://github.com/sfnemis/linnote">GitHub</a>
       <a href="https://www.shopier.com/sfnemis/43380031">Support</a>
     </nav>
     <div class="nav-right">
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Menu"><span class="nav-toggle-label">Menu</span> ☰</button>
       <button class="kbd-open" id="palOpen" aria-haspopup="dialog" aria-label="Search and jump to a section"><span class="kbd-label">Search</span> <kbd>⌘K</kbd></button>
       <a class="btn btn-primary" href="#install">Install</a>
     </div>
@@ -52,7 +88,7 @@
         <div class="hero-actions">
           <a class="btn btn-primary" href="#install">Install LinNote</a>
           <a class="btn btn-ghost" href="https://github.com/sfnemis/linnote">⭐ Star on GitHub</a>
-          <a class="btn btn-ghost" href="/guide/">📖 Docs</a>
+          <a class="btn btn-ghost" href="/guide/">📖 Guides</a>
         </div>
         <p class="release-line">
           <span class="chip chip-accent">v<b id="statVersion" style="margin-left:0">2.0.1</b></span>
@@ -192,9 +228,11 @@
   <section class="support" id="support">
     <div class="shell support-in">
       <p>❤️ <strong>Support the project</strong> — Your contribution keeps LinNote alive!</p>
-      <a class="btn btn-primary" href="https://www.shopier.com/sfnemis/43380031">🛒 Shopier</a>
-      <a class="btn btn-ghost" href="https://github.com/sponsors/sfnemis">💖 Sponsor</a>
-      <a class="btn btn-ghost" href="https://github.com/sfnemis/linnote">⭐ Star</a>
+      <span class="support-links">
+        <a class="btn btn-ghost" href="https://www.shopier.com/sfnemis/43380031">Shopier</a>
+        <a class="btn btn-ghost" href="https://github.com/sponsors/sfnemis">GitHub Sponsors</a>
+        <a class="btn btn-ghost" href="https://github.com/sfnemis/linnote">Star on GitHub</a>
+      </span>
     </div>
   </section>
 </main>

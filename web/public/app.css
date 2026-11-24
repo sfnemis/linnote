@@ -91,15 +91,47 @@ img { display: block; max-width: 100%; height: auto; }
 .nav-links a:hover { color: var(--color-accent-ink); border-bottom-color: var(--color-accent); }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-sm); }
 
-/* Below 900px the inline links would push the bar past the viewport and
-   start a horizontal scroll. They collapse into the ⌘K palette instead,
-   which already lists every destination on the page. */
+/* The inline links would push the bar past the viewport below 900px, so
+   they move into a panel behind a Menu button. They stay reachable: the
+   earlier version simply hid them, which left phones with no navigation. */
+.nav-toggle { display: none; }
 @media (max-width: 899px) {
-  .nav-links { display: none; }
+  .nav-toggle {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--color-ink-2); background: var(--color-paper);
+    border: var(--rule) solid var(--color-rule-2);
+    border-radius: var(--radius-sm);
+    padding: 0.38rem 0.6rem; cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .nav-toggle:hover { border-color: var(--color-accent); color: var(--color-accent-ink); }
+  .nav-toggle[aria-expanded="true"] { border-color: var(--color-accent); color: var(--color-accent-ink); }
+
+  .nav-links {
+    position: absolute; left: 0; right: 0; top: 100%;
+    display: none;
+    flex-direction: column; gap: 0;
+    margin: 0; padding: var(--space-xs);
+    background: var(--color-paper);
+    border-bottom: var(--rule) solid var(--color-rule);
+    box-shadow: 0 8px 24px oklch(24% 0.02 258 / 0.10);
+  }
+  .nav-links[data-open="true"] { display: flex; }
+  .nav-links a {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 0;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-lg);
+  }
+  .nav-links a:hover { background: var(--color-accent-wash); }
+  .nav { position: sticky; }
+  .nav-in { position: relative; }
 }
-@media (max-width: 420px) {
-  .kbd-open .kbd-label { display: none; }
-  .kbd-open { padding-inline: 0.5rem; }
+@media (max-width: 460px) {
+  .kbd-open .kbd-label, .nav-toggle .nav-toggle-label { display: none; }
+  .kbd-open, .nav-toggle { padding-inline: 0.5rem; }
+  .nav-right { gap: var(--space-2xs); }
 }
 .kbd-open {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -212,17 +244,25 @@ img { display: block; max-width: 100%; height: auto; }
 .install-card h3 { color: var(--color-on-graphite); font-size: var(--text-xl); }
 .install-card p { font-size: var(--text-md); }
 .cmd {
-  display: flex; align-items: center; gap: var(--space-sm);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start; gap: var(--space-sm);
   background: var(--color-graphite);
   border: var(--rule) solid var(--color-graphite-rule);
   border-radius: var(--radius-sm);
-  padding: 0.6rem 0.7rem; margin-top: auto;
+  padding: 0.65rem 0.7rem; margin-top: auto;
   min-width: 0;
 }
 .cmd code {
   font-family: var(--font-mono); font-size: var(--text-sm);
+  line-height: 1.6;
   color: var(--color-on-graphite);
-  overflow-x: auto; white-space: nowrap; flex: 1; min-width: 0;
+  min-width: 0;
+  /* Wrap at any point rather than scroll: a command is for reading and
+     copying, and a scrollbar hides half of it. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .copy {
   flex: none; font-family: var(--font-mono); font-size: var(--text-xs);
@@ -289,9 +329,13 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* ── support ─────────────────────────────────────────────────── */
 .support { padding-block: var(--space-2xl); border-top: var(--rule) solid var(--color-rule); }
-.support-in { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-md) var(--space-lg); }
-.support-in p { font-size: var(--text-md); color: var(--color-ink-2); flex: 1 1 22rem; min-width: 0; }
+.support-in { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-md); }
+.support-in p { font-size: var(--text-md); color: var(--color-ink-2); flex: 1 1 24rem; min-width: 0; margin: 0; }
 .support-in strong { color: var(--color-ink); }
+/* One weight for all three. A single filled button next to two outlined
+   ones read as a mistake rather than a hierarchy. */
+.support-links { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.support-links .btn { font-size: var(--text-md); }
 
 /* ── footer Ft2 ──────────────────────────────────────────────── */
 .foot { border-top: var(--rule) solid var(--color-rule); padding-block: var(--space-lg) var(--space-2xl); }

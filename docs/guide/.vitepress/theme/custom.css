@@ -1,117 +1,134 @@
-/* LinNote Custom Theme - Matches main site (linnote.app) colors */
+/* LinNote guides — same system as linnote.app.
+ * Cobalt: cool near-white paper, one blue signal sampled from the app icon,
+ * Space Grotesk over Inter with JetBrains Mono for anything machine
+ * readable, hairlines instead of cards, 6px radii.
+ */
 
 :root {
-  /* Primary accent - Purple (#8b5cf6) */
-  --vp-c-brand-1: #8b5cf6;
-  --vp-c-brand-2: #a78bfa;
-  --vp-c-brand-3: #7c3aed;
-  --vp-c-brand-soft: rgba(139, 92, 246, 0.14);
+  /* the one signal */
+  --vp-c-brand-1: #1f49ab;
+  --vp-c-brand-2: #2a5ccc;
+  --vp-c-brand-3: #163a8c;
+  --vp-c-brand-soft: rgba(31, 73, 171, 0.10);
 
-  /* Backgrounds - Match main site */
-  --vp-c-bg: #0a0a0f;
-  --vp-c-bg-soft: #16161d;
-  --vp-c-bg-mute: #1e1e28;
-  --vp-c-bg-alt: #16161d;
+  /* cool engineered paper, never pure white */
+  --vp-c-bg: #f8f9fc;
+  --vp-c-bg-alt: #f1f3f8;
+  --vp-c-bg-soft: #f1f3f8;
+  --vp-c-bg-elv: #ffffff;
 
-  /* Text colors */
-  --vp-c-text-1: #e4e4e7;
-  --vp-c-text-2: #a6adc8;
-  --vp-c-text-3: #71717a;
+  /* cool charcoal ink, never pure black */
+  --vp-c-text-1: #262c3a;
+  --vp-c-text-2: #4a5163;
+  --vp-c-text-3: #767d8e;
 
-  /* Borders */
-  --vp-c-border: #313244;
-  --vp-c-divider: #313244;
-  --vp-c-gutter: #1e1e28;
+  --vp-c-divider: #dfe3ec;
+  --vp-c-border: #dfe3ec;
+  --vp-c-gutter: #e7eaf2;
 
-  /* Code blocks */
-  --vp-code-block-bg: #1e1e28;
-  --vp-code-line-highlight-color: rgba(139, 92, 246, 0.15);
-  --vp-c-code-link-color: #8b5cf6;
+  --vp-c-default-1: #4a5163;
+  --vp-c-default-2: #767d8e;
+  --vp-c-default-soft: rgba(38, 44, 58, 0.06);
 
-  /* Navbar */
-  --vp-nav-bg-color: rgba(10, 10, 15, 0.8);
+  /* the one dark beat: code */
+  --vp-code-block-bg: #171b24;
+  --vp-code-block-divider-color: #2c3240;
+  --vp-c-code-link-color: #7aa2ff;
+  --vp-code-line-highlight-color: rgba(31, 73, 171, 0.16);
 
-  /* Sidebar */
-  --vp-sidebar-bg-color: #16161d;
+  --vp-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Button colors */
+  --vp-button-brand-bg: var(--vp-c-brand-1);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-3);
   --vp-button-brand-border: transparent;
-  --vp-button-brand-text: #ffffff;
-  --vp-button-brand-bg: #8b5cf6;
-  --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: #ffffff;
-  --vp-button-brand-hover-bg: #7c3aed;
-  --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: #ffffff;
-  --vp-button-brand-active-bg: #6d28d9;
 
-  /* Home hero gradient - matches main site */
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(135deg, #e4e4e7 0%, #8b5cf6 50%, #06b6d4 100%);
-  --vp-home-hero-image-background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent);
-  --vp-home-hero-image-filter: blur(40px);
+  --vp-layout-max-width: 1440px;
+  --vp-nav-height: 60px;
 }
 
-/* Force dark theme styles */
-.dark {
-  --vp-c-bg: #0a0a0f;
-  --vp-c-bg-soft: #16161d;
-  --vp-c-bg-mute: #1e1e28;
+/* Display type is Space Grotesk, as on the site. Headings stay roman. */
+.VPDoc h1, .VPDoc h2, .VPDoc h3, .VPDoc h4,
+.VPHero .name, .VPHero .text, .VPNavBarTitle .title {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: -0.025em;
 }
 
-/* Navbar backdrop blur - like main site */
-.VPNav {
-  backdrop-filter: blur(20px) !important;
-  background: rgba(10, 10, 15, 0.8) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+/* Hairlines carry the structure. No boxed cards, no shadows. */
+.VPNavBar { border-bottom: 1px solid var(--vp-c-divider); }
+.VPNavBar.has-sidebar .content-body,
+.VPNavBar .divider { background: transparent; }
+.VPSidebar { border-right: 1px solid var(--vp-c-divider); background: var(--vp-c-bg); }
+.VPDoc .aside .aside-container { border-left: 1px solid var(--vp-c-divider); }
+
+.VPDoc h2 {
+  border-top: 1px solid var(--vp-c-divider);
+  padding-top: 1.6rem;
+  margin-top: 2.6rem;
 }
 
-/* Sidebar styling */
-.VPSidebar {
-  background: #16161d !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+/* Mono labels, uppercase, the machine-readout voice. */
+.VPSidebarItem.level-0 > .item > .text {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--vp-c-text-3);
 }
 
-/* Active sidebar link */
-.VPSidebarItem.is-active > .item > .link > .text {
-  color: #8b5cf6 !important;
+/* Tight technical radii, drawn with a ruler. */
+.VPButton, .vp-doc .custom-block, .vp-doc div[class*='language-'] {
+  border-radius: 6px;
+}
+.vp-doc div[class*='language-'] { border: 1px solid #2c3240; }
+
+/* Links underline on hover rather than changing weight. */
+.vp-doc a { text-decoration: none; border-bottom: 1px solid var(--vp-c-brand-soft); }
+.vp-doc a:hover { border-bottom-color: var(--vp-c-brand-1); }
+
+/* Tables read as data, not as decoration. */
+.vp-doc table { display: table; width: 100%; border-collapse: collapse; }
+.vp-doc th, .vp-doc td { border: 1px solid var(--vp-c-divider); }
+.vp-doc th {
+  background: var(--vp-c-bg-alt);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* Code inline styling */
-.vp-doc :not(pre) > code {
-  background: #1e1e28;
-  color: #22c55e;
+/* Keyboard keys look like keys. */
+.vp-doc kbd {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8em;
+  border: 1px solid var(--vp-c-divider);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  background: var(--vp-c-bg-elv);
 }
 
-/* Links */
-.vp-doc a {
-  color: #8b5cf6;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-.vp-doc a:hover {
-  color: #a78bfa;
+/* Code blocks are the page's one dark beat, so their text has to be light.
+   Most fences in these guides carry no language, so Shiki never tokenises
+   them and the <pre> inherits --vp-c-text-1, which is the dark ink of a
+   light page: dark text on a dark block, unreadable. Set it explicitly. */
+.vp-doc div[class*='language-'] pre,
+.vp-doc div[class*='language-'] code,
+.vp-doc div[class*='language-'] .line {
+  color: #d9deeb;
 }
+.vp-doc div[class*='language-'] .lang { color: #767d8e; }
+.vp-doc div[class*='language-'] .copy { border-color: #2c3240; }
+.vp-doc [class*='language-'] code .highlighted { background-color: rgba(31, 73, 171, 0.22); }
 
-/* Headings */
-.vp-doc h1 {
-  color: #8b5cf6;
+/* The little language badge and the copy button sit on the dark block too. */
+.vp-doc div[class*='language-'] > button.copy {
+  background-color: #1f242f;
+  border-color: #2c3240;
 }
-
-.vp-doc h2 {
-  border-bottom: 1px solid #313244;
-  padding-bottom: 10px;
-}
-
-/* Search box styling */
-.DocSearch {
-  --docsearch-primary-color: #8b5cf6 !important;
-  --docsearch-modal-background: #16161d !important;
-  --docsearch-searchbox-background: #1e1e28 !important;
-  --docsearch-hit-background: #1e1e28 !important;
-}
-
-/* Local search styling */
-.VPLocalSearchBox {
-  --vp-local-search-bg: #16161d;
-  --vp-local-search-highlight-bg: rgba(139, 92, 246, 0.3);
-}
+.vp-doc div[class*='language-'] > button.copy:hover { border-color: #7aa2ff; }

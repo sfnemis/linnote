@@ -1,19 +1,15 @@
-# LinNote Website
-# https://linnote.app
+# LinNote — https://linnote.app
+# The site is served from a Cloudflare Worker whose web root is one
+# directory. Only what is meant to be public is here at all, so this file
+# grants rather than withholds.
+#
+# Everything below applies to every crawler, including the ones behind
+# assistants and answer engines. LinNote is free software; being read and
+# quoted accurately is the point, so there is nothing to opt out of.
+# /llms.txt carries the product and its facts in one plain-text file.
 
 User-agent: *
 Allow: /
 
-# GitHub Pages serves this whole directory, so the VitePress sources sit next
-# to the pages they build into: /guide/getting-started.md answers 200 with the
-# same text as /guide/getting-started. Keeping the raw files out of the index
-# avoids two URLs per guide page. The repository is public, so nothing here is
-# hidden, only kept out of search results.
-Disallow: /*.md$
-Disallow: /guide/package.json
-Disallow: /guide/package-lock.json
-Disallow: /guide/hashmap.json
-
-# sitemap.xml is an index: it points at the root pages and at the sitemap
-# VitePress generates for the guide.
 Sitemap: https://linnote.app/sitemap.xml
+Sitemap: https://linnote.app/guide/sitemap.xml

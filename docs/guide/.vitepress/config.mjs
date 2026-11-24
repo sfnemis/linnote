@@ -6,7 +6,10 @@ export default defineConfig({
 
     head: [
         ['link', { rel: 'icon', href: '/icon.png' }],
-        ['meta', { name: 'theme-color', content: '#8b5cf6' }],
+        ['meta', { name: 'theme-color', content: '#2050c0' }],
+        ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+        ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+        ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap' }],
         ['meta', { name: 'og:type', content: 'website' }],
         ['meta', { name: 'og:title', content: 'LinNote Documentation' }],
         ['meta', { name: 'og:description', content: 'A fast, keyboard-driven scratchpad for Linux with smart calculator, OCR, timers, and note encryption.' }],
@@ -17,15 +20,16 @@ export default defineConfig({
     // Base URL for GitHub Pages deployment
     base: '/guide/',
 
-    // Default to dark theme to match main site
-    // 'force-dark' ensures dark mode regardless of user's system preference
-    appearance: 'force-dark',
+    // The site is a light theme with one dark beat (code blocks), so the
+    // guides follow it rather than forcing dark.
+    appearance: false,
 
     themeConfig: {
         logo: '/logo.png',
 
         nav: [
             { text: 'Home', link: 'https://linnote.app' },
+            { text: 'Install', link: 'https://linnote.app/#install' },
             { text: 'GitHub', link: 'https://github.com/sfnemis/linnote' }
         ],
 
@@ -80,6 +84,13 @@ export default defineConfig({
 
     // Clean URLs without .html extension
     cleanUrls: true,
+
+    markdown: {
+        // The page is light with one dark beat: the code blocks. Both Shiki
+        // slots therefore get a dark theme, otherwise the light theme's dark
+        // tokens land on the dark background and the code is unreadable.
+        theme: { light: 'github-dark', dark: 'github-dark' }
+    },
 
     // Sitemap for SEO
     sitemap: {
