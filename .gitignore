@@ -58,3 +58,6 @@ checkpoints/
 docs/guide/node_modules/
 docs/guide/.vitepress/dist/
 docs/guide/.vitepress/cache/
+
+# Internal project documents (never published)
+project-docs/
