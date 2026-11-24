@@ -17,8 +17,13 @@ export default defineConfig({
         ['meta', { name: 'twitter:card', content: 'summary' }],
     ],
 
-    // Base URL for GitHub Pages deployment
+    // Served by the Cloudflare Worker under /guide/
     base: '/guide/',
+
+    // Build straight into the Worker's web root. Building somewhere else
+    // and copying is what let the live guides and the committed guides
+    // drift apart.
+    outDir: '../public/guide',
 
     // The site is a light theme with one dark beat (code blocks), so the
     // guides follow it rather than forcing dark.

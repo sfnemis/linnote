@@ -54,10 +54,10 @@ Thumbs.db
 .env.local
 checkpoints/
 
-# VitePress Documentation
-docs/guide/node_modules/
-docs/guide/.vitepress/dist/
-docs/guide/.vitepress/cache/
+# VitePress guides: the source is web/guide, the build output is
+# web/public/guide and is committed so the Worker can serve it.
+web/guide/node_modules/
+web/guide/.vitepress/cache/
 
 # Internal project documents (never published)
 project-docs/

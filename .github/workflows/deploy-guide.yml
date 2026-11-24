@@ -1,15 +1,15 @@
 name: Build the guides
 
 # linnote.app is served by the Cloudflare Worker in web/, whose web root is
-# web/public. The guides therefore have to be built into web/public/guide,
-# not into docs/guide, or an edit to a guide page would never reach the
-# live site.
+# web/public. The guide source lives in web/guide and vitepress is
+# configured to build it straight into web/public/guide, so an edit to a
+# guide page reaches the live site instead of a directory nobody serves.
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/guide/**.md'
-      - 'docs/guide/.vitepress/**'
+      - 'web/guide/**.md'
+      - 'web/guide/.vitepress/**'
   workflow_dispatch:
 
 permissions:
@@ -29,24 +29,19 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: docs/guide/package-lock.json
+          cache-dependency-path: web/guide/package-lock.json
 
       - name: Install dependencies
-        working-directory: docs/guide
+        working-directory: web/guide
         run: npm ci
 
       - name: Build
-        working-directory: docs/guide
+        working-directory: web/guide
+        # vitepress is configured with outDir ../public/guide, so this
+        # writes straight into the Worker's web root. It empties the
+        # directory first, which is what stops superseded hashed bundles
+        # accumulating the way two copies of app.*.js once did.
         run: npm run build
-
-      - name: Replace web/public/guide with the fresh build
-        run: |
-          # Replace rather than merge: copying over the old output leaves
-          # every superseded hashed bundle behind, which is how two copies
-          # of app.*.js and theme.*.js ended up committed.
-          rm -rf web/public/guide
-          mkdir -p web/public/guide
-          cp -r docs/guide/.vitepress/dist/. web/public/guide/
 
       - name: Commit the built guides
         run: |
