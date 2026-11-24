@@ -48,7 +48,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/sfnemis/linnote.git
-        commit: 7f5395a0448866ddf43ce10dfd3dd414315279e2
+        tag: v2.0.2
+        commit: da00350f6d618e8b97d04560d76b6093cfcc4cf5
     post-install:
       # The desktop file is renamed above to match the app id, so the
       # metainfo CMake installed has to point at the new name or

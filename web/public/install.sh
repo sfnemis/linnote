@@ -3,7 +3,7 @@
 # Usage: curl -fsSL https://linnote.app/install.sh | bash
 set -e
 
-VERSION="2.0.1"
+VERSION="2.0.2"
 ASSUME_YES="no"
 INSTALL_DIR="/usr/local/bin"
 

@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 2026-11-25
+
+### Fixed
+
+- A conversion that ends with `=` works again. `10 km to miles =` answered
+  `10` and now answers `6.2137 mile`; `25 celsius to fahrenheit =` answered
+  25 and now answers 77. The converter's pattern required the line to end
+  right after the unit, so the trailing `=` stopped it matching and the
+  plain math evaluator answered with the first number on the line. The
+  setup wizard tells you to end lines with `=` and the example page that
+  ships with the app is written that way, so this was the form most people
+  typed. Currency conversion was not affected.
+- The equals sign is no longer printed twice on those lines:
+  `50 USD to EUR = = 45.61 EUR` is now `50 USD to EUR = 45.61 EUR`.
+- A mode keyword typed on a second page takes effect. `calc`, `list`,
+  `code`, `markdown` and `timer` did nothing on another page if the same
+  keyword had already been used in the same session, because the guard that
+  stops the editor processing a line twice was not tied to the page.
+- Ctrl+Home and Ctrl+End move to the first and last page instead of moving
+  the text cursor, and Ctrl+, opens Settings. All three are in the shortcut
+  list and in the guide; Ctrl+, had never been bound to anything.
+- The built-in FreeCryptoAPI key ships with the release again. The 2.0.1
+  tag was cut before the commit that restored it, so neither the AUR
+  package nor the release binaries had it and crypto rates fell back to
+  CoinGecko.
+- The User Guide link in the README pointed at `docs/USER_GUIDE.md`, which
+  was removed when the site moved under `web/`. It points at
+  https://linnote.app/guide/ now.
+
+### Known issues
+
+- The first `calc` typed on a page created with Ctrl+N is lost and the mode
+  does not switch. Typing it again works. This is in 2.0.1 as well.
+
 ## [2.0.1] - 2026-11-24
 
 ### Fixed

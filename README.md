@@ -6,7 +6,7 @@ A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
 ![Platform](https://img.shields.io/badge/platform-Linux-green.svg)
 ![Qt](https://img.shields.io/badge/Qt-6-brightgreen.svg)
 
-**[User Guide](docs/USER_GUIDE.md)** | **[Changelog](CHANGELOG.md)**
+**[Guides](https://linnote.app/guide/)** | **[Changelog](CHANGELOG.md)**
 
 ## Features
 
