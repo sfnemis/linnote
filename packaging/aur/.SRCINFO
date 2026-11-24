@@ -10,7 +10,6 @@ pkgbase = linnote
 	makedepends = git
 	makedepends = qt6-tools
 	depends = qt6-base
-	depends = qt6-svg
 	depends = openssl
 	depends = kwindowsystem
 	depends = kglobalaccel

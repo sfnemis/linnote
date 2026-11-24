@@ -72,18 +72,18 @@ make -j$(nproc)
 
 **Arch/Manjaro:**
 ```bash
-sudo pacman -S qt6-base qt6-svg kf6 cmake openssl tesseract
+sudo pacman -S qt6-base kf6 cmake openssl tesseract
 ```
 
 **Debian/Ubuntu:**
 ```bash
-sudo apt install qt6-base-dev libqt6svg6-dev libqt6sql6-sqlite \
+sudo apt install qt6-base-dev libqt6sql6-sqlite \
   libkf6windowsystem-dev libssl-dev cmake build-essential tesseract-ocr
 ```
 
 **Fedora:**
 ```bash
-sudo dnf install qt6-qtbase-devel qt6-qtsvg-devel \
+sudo dnf install qt6-qtbase-devel \
   kf6-kwindowsystem-devel openssl-devel cmake gcc-c++ tesseract
 ```
 

@@ -44,9 +44,9 @@ All notable changes to this project will be documented in this file.
   image. (#4)
 - Changing a locked note's password no longer overwrites the note when the
   decryption before it failed.
-- The installer now installs the Qt SVG image plugin and the Qt SQLite
-  driver. Without them the toolbar icons were blank and the database would
-  not open on a clean Debian or Ubuntu install.
+- The installer now installs the Qt SQLite driver. On Debian and Ubuntu it
+  is the separate package `libqt6sql6-sqlite`, and without it the app
+  could not open its own database on a clean install.
 - The installer refuses to install a binary built for another CPU
   architecture instead of reporting success and leaving a program that
   cannot run.
