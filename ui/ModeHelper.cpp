@@ -375,6 +375,22 @@ void ModeHelper::toggleCheckboxAtCursor() {
   cursor.insertText(line);
 }
 
+namespace {
+// UnitConverter is kept free of any settings dependency, so the separator
+// is applied where its result is consumed. Only the leading number is
+// touched; the unit name that follows is left alone.
+QString withSeparator(const QString &unitResult, QChar sep) {
+  if (sep != QLatin1Char(',')) {
+    return unitResult;
+  }
+  const int space = unitResult.indexOf(QLatin1Char(' '));
+  QString number = (space < 0) ? unitResult : unitResult.left(space);
+  const QString rest = (space < 0) ? QString() : unitResult.mid(space);
+  number.replace(QLatin1Char('.'), QLatin1Char(','));
+  return number + rest;
+}
+} // namespace
+
 QString ModeHelper::getMathResults() const {
   if (m_mode != NoteMode::Math)
     return QString();
@@ -382,6 +398,11 @@ QString ModeHelper::getMathResults() const {
   QString results;
   // Use mutable evaluator for proper variable tracking
   MathEvaluator &eval = const_cast<MathEvaluator &>(m_evaluator);
+
+  // One separator for the whole pass, taken from settings, so parsing and
+  // printing cannot disagree inside a single note.
+  const QChar sep = Settings::instance()->effectiveDecimalSeparator();
+  eval.setDecimalSeparator(sep);
 
   QString text = m_editor->toPlainText();
   QStringList lines = text.split('\n');
@@ -404,7 +425,7 @@ QString ModeHelper::getMathResults() const {
     if (UnitConverter::instance()->isConversion(trimmed)) {
       QString unitResult = UnitConverter::instance()->convert(trimmed);
       if (!unitResult.isEmpty()) {
-        results += QString(" = %1\n").arg(unitResult);
+        results += QString(" = %1\n").arg(withSeparator(unitResult, sep));
         continue;
       }
     }
@@ -414,8 +435,9 @@ QString ModeHelper::getMathResults() const {
     QString fromCur, toCur;
     if (CurrencyConverter::instance()->parseAndConvert(trimmed, currencyResult,
                                                        fromCur, toCur)) {
-      results +=
-          QString(" = %1 %2\n").arg(currencyResult, 0, 'f', 2).arg(toCur);
+      results += QString(" = %1 %2\n")
+                     .arg(MathEvaluator::formatNumber(currencyResult, sep, 2))
+                     .arg(toCur);
       continue;
     }
 
@@ -423,12 +445,8 @@ QString ModeHelper::getMathResults() const {
     bool ok;
     double mathResult = eval.evaluate(trimmed, &ok);
     if (ok) {
-      // Format nicely
-      if (mathResult == static_cast<int>(mathResult)) {
-        results += QString(" = %1\n").arg(static_cast<int>(mathResult));
-      } else {
-        results += QString(" = %1\n").arg(mathResult, 0, 'f', 4);
-      }
+      results += QString(" = %1\n")
+                     .arg(MathEvaluator::formatNumber(mathResult, sep));
     } else {
       results += "\n";
     }
@@ -448,7 +466,8 @@ QString ModeHelper::calculateExpression(const QString &expression) {
   if (UnitConverter::instance()->isConversion(trimmed)) {
     QString unitResult = UnitConverter::instance()->convert(trimmed);
     if (!unitResult.isEmpty()) {
-      return unitResult;
+      return withSeparator(unitResult,
+                           Settings::instance()->effectiveDecimalSeparator());
     }
   }
 
@@ -457,19 +476,22 @@ QString ModeHelper::calculateExpression(const QString &expression) {
   QString fromCur, toCur;
   if (CurrencyConverter::instance()->parseAndConvert(trimmed, currencyResult,
                                                      fromCur, toCur)) {
-    return QString("%1 %2").arg(currencyResult, 0, 'f', 2).arg(toCur);
+    return QString("%1 %2")
+        .arg(MathEvaluator::formatNumber(
+            currencyResult, Settings::instance()->effectiveDecimalSeparator(),
+            2))
+        .arg(toCur);
   }
 
-  // Try math evaluation
+  // Try math evaluation. The separator has to be set before every
+  // evaluation, not once at construction: the user can change it in
+  // settings while the app is running.
+  const QChar sep = Settings::instance()->effectiveDecimalSeparator();
+  m_evaluator.setDecimalSeparator(sep);
   bool ok;
   double mathResult = m_evaluator.evaluate(trimmed, &ok);
   if (ok) {
-    // Format nicely
-    if (mathResult == static_cast<int>(mathResult)) {
-      return QString::number(static_cast<int>(mathResult));
-    } else {
-      return QString::number(mathResult, 'f', 4);
-    }
+    return MathEvaluator::formatNumber(mathResult, sep);
   }
 
   return QString();

@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QKeySequence>
 #include <QMap>
+#include <QChar>
 #include <QObject>
 #include <QPoint>
 #include <QSize>
@@ -44,6 +45,16 @@ public:
   bool currencyConversionEnabled() const;
   void setCurrencyConversionEnabled(bool enabled);
   QString baseCurrency() const;
+
+  /**
+   * @brief Which character separates a number's integer and decimal part
+   * @return "auto", "dot" or "comma"; "auto" follows the system locale
+   */
+  QString decimalSeparatorMode() const;
+  void setDecimalSeparatorMode(const QString &mode);
+
+  /// Resolves "auto" against the system locale; always '.' or ','.
+  QChar effectiveDecimalSeparator() const;
   void setBaseCurrency(const QString &currency);
   QString currencyApiKey() const;
   void setCurrencyApiKey(const QString &key);
@@ -242,6 +253,7 @@ private:
   bool m_autoMathEnabled;
   bool m_currencyConversionEnabled;
   QString m_baseCurrency;
+  QString m_decimalSeparatorMode;
   QString m_currencyApiKey;
   QString m_cryptoApiKey;
   QString m_currencyProvider;

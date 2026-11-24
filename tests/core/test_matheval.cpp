@@ -16,6 +16,14 @@ private slots:
   void testOperatorPrecedence();
   void testParentheses();
 
+  // Decimal separator (GitHub issue #7)
+  void testDotModeIsUnchanged();
+  void testCommaIsADecimalPoint();
+  void testCommaStillSeparatesArguments();
+  void testSemicolonSeparatesArguments();
+  void testDotIsAGroupSeparatorOnlyBesideAComma();
+  void testFormatNumber();
+
   // Floating point tests
   void testFloatingPoint();
   void testScientificNotation();
@@ -316,6 +324,85 @@ void TestMathEvaluator::testIsMathExpression() {
 
   bool result = m_evaluator->isMathExpression(expression);
   QCOMPARE(result, expected);
+}
+
+// --- Decimal separator -------------------------------------------------
+// LinNote 1.0.0 did not merely fail to read "1,5 + 2,3": it answered 1,
+// because the comma ended the first number and the rest of the line was
+// discarded. A wrong arithmetic result is worse than no result, so these
+// tests pin both the parsing and the answer.
+
+void TestMathEvaluator::testDotModeIsUnchanged() {
+  m_evaluator->setDecimalSeparator(QLatin1Char('.'));
+  bool ok = false;
+  QCOMPARE(m_evaluator->evaluate("1.5+2.3", &ok), 3.8);
+  QVERIFY(ok);
+  QCOMPARE(m_evaluator->evaluate("sum(1, 2, 3)", &ok), 6.0);
+  QVERIFY(ok);
+  QCOMPARE(m_evaluator->evaluate("100.5*2", &ok), 201.0);
+  QVERIFY(ok);
+}
+
+void TestMathEvaluator::testCommaIsADecimalPoint() {
+  m_evaluator->setDecimalSeparator(QLatin1Char(','));
+  bool ok = false;
+  QCOMPARE(m_evaluator->evaluate("1,5+2,3", &ok), 3.8);
+  QVERIFY(ok);
+  QCOMPARE(m_evaluator->evaluate("2,5*4", &ok), 10.0);
+  QVERIFY(ok);
+  // The 1.0.0 answer for this line was 1. Anything but 3.8 is a regression.
+  QVERIFY(m_evaluator->evaluate("1,5+2,3", &ok) != 1.0);
+}
+
+void TestMathEvaluator::testCommaStillSeparatesArguments() {
+  // A comma followed by a space is a separator, so notes written before
+  // this setting existed keep working.
+  m_evaluator->setDecimalSeparator(QLatin1Char(','));
+  bool ok = false;
+  QCOMPARE(m_evaluator->evaluate("sum(1, 2)", &ok), 3.0);
+  QVERIFY(ok);
+  QCOMPARE(m_evaluator->evaluate("max(3, 9, 4)", &ok), 9.0);
+  QVERIFY(ok);
+}
+
+void TestMathEvaluator::testSemicolonSeparatesArguments() {
+  m_evaluator->setDecimalSeparator(QLatin1Char(','));
+  bool ok = false;
+  QCOMPARE(m_evaluator->evaluate("sum(1; 2; 3,5)", &ok), 6.5);
+  QVERIFY(ok);
+  m_evaluator->setDecimalSeparator(QLatin1Char('.'));
+  QCOMPARE(m_evaluator->evaluate("sum(1; 2; 3.5)", &ok), 6.5);
+  QVERIFY(ok);
+}
+
+void TestMathEvaluator::testDotIsAGroupSeparatorOnlyBesideAComma() {
+  m_evaluator->setDecimalSeparator(QLatin1Char(','));
+  bool ok = false;
+  QCOMPARE(m_evaluator->evaluate("1.234,56", &ok), 1234.56);
+  QVERIFY(ok);
+  QCOMPARE(m_evaluator->evaluate("1.234.567,5", &ok), 1234567.5);
+  QVERIFY(ok);
+  // No comma in the token, so the dot stays a decimal point and an old
+  // note that says 1.5 still means one and a half.
+  QCOMPARE(m_evaluator->evaluate("1.5", &ok), 1.5);
+  QVERIFY(ok);
+}
+
+void TestMathEvaluator::testFormatNumber() {
+  QCOMPARE(MathEvaluator::formatNumber(3.8, QLatin1Char('.')),
+           QStringLiteral("3.8"));
+  QCOMPARE(MathEvaluator::formatNumber(3.8, QLatin1Char(',')),
+           QStringLiteral("3,8"));
+  QCOMPARE(MathEvaluator::formatNumber(4.0, QLatin1Char(',')),
+           QStringLiteral("4"));
+  QCOMPARE(MathEvaluator::formatNumber(201.0, QLatin1Char('.')),
+           QStringLiteral("201"));
+  QCOMPARE(MathEvaluator::formatNumber(31.06856, QLatin1Char(',')),
+           QStringLiteral("31,0686"));
+  QCOMPARE(MathEvaluator::formatNumber(-0.5, QLatin1Char(',')),
+           QStringLiteral("-0,5"));
+  QCOMPARE(MathEvaluator::formatNumber(0.0, QLatin1Char(',')),
+           QStringLiteral("0"));
 }
 
 QTEST_MAIN(TestMathEvaluator)

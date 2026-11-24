@@ -2,6 +2,7 @@
 #define LINNOTE_MATHEVALUATOR_H
 
 #include <QMap>
+#include <QChar>
 #include <QString>
 #include <QStringList>
 #include <QVariant>
@@ -26,6 +27,30 @@ public:
    * @return The result as a double
    */
   double evaluate(const QString &expression, bool *ok = nullptr);
+
+  /**
+   * @brief Choose which character separates the integer and fractional part
+   *
+   * '.' is the default and the only behaviour LinNote 1.0.0 had. With ','
+   * a comma immediately followed by a digit is a decimal point, so
+   * "1,5 + 2,3" is 3.8; a comma that is not followed by a digit stays an
+   * argument separator, so "sum(1, 2)" keeps working, and ';' separates
+   * arguments as it does in a spreadsheet under a European locale. Inside
+   * one number a '.' is then a group separator, but only when that number
+   * also contains a comma, so "1.5" written in an older note is still 1.5
+   * while "1.234,56" is 1234.56.
+   */
+  void setDecimalSeparator(QChar separator);
+  QChar decimalSeparator() const { return m_decimalSeparator; }
+
+  /**
+   * @brief Render a result with the configured separator
+   *
+   * One helper for math, unit and currency output, so a result never
+   * disagrees with the notation the user typed.
+   */
+  static QString formatNumber(double value, QChar separator,
+                              int precision = 4);
 
   /**
    * @brief Check if a line contains a math expression
@@ -59,8 +84,11 @@ private:
   double parseNumber(const QString &expr, int &pos, bool *ok);
   void skipWhitespace(const QString &expr, int &pos);
 
+  bool isArgumentSeparator(QChar c) const;
+
   QMap<QString, double> m_variables;
   QList<double> m_values;
+  QChar m_decimalSeparator = QLatin1Char('.');
 };
 
 #endif // LINNOTE_MATHEVALUATOR_H

@@ -1,4 +1,5 @@
 #include "MathEvaluator.h"
+#include <cmath>
 #include <QDebug>
 #include <QRegularExpression>
 #include <QtMath>
@@ -314,8 +315,8 @@ double MathEvaluator::parseNumber(const QString &expr, int &pos, bool *ok) {
             return 0;
           args.append(arg);
           skipWhitespace(expr, pos);
-          if (pos < expr.length() && expr[pos] == ',') {
-            pos++; // skip ','
+          if (pos < expr.length() && isArgumentSeparator(expr[pos])) {
+            pos++; // skip the separator
             skipWhitespace(expr, pos);
           }
         }
@@ -453,11 +454,43 @@ double MathEvaluator::parseNumber(const QString &expr, int &pos, bool *ok) {
     }
   }
 
-  // Parse number - only use dot as decimal, comma is argument separator
+  // Parse a number literal. Which character is the decimal point depends
+  // on the configured separator; see MathEvaluator::setDecimalSeparator.
   QString numStr;
-  while (pos < expr.length() && (expr[pos].isDigit() || expr[pos] == '.')) {
-    numStr += expr[pos];
-    pos++;
+  bool sawComma = false;
+  const bool commaIsDecimal = (m_decimalSeparator == QLatin1Char(','));
+  while (pos < expr.length()) {
+    const QChar c = expr[pos];
+    if (c.isDigit()) {
+      numStr += c;
+      pos++;
+      continue;
+    }
+    if (c == QLatin1Char('.')) {
+      numStr += c;
+      pos++;
+      continue;
+    }
+    if (commaIsDecimal && c == QLatin1Char(',') && !sawComma &&
+        pos + 1 < expr.length() && expr[pos + 1].isDigit()) {
+      // A comma straight before a digit is this number's decimal point.
+      // A comma anywhere else is left alone so it can separate arguments.
+      sawComma = true;
+      numStr += QLatin1Char('.');
+      pos++;
+      continue;
+    }
+    break;
+  }
+
+  if (commaIsDecimal && sawComma) {
+    // "1.234,56": the dots were thousands separators. Only strip them when
+    // the number really did carry a comma, so "1.5" in a note written
+    // before this setting existed still reads as one and a half.
+    const int decimalAt = numStr.lastIndexOf(QLatin1Char('.'));
+    QString head = numStr.left(decimalAt);
+    head.remove(QLatin1Char('.'));
+    numStr = head + numStr.mid(decimalAt);
   }
 
   // Handle scientific notation (e.g., 1e3, 2.5e-2)
@@ -506,6 +539,42 @@ double MathEvaluator::parseNumber(const QString &expr, int &pos, bool *ok) {
   }
 
   return value;
+}
+
+void MathEvaluator::setDecimalSeparator(QChar separator) {
+  m_decimalSeparator =
+      (separator == QLatin1Char(',')) ? QLatin1Char(',') : QLatin1Char('.');
+}
+
+bool MathEvaluator::isArgumentSeparator(QChar c) const {
+  // ';' always separates arguments, which is what a spreadsheet under a
+  // comma locale uses. ',' separates too, except that parseNumber has
+  // already consumed it when it was a decimal point.
+  return c == QLatin1Char(';') || c == QLatin1Char(',');
+}
+
+QString MathEvaluator::formatNumber(double value, QChar separator,
+                                    int precision) {
+  QString out;
+  const double magnitude = std::fabs(value);
+  if (value != 0.0 && (magnitude < 1e-4 || magnitude >= 1e15)) {
+    // Too small or too large to write out: leave it in exponent form.
+    out = QString::number(value, 'g', precision + 2);
+  } else {
+    out = QString::number(value, 'f', precision);
+    if (out.contains(QLatin1Char('.'))) {
+      while (out.endsWith(QLatin1Char('0'))) {
+        out.chop(1);
+      }
+      if (out.endsWith(QLatin1Char('.'))) {
+        out.chop(1);
+      }
+    }
+  }
+  if (separator == QLatin1Char(',')) {
+    out.replace(QLatin1Char('.'), QLatin1Char(','));
+  }
+  return out;
 }
 
 void MathEvaluator::skipWhitespace(const QString &expr, int &pos) {

@@ -1,4 +1,5 @@
 #include "Settings.h"
+#include <QLocale>
 #include "integration/DesktopHelper.h"
 #include "storage/SqliteStorage.h"
 #include "version.h"
@@ -28,6 +29,7 @@ Settings *Settings::instance() {
 Settings::Settings(QObject *parent)
     : QObject(parent), m_autoMathEnabled(true),
       m_currencyConversionEnabled(true), m_baseCurrency("USD"),
+      m_decimalSeparatorMode("auto"),
       m_currencyApiKey(""), m_cryptoApiKey(""),
       m_currencyProvider("frankfurter"),
       m_refreshIntervalMinutes(360), // 6 hours default
@@ -76,6 +78,33 @@ void Settings::setCurrencyConversionEnabled(bool enabled) {
 }
 
 QString Settings::baseCurrency() const { return m_baseCurrency; }
+
+QString Settings::decimalSeparatorMode() const {
+  return m_decimalSeparatorMode;
+}
+
+void Settings::setDecimalSeparatorMode(const QString &mode) {
+  const QString normalized =
+      (mode == "dot" || mode == "comma") ? mode : QStringLiteral("auto");
+  if (m_decimalSeparatorMode != normalized) {
+    m_decimalSeparatorMode = normalized;
+    save();
+    emit settingsChanged();
+  }
+}
+
+QChar Settings::effectiveDecimalSeparator() const {
+  if (m_decimalSeparatorMode == "comma") {
+    return QLatin1Char(',');
+  }
+  if (m_decimalSeparatorMode == "dot") {
+    return QLatin1Char('.');
+  }
+  // "auto": most of continental Europe, including Turkey, writes a comma.
+  return QLocale::system().decimalPoint() == QLatin1Char(',')
+             ? QLatin1Char(',')
+             : QLatin1Char('.');
+}
 
 void Settings::setBaseCurrency(const QString &currency) {
   if (m_baseCurrency != currency) {
@@ -435,6 +464,7 @@ void Settings::save() {
   json["autoMathEnabled"] = m_autoMathEnabled;
   json["currencyConversionEnabled"] = m_currencyConversionEnabled;
   json["baseCurrency"] = m_baseCurrency;
+  json["decimalSeparatorMode"] = m_decimalSeparatorMode;
   json["currencyApiKey"] = m_currencyApiKey;
   json["cryptoApiKey"] = m_cryptoApiKey;
   json["currencyProvider"] = m_currencyProvider;
@@ -550,6 +580,8 @@ void Settings::load() {
   m_autoMathEnabled = json["autoMathEnabled"].toBool(true);
   m_currencyConversionEnabled = json["currencyConversionEnabled"].toBool(true);
   m_baseCurrency = json["baseCurrency"].toString("USD");
+  m_decimalSeparatorMode =
+      json["decimalSeparatorMode"].toString("auto");
   m_currencyApiKey = json["currencyApiKey"].toString("");
   // No default key. Until LinNote 1.0.1 a FreeCryptoAPI key was compiled
   // in, so every installation shared one account's quota and the key was
