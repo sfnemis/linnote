@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Post-deploy probe. Private paths must 404, public ones must 200.
+# Exits non-zero on either failure, so a bad deploy fails loudly.
+set -u
+BASE="${1:-https://linnote.app}"
+fail=0
+
+want() { # want <code> <path>
+  local want=$1 path=$2 got
+  got=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$BASE$path")
+  if [ "$got" = "$want" ]; then
+    printf '  ok   %-3s %s\n' "$got" "$path"
+  else
+    printf '  FAIL want %s got %s  %s\n' "$want" "$got" "$path"
+    fail=1
+  fi
+}
+
+echo "Probing $BASE"
+echo "must be reachable:"
+for p in / /install.sh /USER_GUIDE.md /COMPARISON.md /robots.txt /icon.png /logo.png \
+         /app.css /app.js /tokens.css /guide/ /screenshots/01-calculator.png /api/stats; do
+  want 200 "$p"
+done
+
+echo "must NOT be reachable:"
+for p in /CLAUDE.md /CLAUDE.local.md /AGENTS.md /.git/config /.gitignore /package.json \
+         /README.md /CHANGELOG.md /CMakeLists.txt /main.cpp /core/Settings.cpp \
+         /project-docs/feature-requests.md /project-docs/agent-log.md \
+         /.serena/project.yml /.claude/settings.json /wrangler.jsonc /src/index.js \
+         /guide/package.json /guide/package-lock.json /guide/.vitepress/config.mjs \
+         /packaging/aur/PKGBUILD /dist/linnote-arch /.env; do
+  want 404 "$p"
+done
+
+echo "stats payload:"
+curl -s --max-time 15 "$BASE/api/stats" | head -c 300; echo
+exit $fail

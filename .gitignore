@@ -61,3 +61,10 @@ docs/guide/.vitepress/cache/
 
 # Internal project documents (never published)
 project-docs/
+
+# Cloudflare Worker site
+web/node_modules/
+web/.wrangler/
+
+# playwright screenshots
+.playwright-mcp/

@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "linnote-site",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+
+  // Only ./public is published. The repository root is NEVER the web root:
+  // an allowlisted directory cannot leak a file nobody thought about, a
+  // denylist always can.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+
+  "observability": { "enabled": true },
+
+  "workers_dev": true
+
+  // linnote.app lives in a different Cloudflare account than the token used
+  // here, so the custom domain is attached separately. Once the zone is
+  // reachable, add:
+  //   "routes": [
+  //     { "pattern": "linnote.app",     "custom_domain": true },
+  //     { "pattern": "www.linnote.app", "custom_domain": true }
+  //   ]
+}

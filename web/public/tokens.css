@@ -1,0 +1,70 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench · theme: Cobalt
+ * axes: paper=cool-light · display=grotesk-sans · accent=electric-cobalt
+ * accent anchored on the app icon's own blue (#2050c0 sampled from
+ * resources/icons/app/linnote-128.png), so the signal is the product's.
+ */
+:root {
+  /* paper + ink */
+  --color-paper:    oklch(98.5% 0.004 250);
+  --color-paper-2:  oklch(96.5% 0.006 252);
+  --color-paper-3:  oklch(93.5% 0.008 253);
+  --color-ink:      oklch(24% 0.020 258);
+  --color-ink-2:    oklch(40% 0.016 257);
+  --color-ink-3:    oklch(55% 0.014 256);
+  --color-rule:     oklch(89% 0.008 255);
+  --color-rule-2:   oklch(82% 0.010 255);
+
+  /* the one signal */
+  --color-accent:     oklch(52% 0.205 262);
+  --color-accent-ink: oklch(44% 0.195 262);
+  --color-accent-wash:oklch(95% 0.030 262);
+  --color-focus:      oklch(52% 0.205 262);
+
+  /* the single dark band */
+  --color-graphite:   oklch(21% 0.018 260);
+  --color-graphite-2: oklch(26% 0.018 260);
+  --color-graphite-rule: oklch(33% 0.016 260);
+  --color-on-graphite:   oklch(93% 0.010 255);
+  --color-on-graphite-2: oklch(72% 0.014 255);
+  --color-accent-bright: oklch(74% 0.150 255);
+  --color-ok:            oklch(72% 0.150 150);
+
+  /* type */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-display:   clamp(2.4rem, 5.2vw + 0.4rem, 4.25rem);
+  --text-display-s: clamp(1.9rem, 3.4vw + 0.4rem, 2.9rem);
+  --text-2xl: clamp(1.4rem, 1.4vw + 0.9rem, 1.8rem);
+  --text-xl:  1.25rem;
+  --text-lg:  1.0625rem;
+  --text-md:  0.9375rem;
+  --text-sm:  0.8125rem;
+  --text-xs:  0.6875rem;
+
+  /* 4pt scale */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 5rem;
+  --space-4xl: 7.5rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --rule: 1px;
+
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:     cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-med:  260ms;
+  --dur-slow: 600ms;
+
+  --measure: 62ch;
+  --shell:   74rem;
+}

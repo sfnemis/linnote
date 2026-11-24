@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LinNote - Fast Linux Scratchpad &amp; Note Taking App | Qt6 KDE Plasma</title>
+<meta name="description" content="LinNote is a fast, keyboard-driven scratchpad for Linux. Features smart calculator, currency conversion, OCR screen capture, timers and encrypted notes. Built for KDE Plasma with Qt6." />
+<meta name="keywords" content="Linux note-taking app, Linux scratchpad, KDE Plasma notes, Qt6 note app, Linux productivity tool, Wayland notes" />
+<meta name="theme-color" content="#2050c0" />
+<link rel="canonical" href="https://linnote.app/" />
+<meta property="og:title" content="LinNote - Fast Linux Scratchpad &amp; Note Taking App" />
+<meta property="og:description" content="A fast, keyboard-driven scratchpad for Linux with smart calculator, OCR, timers, and note encryption. Built for KDE Plasma with Qt6." />
+<meta property="og:image" content="https://linnote.app/logo.png" />
+<meta property="og:url" content="https://linnote.app/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/app.css" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"LinNote","applicationCategory":"UtilitiesApplication","operatingSystem":"Linux","url":"https://linnote.app/","license":"https://github.com/sfnemis/linnote/blob/main/LICENSE","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="shell nav-in">
+    <a class="brand" href="/"><img src="/icon.png" alt="" width="24" height="24" />LinNote</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#install">Install</a>
+      <a href="#features">Features</a>
+      <a href="/guide/">Docs</a>
+      <a href="https://github.com/sfnemis/linnote">GitHub</a>
+      <a href="https://www.shopier.com/sfnemis/43380031">Support</a>
+    </nav>
+    <div class="nav-right">
+      <button class="kbd-open" id="palOpen" aria-haspopup="dialog" aria-label="Search and jump to a section"><span class="kbd-label">Search</span> <kbd>⌘K</kbd></button>
+      <a class="btn btn-primary" href="#install">Install</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <p class="eyebrow">Scratchpad for Linux</p>
+        <h1>The fastest scratchpad for Linux</h1>
+        <p class="lede">A keyboard-driven note-taking app with built-in calculator, timers, and more. Built for KDE Plasma with Qt6.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#install">Install LinNote</a>
+          <a class="btn btn-ghost" href="https://github.com/sfnemis/linnote">⭐ Star on GitHub</a>
+          <a class="btn btn-ghost" href="/guide/">📖 Docs</a>
+        </div>
+        <p class="release-line">
+          <span class="chip chip-accent">v<b id="statVersion" style="margin-left:0">2.0.1</b></span>
+          <span class="chip">📦 <b id="statDownloads">—</b> downloads</span>
+          <span class="chip">⭐ <b id="statStars">—</b> stars</span>
+          <span class="chip">MIT</span>
+        </p>
+      </div>
+
+      <div class="term rv" aria-label="Installing and launching LinNote in a terminal">
+        <div class="term-bar">bash — install</div>
+        <div class="term-body">
+<div class="term-line"><span class="pr">$</span> curl -fsSL https://linnote.app/install.sh | bash</div>
+<div class="term-line"><span class="cm">  ▶ Installing dependencies for fedora...</span></div>
+<div class="term-line"><span class="cm">  ▶ Downloading LinNote v2.0.1 (linnote-fedora)...</span></div>
+<div class="term-line"><span class="ok">  ✓ Installation Complete!</span></div>
+<div class="term-line"> </div>
+<div class="term-line"><span class="pr">$</span> linnote --version</div>
+<div class="term-line">linnote 2.0.1</div>
+<div class="term-line"> </div>
+<div class="term-line"><span class="pr">$</span> <span id="typeLine"></span><span class="caret">&nbsp;</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="install">
+    <div class="shell">
+      <p class="eyebrow">Install</p>
+      <h2>Three ways in</h2>
+      <p>Pick the one your distribution uses. Each build is tested on the system it is named after.</p>
+
+      <div class="install-grid">
+        <div class="install-card rv">
+          <h3>🐧 Universal</h3>
+          <p>Fedora, Debian, Ubuntu and the distributions built on them. Detects your system, installs the dependencies, drops in the binary.</p>
+          <div class="cmd">
+            <code>curl -fsSL https://linnote.app/install.sh | bash</code>
+            <button class="copy" data-copy="curl -fsSL https://linnote.app/install.sh | bash">Copy</button>
+          </div>
+        </div>
+
+        <div class="install-card rv">
+          <h3>🔷 Arch Linux (AUR)</h3>
+          <p>Builds from source against your own Qt and OpenSSL, so it keeps working across rolling updates.</p>
+          <div class="cmd">
+            <code>yay -S linnote</code>
+            <button class="copy" data-copy="yay -S linnote">Copy</button>
+          </div>
+        </div>
+
+        <div class="install-card rv">
+          <h3>📦 Flatpak</h3>
+          <p>For immutable systems. Download the bundle from the latest release, then install it. OCR does not work in the sandbox yet.</p>
+          <div class="cmd">
+            <code>flatpak install linnote-2.0.1.flatpak</code>
+            <button class="copy" data-copy="flatpak install linnote-2.0.1.flatpak">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">
+        <strong>GNOME users:</strong> the global hotkey binds on GNOME since 2.0.1. Nothing to configure by hand any more.
+        <a href="/guide/shortcuts">Learn more →</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="tour" id="tour">
+    <div class="shell">
+      <div class="tour-head">
+        <p class="eyebrow">See it in action</p>
+        <h2>Explore LinNote's powerful features and beautiful interface</h2>
+        <p>Every page is a mode. Type a keyword on a blank line and the page becomes a calculator, a checklist, a code block, a timer or a markdown document.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">01 / CALC</p><h3>Smart Calculator with variables and functions</h3><p>Finish a line with an equals sign and the answer lands in place. Variables, functions, percentages, unit and currency conversion on the same line.</p></div>
+          <figure><img src="/screenshots/01-calculator.png" alt="Calculator Mode" loading="lazy" width="1200" height="800" /><figcaption>Calculator Mode</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">02 / LIST</p><h3>Interactive Checklist Mode</h3><p>Type <code>list</code> and every new line becomes a checkbox you can tick with the keyboard.</p></div>
+          <figure><img src="/screenshots/02-checklist.png" alt="Checklist Mode" loading="lazy" width="1200" height="800" /><figcaption>Checklist Mode</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">03 / STATS</p><h3>Built-in Statistical Functions</h3><p><code>sum</code>, <code>avg</code> and <code>count</code> read the numbers already on the page. No selecting, no re-typing.</p></div>
+          <figure><img src="/screenshots/03-average-function.png" alt="Average Function" loading="lazy" width="1200" height="800" /><figcaption>Average Function</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">04 / TEXT</p><h3>Word Count &amp; Text Analysis</h3><p>Character and word counts for the page you are on, without leaving it.</p></div>
+          <figure><img src="/screenshots/05-word-count.png" alt="Word Count" loading="lazy" width="1200" height="800" /><figcaption>Word Count</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">05 / TIMER</p><h3>Countdown Timer &amp; Pomodoro</h3><p>Stopwatch, countdown and Pomodoro live in a page like everything else.</p></div>
+          <figure><img src="/screenshots/07-timer.png" alt="Timer" loading="lazy" width="1200" height="800" /><figcaption>Timer</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">06 / SETUP</p><h3>First Run Setup Wizard</h3><p>Theme, currency, hotkey and encryption, chosen once on first launch.</p></div>
+          <figure><img src="/screenshots/09-setup-preferences.png" alt="Setup" loading="lazy" width="1200" height="800" /><figcaption>Setup</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">07 / LOCK</p><h3>Note Encryption with Recovery Key</h3><p>Lock a page with a password. Since 2.0.0 the content is sealed with AES-256-GCM and a key derived with PBKDF2.</p></div>
+          <figure><img src="/screenshots/10-setup-security.png" alt="Security Setup" loading="lazy" width="1200" height="800" /><figcaption>Security Setup</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">08 / EDITOR</p><h3>Customizable Editor Settings</h3><p>Font, size, indentation and paste cleanup, all in one panel.</p></div>
+          <figure><img src="/screenshots/12-settings-editor.png" alt="Editor Settings" loading="lazy" width="1200" height="800" /><figcaption>Editor Settings</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">09 / KEYS</p><h3>Configurable Keyboard Shortcuts</h3><p>Every action has a key, and every key can be changed.</p></div>
+          <figure><img src="/screenshots/15-settings-shortcuts.png" alt="Shortcuts" loading="lazy" width="1200" height="800" /><figcaption>Shortcuts</figcaption></figure>
+        </div>
+        <div class="step rv">
+          <div class="step-text"><p class="step-no">10 / ABOUT</p><h3>Feature-Rich Application</h3><p>Version, licence and update check, where you expect them.</p></div>
+          <figure><img src="/screenshots/20-settings-about.png" alt="About" loading="lazy" width="1200" height="800" /><figcaption>About</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="shell">
+      <p class="eyebrow">Everything you need</p>
+      <h2>Powerful features packed into a lightweight app</h2>
+      <div class="feat-grid">
+        <div class="feat"><p class="tag">CALC</p><h3>🧮 Smart Calculator</h3><p>Type math expressions and get instant results. Variables, functions, percentages.</p></div>
+        <div class="feat"><p class="tag">RATES</p><h3>💱 Currency Conversion</h3><p>Real-time exchange rates for 30+ currencies including crypto.</p></div>
+        <div class="feat"><p class="tag">UNITS</p><h3>📐 Unit Conversion</h3><p>Convert length, weight, temperature, volume, and more instantly.</p></div>
+        <div class="feat"><p class="tag">TIME</p><h3>⏱️ Built-in Timers</h3><p>Stopwatch, countdown, and Pomodoro for maximum productivity.</p></div>
+        <div class="feat"><p class="tag">OCR</p><h3>📷 OCR Capture</h3><p>Extract text from any area of your screen with Tesseract.</p></div>
+        <div class="feat"><p class="tag">CRYPTO</p><h3>🔒 Encryption</h3><p>Protect sensitive notes with master password and recovery key.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="support" id="support">
+    <div class="shell support-in">
+      <p>❤️ <strong>Support the project</strong> — Your contribution keeps LinNote alive!</p>
+      <a class="btn btn-primary" href="https://www.shopier.com/sfnemis/43380031">🛒 Shopier</a>
+      <a class="btn btn-ghost" href="https://github.com/sponsors/sfnemis">💖 Sponsor</a>
+      <a class="btn btn-ghost" href="https://github.com/sfnemis/linnote">⭐ Star</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="shell">
+    <p>
+      <span>Made with ❤️ for Linux</span>
+      <span>·</span>
+      <a href="https://github.com/sfnemis/linnote">GitHub</a>
+      <span>·</span>
+      <a href="https://github.com/sfnemis/linnote/blob/main/LICENSE">MIT License</a>
+      <span>·</span>
+      <a href="https://github.com/sfnemis/linnote/releases">Releases</a>
+    </p>
+  </div>
+</footer>
+
+<div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-label="Search LinNote">
+  <div class="pal-box">
+    <input id="palInput" type="text" placeholder="Jump to…" autocomplete="off" spellcheck="false" aria-controls="palList" />
+    <ul id="palList"></ul>
+  </div>
+</div>
+
+<script src="/app.js" defer></script>
+</body>
+</html>
