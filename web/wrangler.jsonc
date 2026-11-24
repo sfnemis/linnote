@@ -2,6 +2,13 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "linnote-site",
   "main": "src/index.js",
+
+  // linnote.app lives in its own Cloudflare account, and wrangler otherwise
+  // takes the account from .wrangler/cache/wrangler-account.json, which held
+  // SFN_IMP from another project and made every deploy fail with
+  // "Authentication error [code: 10000]" against an account this token
+  // cannot see. Pinning it here beats a cache nobody looks at.
+  "account_id": "0c140265fee9d14ccf1998f36fbbc883",
   "compatibility_date": "2026-11-01",
 
   // Only ./public is published. The repository root is NEVER the web root:
