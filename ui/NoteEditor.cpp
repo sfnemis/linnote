@@ -418,12 +418,40 @@ QString NoteEditor::cleanupPastedText(const QString &text, Settings *s) {
   return output;
 }
 
+// What to append to a line that has just been evaluated. The result is
+// introduced with " = ", unless the line already ends in "=", in which case
+// only a space and the result follow.
+QString NoteEditor::appendResult(const QString &line, const QString &result) {
+  if (line.trimmed().endsWith('='))
+    return " " + result;
+  return " = " + result;
+}
+
 void NoteEditor::keyPressEvent(QKeyEvent *event) {
   // Stop AutoPaste on ESC
   if (event->key() == Qt::Key_Escape && m_autoPasteActive) {
     stopAutoPaste();
     event->accept();
     return;
+  }
+
+  // Ctrl+Home and Ctrl+End are documented, in the guide and on the app's own
+  // seeded shortcut page, as first page and last page. QPlainTextEdit claims
+  // them as standard caret moves through ShortcutOverride, so the window's
+  // QShortcuts never fired and the keys only moved the cursor. They are
+  // handled here instead, before the base class sees them.
+  if (event->modifiers().testFlag(Qt::ControlModifier) &&
+      !event->modifiers().testFlag(Qt::ShiftModifier)) {
+    if (event->key() == Qt::Key_Home) {
+      emit firstPageRequested();
+      event->accept();
+      return;
+    }
+    if (event->key() == Qt::Key_End) {
+      emit lastPageRequested();
+      event->accept();
+      return;
+    }
   }
 
   // Auto-delete tutorial text when user presses ANY key (except Escape)
@@ -597,7 +625,9 @@ void NoteEditor::keyPressEvent(QKeyEvent *event) {
           if (!result.isEmpty()) {
             cursor.movePosition(QTextCursor::EndOfBlock);
             setTextCursor(cursor);
-            cursor.insertText(" = " + result);
+            // A line the user already finished with "=" must not get a
+            // second one: "50 USD to EUR = = 45.61 EUR" was the old output.
+            cursor.insertText(appendResult(currentLine, result));
             setTextCursor(cursor);
             QPlainTextEdit::keyPressEvent(event);
             return;
@@ -621,7 +651,7 @@ void NoteEditor::keyPressEvent(QKeyEvent *event) {
         if (!result.isEmpty()) {
           cursor.movePosition(QTextCursor::EndOfBlock);
           setTextCursor(cursor);
-          cursor.insertText(" = " + result);
+          cursor.insertText(appendResult(currentLine, result));
           setTextCursor(cursor);
         }
       }

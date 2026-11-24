@@ -45,6 +45,8 @@ private slots:
   // Parsing tests
   void testIsConversion();
   void testIsConversion_data();
+  void testTrailingEquals();
+  void testTrailingEquals_data();
 
   // Edge cases
   void testZeroValue();
@@ -201,6 +203,8 @@ void TestUnitConverter::testIsConversion_data() {
   QTest::newRow("plain text") << "hello world" << false;
   QTest::newRow("math expression") << "2+2" << false;
   QTest::newRow("single number") << "100" << false;
+  QTest::newRow("trailing equals") << "10 km to miles =" << true;
+  QTest::newRow("equals but no units") << "2 + 2 =" << false;
 }
 
 void TestUnitConverter::testIsConversion() {
@@ -208,6 +212,34 @@ void TestUnitConverter::testIsConversion() {
   QFETCH(bool, expected);
 
   QCOMPARE(m_converter->isConversion(input), expected);
+}
+
+// A line that ends with "=" is still a conversion. The first-run wizard
+// tells people to end a line with "=" for an instant result and the seeded
+// Calculator Example page does it, so this is the form most users type.
+// Until 2.0.2 it was not recognised and the math evaluator answered with
+// the number the line started with: "10 km to miles =" became 10.
+void TestUnitConverter::testTrailingEquals_data() {
+  QTest::addColumn<QString>("input");
+  QTest::addColumn<QString>("contains");
+
+  QTest::newRow("km to miles") << "10 km to miles =" << "6.21";
+  QTest::newRow("no space before =") << "10 km to miles=" << "6.21";
+  QTest::newRow("celsius") << "25 celsius to fahrenheit =" << "77";
+  QTest::newRow("kg to lb") << "1 kg to lb =" << "2.20";
+  QTest::newRow("with in") << "5 feet in meters =" << "1.52";
+}
+
+void TestUnitConverter::testTrailingEquals() {
+  QFETCH(QString, input);
+  QFETCH(QString, contains);
+
+  QVERIFY2(m_converter->isConversion(input),
+           qPrintable("not recognised as a conversion: " + input));
+  QString result = m_converter->convert(input);
+  QVERIFY2(result.contains(contains),
+           qPrintable(input + " gave \"" + result + "\", expected it to "
+                      "contain " + contains));
 }
 
 // ============ Edge Cases ============

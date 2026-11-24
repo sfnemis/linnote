@@ -13,6 +13,10 @@ private slots:
   // Singleton
   void testSingleton();
 
+  // Shortcuts
+  void testDocumentedShortcutsHaveDefaults();
+  void testCryptoApiKeyShipsWithTheProjectKey();
+
   // Boolean settings
   void testAutoMathEnabled();
   void testCurrencyConversionEnabled();
@@ -243,6 +247,37 @@ void TestSettings::testEmptyStringSettings() {
   m_settings->setThemeName("");
   // Should either keep old value or use default, not crash
   QVERIFY(true);
+}
+
+// Every shortcut the guide and the app's own seeded shortcut page document
+// has to exist as a default. openSettings was documented from 1.0.0 and had
+// no entry here, so Ctrl+, was never bound to anything.
+void TestSettings::testDocumentedShortcutsHaveDefaults() {
+  QMap<QString, QKeySequence> defaults = Settings::defaultShortcuts();
+  const QStringList documented = {"newPage",  "deletePage", "nextPage",
+                                  "prevPage", "firstPage",  "lastPage",
+                                  "export",   "alwaysOnTop", "hide",
+                                  "find",     "replace",     "toggleLock",
+                                  "ocr",      "shortenUrl",  "openSettings"};
+  for (const QString &name : documented) {
+    QVERIFY2(defaults.contains(name),
+             qPrintable("no default shortcut for " + name));
+    QVERIFY2(!defaults.value(name).isEmpty(),
+             qPrintable("empty default shortcut for " + name));
+  }
+  QCOMPARE(defaults.value("openSettings"), QKeySequence("Ctrl+,"));
+  QCOMPARE(defaults.value("firstPage"), QKeySequence("Ctrl+Home"));
+  QCOMPARE(defaults.value("lastPage"), QKeySequence("Ctrl+End"));
+}
+
+// The project's FreeCryptoAPI key ships as the default on purpose, so crypto
+// rates work without the user signing up. It was reverted out of the source
+// once by a security sweep and had to be put back; the v2.0.1 tag was cut
+// before the revert landed, so neither the AUR package nor the release
+// binaries carried it. This pins the decision.
+void TestSettings::testCryptoApiKeyShipsWithTheProjectKey() {
+  QVERIFY2(!m_settings->cryptoApiKey().isEmpty(),
+           "the built-in FreeCryptoAPI key is missing");
 }
 
 QTEST_MAIN(TestSettings)

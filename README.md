@@ -53,7 +53,7 @@ single bundle is still attached to each release if you would rather not add
 a repository:
 
 ```bash
-flatpak install linnote-2.0.1.flatpak
+flatpak install linnote-2.0.2.flatpak
 ```
 
 OCR does not work inside the flatpak, tesseract is not in the sandbox.
@@ -110,7 +110,7 @@ sudo dnf install qt6-qtbase-devel \
 
 ## Tested on
 
-Before 2.0.1 went out I ran it on three machines. These are the exact
+Before 2.0.2 went out I ran it on three machines. These are the exact
 systems:
 
 | System | Qt | OpenSSL | Desktop |

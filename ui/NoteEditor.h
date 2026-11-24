@@ -61,6 +61,11 @@ public slots:
 
 signals:
   void contentChanged();
+  // Ctrl+Home and Ctrl+End: the editor claims them as caret moves through
+  // ShortcutOverride, so the window's QShortcuts never fire. The editor
+  // forwards them instead of moving the caret.
+  void firstPageRequested();
+  void lastPageRequested();
   void checkboxToggled();
   void commandExecuted(const QString &command);
   void autoPasteStarted();
@@ -71,6 +76,8 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void insertFromMimeData(const QMimeData *source) override;
   QMimeData *createMimeDataFromSelection() const override;
+
+  static QString appendResult(const QString &line, const QString &result);
 
 private slots:
   void updateMathOverlay();

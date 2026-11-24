@@ -5,7 +5,7 @@
 > code block, a timer or a markdown document. Written in C++17 with Qt 6,
 > MIT licensed, built for KDE Plasma and working on GNOME.
 
-Current version: 2.0.1, released 2026-11-24.
+Current version: 2.0.2, released 2026-11-25.
 Platforms: Linux x86_64. Arch through the AUR, Fedora and the Debian family
 through an installer script, and a Flatpak for immutable systems. No arm64
 binary yet; building from source on arm64 works.

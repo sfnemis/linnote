@@ -217,8 +217,14 @@ UnitConverter::parse(const QString &line) const {
   // Also supports: <number><unit> to <unit>, <number> <unit> in <unit>
   // Unit can include letters, digits (for m2, km2), and special chars (°, ², /)
   // Pattern supports multi-word units like "fl oz"
+  //
+  // The trailing "=" is optional and ignored. The first-run wizard tells
+  // people to end a line with "=" for an instant result, and the seeded
+  // Calculator Example page does exactly that, so without this the form the
+  // app teaches fell through to the math evaluator and answered with the
+  // number the line started with: "10 km to miles =" became 10.
   static QRegularExpression pattern(
-      R"(^\s*(-?[\d.,]+)\s*([a-zA-Z°²/0-9]+(?:\s+[a-zA-Z°²/0-9]+)?)\s+(?:to|in|as)\s+([a-zA-Z°²/0-9]+(?:\s+[a-zA-Z°²/0-9]+)?)\s*$)",
+      R"(^\s*(-?[\d.,]+)\s*([a-zA-Z°²/0-9]+(?:\s+[a-zA-Z°²/0-9]+)?)\s+(?:to|in|as)\s+([a-zA-Z°²/0-9]+(?:\s+[a-zA-Z°²/0-9]+)?)\s*=?\s*$)",
       QRegularExpression::CaseInsensitiveOption);
 
   QRegularExpressionMatch match = pattern.match(line.trimmed());

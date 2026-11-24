@@ -406,6 +406,13 @@ void MainWindow::setupUi() {
   connect(m_editor, &NoteEditor::contentChanged, this,
           &MainWindow::onEditorContentChanged);
 
+  // Ctrl+Home and Ctrl+End reach the editor before any QShortcut can run,
+  // so the editor forwards them here.
+  connect(m_editor, &NoteEditor::firstPageRequested, this,
+          [this]() { m_pageSelector->goToFirstPage(); });
+  connect(m_editor, &NoteEditor::lastPageRequested, this,
+          [this]() { m_pageSelector->goToLastPage(); });
+
   // Connect command popup signal
   connect(m_editor, &NoteEditor::commandExecuted, this,
           [this](const QString &command) {
@@ -479,6 +486,13 @@ void MainWindow::setupShortcuts() {
   QShortcut *lastPage = new QShortcut(s->shortcut("lastPage"), this);
   connect(lastPage, &QShortcut::activated, this,
           [this]() { m_pageSelector->goToLastPage(); });
+
+  // Ctrl+, - Settings. The guide has documented this since 1.0.0 and it was
+  // never bound: only the gear button and the /settings command opened the
+  // dialog.
+  QShortcut *settingsShortcut = new QShortcut(s->shortcut("openSettings"), this);
+  connect(settingsShortcut, &QShortcut::activated, this,
+          &MainWindow::openSettingsDialog);
 
   // Ctrl+E - Export note
   QShortcut *exportShortcut = new QShortcut(s->shortcut("export"), this);
@@ -621,18 +635,29 @@ void MainWindow::onEditorContentChanged() {
 
       // Skip if this line was already processed as a keyword
       // (prevents infinite loop when highlighter triggers textChanged)
+      //
+      // The note id is part of the comparison. Without it these statics
+      // outlived the note they were set on, so typing a keyword on a second
+      // page with the same text and the same line count was skipped and the
+      // mode never changed: a page made with Ctrl+N stopped evaluating
+      // anything, while the pages seeded on first run kept working because
+      // their mode is already stored.
       static QString lastProcessedKeyword;
+      static QString lastProcessedNoteId;
       static int lastLineCount = 0;
 
-      if (lastLine == lastProcessedKeyword && lines.count() == lastLineCount) {
-        // Same keyword, same line count - skip to prevent re-entrancy
+      Note currentNote = m_noteManager->currentNote();
+
+      if (lastLine == lastProcessedKeyword && lines.count() == lastLineCount &&
+          currentNote.id() == lastProcessedNoteId) {
+        // Same keyword, same note, same line count - skip to prevent
+        // re-entrancy
         saveCurrentNoteContent();
         isProcessing = false;
         return;
       }
 
       // Check for Timer mode commands (without /)
-      Note currentNote = m_noteManager->currentNote();
       if (currentNote.mode() == NoteMode::Timer && m_timerWidget) {
         QString cmd = lastLine.toLower().trimmed();
         bool timerCmdProcessed = false;
@@ -676,6 +701,7 @@ void MainWindow::onEditorContentChanged() {
 
         if (timerCmdProcessed) {
           lastProcessedKeyword = lastLine;
+          lastProcessedNoteId = currentNote.id();
           lastLineCount = lines.count();
           saveCurrentNoteContent();
           isProcessing = false;
@@ -691,6 +717,7 @@ void MainWindow::onEditorContentChanged() {
         // Set guard BEFORE execute to prevent re-entrancy
         m_updatingEditor = true;
         lastProcessedKeyword = lastLine;
+        lastProcessedNoteId = currentNote.id();
         lastLineCount = lines.count();
 
         // Execute the command but keep the keyword visible as section header

@@ -731,6 +731,9 @@ QMap<QString, QKeySequence> Settings::defaultShortcuts() {
   // File operations
   defaults["export"] = QKeySequence("Ctrl+E");
 
+  // Settings
+  defaults["openSettings"] = QKeySequence("Ctrl+,");
+
   // Window operations
   defaults["alwaysOnTop"] = QKeySequence("Ctrl+T");
   defaults["hide"] = QKeySequence("Esc");
