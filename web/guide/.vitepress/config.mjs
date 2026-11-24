@@ -15,6 +15,9 @@ export default defineConfig({
         ['meta', { name: 'og:description', content: 'A fast, keyboard-driven scratchpad for Linux with smart calculator, OCR, timers, and note encryption.' }],
         ['meta', { name: 'og:image', content: 'https://linnote.app/logo.png' }],
         ['meta', { name: 'twitter:card', content: 'summary' }],
+
+        // Self-hosted Umami, page views only. No recorder.js, no API key.
+        ['script', { defer: '', src: 'https://stats.devdio.pro/script.js', 'data-website-id': '69d70613-11cf-461e-b702-bc28fa38b7ba' }],
     ],
 
     // Served by the Cloudflare Worker under /guide/
