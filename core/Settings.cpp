@@ -28,7 +28,7 @@ Settings *Settings::instance() {
 Settings::Settings(QObject *parent)
     : QObject(parent), m_autoMathEnabled(true),
       m_currencyConversionEnabled(true), m_baseCurrency("USD"),
-      m_currencyApiKey(""), m_cryptoApiKey("gz2pvqoerci2x921124g"),
+      m_currencyApiKey(""), m_cryptoApiKey(""),
       m_currencyProvider("frankfurter"),
       m_refreshIntervalMinutes(360), // 6 hours default
       m_autoPasteEnabled(true), m_openWithNewNote(false),
@@ -551,7 +551,11 @@ void Settings::load() {
   m_currencyConversionEnabled = json["currencyConversionEnabled"].toBool(true);
   m_baseCurrency = json["baseCurrency"].toString("USD");
   m_currencyApiKey = json["currencyApiKey"].toString("");
-  m_cryptoApiKey = json["cryptoApiKey"].toString("gz2pvqoerci2x921124g");
+  // No default key. Until LinNote 1.0.1 a FreeCryptoAPI key was compiled
+  // in, so every installation shared one account's quota and the key was
+  // readable by anyone with the source. Crypto rates fall back to
+  // CoinGecko, which needs no key, when this is empty.
+  m_cryptoApiKey = json["cryptoApiKey"].toString("");
   m_currencyProvider = json["currencyProvider"].toString("frankfurter");
   m_refreshIntervalMinutes = json["refreshIntervalMinutes"].toInt(360);
   m_autoPasteEnabled = json["autoPasteEnabled"].toBool(true);
