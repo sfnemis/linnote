@@ -26,7 +26,7 @@ A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
 
 ### Arch Linux (AUR)
 
-[![AUR version](https://img.shields.io/aur/version/linnote?logo=archlinux&label=AUR)](https://aur.archlinux.org/packages/linnote)
+[![AUR version](https://img.shields.io/aur/version/linnote?logo=archlinux&label=AUR&cacheSeconds=1800)](https://aur.archlinux.org/packages/linnote)
 
 ```bash
 yay -S linnote
