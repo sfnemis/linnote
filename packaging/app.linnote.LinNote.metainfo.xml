@@ -27,6 +27,29 @@
     </p>
   </description>
 
+  <screenshots>
+    <screenshot type="default">
+      <image width="1100" height="720">https://linnote.app/screenshots/store/sc-01-calculator.png</image>
+      <caption>The calculator answers in place, and converts units and currencies on the same line</caption>
+    </screenshot>
+    <screenshot>
+      <image width="1100" height="720">https://linnote.app/screenshots/store/sc-02-checklist.png</image>
+      <caption>A page in checklist mode</caption>
+    </screenshot>
+    <screenshot>
+      <image width="1100" height="720">https://linnote.app/screenshots/store/sc-03-markdown.png</image>
+      <caption>A page in markdown mode</caption>
+    </screenshot>
+    <screenshot>
+      <image width="1100" height="720">https://linnote.app/screenshots/store/sc-04-code.png</image>
+      <caption>A page in code mode, with syntax highlighting</caption>
+    </screenshot>
+    <screenshot>
+      <image width="1100" height="720">https://linnote.app/screenshots/store/sc-05-timer.png</image>
+      <caption>A page in timer mode: stopwatch, countdown and Pomodoro</caption>
+    </screenshot>
+  </screenshots>
+
   <launchable type="desktop-id">linnote.desktop</launchable>
   <url type="homepage">https://linnote.app</url>
   <url type="bugtracker">https://github.com/sfnemis/linnote/issues</url>
