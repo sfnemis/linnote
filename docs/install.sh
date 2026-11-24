@@ -161,19 +161,51 @@ download_binary() {
     local BINARY_URL="https://github.com/sfnemis/linnote/releases/download/v${VERSION}/${BINARY_NAME}"
     
     print_step "Downloading LinNote v${VERSION} (${BINARY_NAME})..."
-    
-    local TEMP_FILE="/tmp/linnote"
-    
-    if command -v curl &> /dev/null; then
-        curl -fsSL "$BINARY_URL" -o "$TEMP_FILE"
-    elif command -v wget &> /dev/null; then
-        wget -q "$BINARY_URL" -O "$TEMP_FILE"
+
+    # A private directory, not a fixed /tmp path another user could have
+    # created first as a symlink to somewhere that then gets overwritten.
+    local TMP_DIR
+    TMP_DIR=$(mktemp -d) || print_error "could not create a temporary directory"
+    trap 'rm -rf "$TMP_DIR"' RETURN
+    local TEMP_FILE="$TMP_DIR/linnote"
+    local SUMS_FILE="$TMP_DIR/SHA256SUMS"
+    local SUMS_URL="https://github.com/sfnemis/linnote/releases/download/v${VERSION}/SHA256SUMS"
+
+    fetch() { # fetch <url> <dest>; quiet failure, caller decides
+        if command -v curl &> /dev/null; then
+            curl -fsSL "$1" -o "$2"
+        elif command -v wget &> /dev/null; then
+            wget -q "$1" -O "$2"
+        else
+            print_error "curl or wget required"
+        fi
+    }
+
+    fetch "$BINARY_URL" "$TEMP_FILE" || print_error "download failed: $BINARY_URL"
+    [ -s "$TEMP_FILE" ] || print_error "downloaded an empty file from $BINARY_URL"
+
+    # Verify against the checksums published with the release. Without this
+    # the installer runs whatever the URL happened to return.
+    if fetch "$SUMS_URL" "$SUMS_FILE" 2>/dev/null && [ -s "$SUMS_FILE" ]; then
+        local want got
+        want=$(awk -v f="$BINARY_NAME" '$2 == f || $2 == "*"f {print $1}' "$SUMS_FILE" | head -1)
+        if [ -n "$want" ]; then
+            if command -v sha256sum &> /dev/null; then
+                got=$(sha256sum "$TEMP_FILE" | cut -d' ' -f1)
+            elif command -v shasum &> /dev/null; then
+                got=$(shasum -a 256 "$TEMP_FILE" | cut -d' ' -f1)
+            fi
+            if [ -n "$got" ] && [ "$got" != "$want" ]; then
+                print_error "checksum mismatch for $BINARY_NAME, refusing to install"
+            elif [ -n "$got" ]; then
+                print_success "Checksum verified"
+            fi
+        fi
     else
-        print_error "curl or wget required"
+        print_step "No published checksums for v${VERSION}, installing unverified"
     fi
-    
+
     sudo install -m 755 "$TEMP_FILE" "$INSTALL_DIR/linnote"
-    rm -f "$TEMP_FILE"
     print_success "Binary installed to $INSTALL_DIR/linnote"
 }
 
