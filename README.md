@@ -46,6 +46,12 @@ flatpak install flathub app.linnote.LinNote
 curl -fsSL https://linnote.app/install.sh | bash
 ```
 
+A minimal Ubuntu or Debian install has no curl, so use wget there:
+
+```bash
+wget -qO- https://linnote.app/install.sh | bash
+```
+
 This will:
 - Detect your distro (Arch, Debian, Fedora, openSUSE)
 - Install dependencies
