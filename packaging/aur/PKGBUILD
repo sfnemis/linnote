@@ -28,7 +28,7 @@ optdepends=(
     'tesseract-data-rus: Russian OCR support'
 )
 source=("$pkgname-$pkgver.tar.gz::https://github.com/sfnemis/linnote/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('97614ca19f60ed12665b5611df1f623018339d26613ec89309ca5d9369301990')
+sha256sums=('335ae794d9a082f4510cf7619097e18b967a86f206cf1355d7d21444c3129fea')
 
 build() {
     cd "$srcdir/$pkgname-main"
