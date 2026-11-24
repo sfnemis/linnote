@@ -31,7 +31,7 @@ source=("$pkgname-$pkgver.tar.gz::https://github.com/sfnemis/linnote/archive/ref
 sha256sums=('335ae794d9a082f4510cf7619097e18b967a86f206cf1355d7d21444c3129fea')
 
 build() {
-    cd "$srcdir/$pkgname-main"
+    cd "$srcdir/$pkgname-$pkgver"
     cmake -B build \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/usr \
@@ -40,7 +40,7 @@ build() {
 }
 
 package() {
-    cd "$srcdir/$pkgname-main"
+    cd "$srcdir/$pkgname-$pkgver"
     DESTDIR="$pkgdir" cmake --install build
     
     # Install license
