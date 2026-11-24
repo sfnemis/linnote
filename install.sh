@@ -277,10 +277,14 @@ uninstall() {
     elif [ -t 0 ]; then
         printf "  Type yes to continue: "
         read -r answer
-    elif { true >/dev/tty; } 2>/dev/null; then
+    elif { exec 3</dev/tty; } 2>/dev/null; then
         # Piped from curl, so stdin is the script. Ask on the terminal.
+        # Opening the descriptor first is the only reliable test: a plain
+        # redirect can still fail at read time on a box with no
+        # controlling terminal, and then bash prints its own error.
         printf "  Type yes to continue: " > /dev/tty
-        read -r answer < /dev/tty
+        read -r answer <&3
+        exec 3<&-
     else
         echo "  There is no terminal to confirm on, so nothing was removed."
         echo "  Run it from a terminal, or add --yes if you are scripting it."
