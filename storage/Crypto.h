@@ -74,10 +74,16 @@ public:
   /// PBKDF2 iteration count written by this version.
   static int currentIterations();
 
-private:
-  static QByteArray randomBytes(int length);
+  /**
+   * @brief PBKDF2-HMAC-SHA256, exposed so a known-answer test can pin the
+   *        primitive rather than only the round trip
+   * @return keyLength bytes, or an empty array on failure
+   */
   static QByteArray deriveKey(const QString &password, const QByteArray &salt,
                               int iterations, int keyLength);
+
+private:
+  static QByteArray randomBytes(int length);
   static QString decryptLegacy(const QString &ciphertext,
                                          const QString &password, bool *ok);
   static bool verifyLegacyPassword(const QString &password,

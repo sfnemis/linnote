@@ -4,8 +4,6 @@
 #include <QStringList>
 #include <QTest>
 
-#include <openssl/evp.h>
-
 // These tests exist because a round-trip assertion proves nothing about a
 // cipher: decrypt(encrypt(x)) == x holds just as well for a repeating-key
 // XOR, which is what LinNote 1.0.0 actually shipped while its own header
@@ -22,7 +20,7 @@ private slots:
   void testPasswordHashIsPbkdf2Tagged();
 
   // The key derivation, checked against OpenSSL rather than against itself
-  void testStoredHashMatchesOpenSslPbkdf2();
+  void testKeyDerivationMatchesAnIndependentPbkdf2();
 
   // Properties a repeating-key XOR cannot satisfy
   void testWrongPasswordIsReportedNotGuessed();
@@ -103,30 +101,45 @@ void TestCrypto::testPasswordHashIsPbkdf2Tagged() {
   QVERIFY(!Crypto::verifyPassword(QStringLiteral("WrongPassword"), hash));
 }
 
-void TestCrypto::testStoredHashMatchesOpenSslPbkdf2() {
-  // Two independent PBKDF2 implementations must agree: ours goes through
-  // Qt's QPasswordDigestor, this one through OpenSSL. A hand-rolled hash
-  // chain, which is what 1.0.0 used, fails this.
-  const QString hash = Crypto::hashPassword(m_password);
-  const QStringList parts = hash.split('$');
-  QCOMPARE(parts.size(), 4);
+void TestCrypto::testKeyDerivationMatchesAnIndependentPbkdf2() {
+  // Known-answer test. The expected values were produced by Python's
+  // hashlib.pbkdf2_hmac, an implementation with no code in common with
+  // this one, so a hand-rolled hash chain (which is what 1.0.0 used)
+  // cannot pass. The first two are the widely published
+  // PBKDF2-HMAC-SHA256 vectors for password/salt.
+  struct Vector {
+    const char *password;
+    const char *saltHex;
+    int iterations;
+    const char *expectedHex;
+  };
+  // "salt" in hex is 73616c74; "password" is the password.
+  const QList<Vector> vectors = {
+      {"password", "73616c74", 1,
+       "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b"},
+      {"password", "73616c74", 4096,
+       "c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a"},
+      {"correct horse battery staple", "000102030405060708090a0b0c0d0e0f",
+       600000,
+       "ef177144eec9420cbc1093d2a8b344a92bc506d0d4ec9c028dd19f8324d8c1e6"}};
 
-  const int iterations = parts.at(1).toInt();
-  const QByteArray salt = QByteArray::fromHex(parts.at(2).toLatin1());
-  const QByteArray expected = QByteArray::fromHex(parts.at(3).toLatin1());
-  QCOMPARE(salt.size(), 16);
-  QCOMPARE(expected.size(), 32);
+  for (const Vector &v : vectors) {
+    const QByteArray out = Crypto::deriveKey(
+        QString::fromLatin1(v.password),
+        QByteArray::fromHex(QByteArray(v.saltHex)), v.iterations, 32);
+    QCOMPARE(QString::fromLatin1(out.toHex()),
+             QString::fromLatin1(v.expectedHex));
+  }
 
-  const QByteArray pw = m_password.toUtf8();
-  QByteArray fromOpenSsl(expected.size(), Qt::Uninitialized);
-  const int rc = PKCS5_PBKDF2_HMAC(
-      pw.constData(), static_cast<int>(pw.size()),
-      reinterpret_cast<const unsigned char *>(salt.constData()),
-      static_cast<int>(salt.size()), iterations, EVP_sha256(),
-      static_cast<int>(fromOpenSsl.size()),
-      reinterpret_cast<unsigned char *>(fromOpenSsl.data()));
-  QCOMPARE(rc, 1);
-  QCOMPARE(fromOpenSsl.toHex(), expected.toHex());
+  // And the stored hash must be exactly that derivation, so the format and
+  // the primitive cannot drift apart.
+  const QString hash = Crypto::hashPassword(
+      QStringLiteral("correct horse battery staple"),
+      QStringLiteral("000102030405060708090a0b0c0d0e0f"));
+  QCOMPARE(hash,
+           QStringLiteral("pbkdf2-sha256$600000$000102030405060708090a0b0c0d"
+                          "0e0f$ef177144eec9420cbc1093d2a8b344a92bc506d0d4ec"
+                          "9c028dd19f8324d8c1e6"));
 }
 
 void TestCrypto::testWrongPasswordIsReportedNotGuessed() {

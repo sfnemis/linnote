@@ -2,7 +2,6 @@
 #include <QByteArray>
 #include <QCryptographicHash>
 #include <QDebug>
-#include <QPasswordDigestor>
 #include <QStringList>
 #include <QtGlobal>
 
@@ -86,9 +85,22 @@ QString Crypto::generateSalt(int length) {
 
 QByteArray Crypto::deriveKey(const QString &password, const QByteArray &salt,
                              int iterations, int keyLength) {
-  return QPasswordDigestor::deriveKeyPbkdf2(QCryptographicHash::Sha256,
-                                            password.toUtf8(), salt,
-                                            iterations, keyLength);
+  if (iterations <= 0 || keyLength <= 0) {
+    return QByteArray();
+  }
+  // PBKDF2 comes from libcrypto rather than Qt's QPasswordDigestor, which
+  // lives in QtNetwork: one crypto library for the whole file.
+  const QByteArray pw = password.toUtf8();
+  QByteArray out(keyLength, Qt::Uninitialized);
+  if (PKCS5_PBKDF2_HMAC(
+          pw.constData(), static_cast<int>(pw.size()),
+          reinterpret_cast<const unsigned char *>(salt.constData()),
+          static_cast<int>(salt.size()), iterations, EVP_sha256(), keyLength,
+          reinterpret_cast<unsigned char *>(out.data())) != 1) {
+    qWarning() << "Crypto: PBKDF2 failed";
+    return QByteArray();
+  }
+  return out;
 }
 
 QString Crypto::encrypt(const QString &plaintext, const QString &password) {
