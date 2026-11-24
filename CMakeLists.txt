@@ -168,6 +168,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(FILES linnote.desktop DESTINATION share/applications)
 
+# AppStream metadata. Fedora, KDE Discover, GNOME Software and Flathub all
+# need this; without it the app has no description in any software centre.
+install(FILES packaging/app.linnote.LinNote.metainfo.xml
+        DESTINATION share/metainfo)
+
 # Install icons for all sizes
 foreach(SIZE 16 32 48 64 128 256 512)
     install(FILES resources/icons/app/linnote-${SIZE}.png

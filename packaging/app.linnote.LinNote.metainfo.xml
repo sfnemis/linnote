@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>app.linnote.LinNote</id>
+  <name>LinNote</name>
+  <summary>Fast keyboard-driven scratchpad</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="app.linnote">
+    <name>sfnemis</name>
+  </developer>
+
+  <description>
+    <p>
+      LinNote is a scratchpad for Linux built for typing rather than clicking.
+      Notes live in pages you switch with the keyboard, and each page can be a
+      plain note, a checklist, a code block with highlighting, a markdown
+      document, a timer or a calculator.
+    </p>
+    <p>
+      Finish a line with an equals sign and the calculator answers in place.
+      It reads a comma or a dot as the decimal point, following your locale,
+      and the same line converts units and currencies.
+    </p>
+    <p>
+      A page can be locked with a password. Locked pages are encrypted with
+      AES-256-GCM and the key is derived from the password with PBKDF2.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">linnote.desktop</launchable>
+  <url type="homepage">https://linnote.app</url>
+  <url type="bugtracker">https://github.com/sfnemis/linnote/issues</url>
+  <url type="vcs-browser">https://github.com/sfnemis/linnote</url>
+
+  <categories>
+    <category>Utility</category>
+    <category>TextEditor</category>
+  </categories>
+
+  <keywords>
+    <keyword>notes</keyword>
+    <keyword>scratchpad</keyword>
+    <keyword>calculator</keyword>
+    <keyword>markdown</keyword>
+  </keywords>
+
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </supports>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="2.0.0" date="2026-11-24">
+      <description>
+        <p>
+          Locked notes are now encrypted with AES-256-GCM instead of the
+          reversible scheme used in 1.0.0, and existing locked notes are
+          converted the first time they are opened.
+        </p>
+        <p>
+          The calculator reads a comma as the decimal point, so 1,5 + 2,3
+          answers 3,8 instead of 1.
+        </p>
+        <p>
+          The global shortcut now binds on GNOME, and the app no longer
+          writes note or clipboard contents to the system log.
+        </p>
+      </description>
+    </release>
+    <release version="1.0.0" date="2026-01-20" />
+  </releases>
+</component>

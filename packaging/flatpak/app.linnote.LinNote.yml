@@ -1,0 +1,48 @@
+app-id: app.linnote.LinNote
+runtime: org.kde.Platform
+runtime-version: '6.11'
+sdk: org.kde.Sdk
+command: linnote
+rename-icon: linnote
+rename-desktop-file: linnote.desktop
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Currency and unit rates, and the update check.
+  - --share=network
+  # The app's own D-Bus name, used by the toggle command and the
+  # linnote:// scheme handler.
+  - --own-name=org.linnote.LinNote
+  # Tray icon on desktops that provide a StatusNotifier host.
+  - --talk-name=org.kde.StatusNotifierWatcher
+  # Export to TXT, Markdown, PDF, CSV and ZIP writes here.
+  - --filesystem=xdg-documents
+
+modules:
+  # Wayland always-on-top. Not part of the KDE runtime, so it is built here.
+  - name: layer-shell-qt
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TESTING=OFF
+    sources:
+      - type: git
+        url: https://invent.kde.org/plasma/layer-shell-qt.git
+        tag: v6.4.5
+
+  - name: linnote
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: dir
+        path: ../..
+    post-install:
+      # The desktop file is renamed above to match the app id, so the
+      # metainfo CMake installed has to point at the new name or
+      # appstream validation fails.
+      - sed -i 's|>linnote.desktop<|>app.linnote.LinNote.desktop<|'
+        /app/share/metainfo/app.linnote.LinNote.metainfo.xml
