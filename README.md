@@ -36,9 +36,13 @@ paru -S linnote
 
 ### Flatpak
 
+Not on Flathub yet. The bundle is attached to the release:
+
 ```bash
-flatpak install flathub app.linnote.LinNote
+flatpak install linnote-2.0.1.flatpak
 ```
+
+OCR does not work inside the flatpak, tesseract is not in the sandbox.
 
 ### Universal Install (Debian, Fedora, openSUSE, etc.)
 
@@ -86,6 +90,39 @@ sudo apt install qt6-base-dev libqt6sql6-sqlite \
 sudo dnf install qt6-qtbase-devel \
   kf6-kwindowsystem-devel openssl-devel cmake gcc-c++ tesseract
 ```
+
+## Tested on
+
+Before 2.0.1 went out I ran it on three machines. These are the exact
+systems:
+
+| System | Qt | OpenSSL | Desktop |
+|---|---|---|---|
+| Fedora Workstation 45 | 6.11.2 | 4.0.3 | GNOME 51 |
+| Ubuntu 26.04.1 LTS | 6.10.2 | 3.5.5 | GNOME |
+| EndeavourOS (Arch, kernel 7.3.5) | 6.12.0 | 4.1.0 | KDE Plasma 6.8.3 |
+
+All three x86_64. What I checked on each of them, not just on one:
+
+- A clean build from source with no compiler warnings, and all seven test
+  suites passing, including 23 tests on the encryption and 39 on the
+  calculator.
+- A note locked by LinNote 1.0.0 opened with its old password and came back
+  with exactly the text that went in, and the database then showed it stored
+  in the new format.
+- Every mode keyword, calc, list, code, markdown and timer, checked by
+  reading the mode back out of the database rather than by looking at the
+  screen.
+- The calculator with both separators: `2+2=`, `100.5*2=`, `sqrt(16)=`,
+  `50 km to miles`, and with the comma on, `1,5+2,3=` and `sum(1; 2; 3,5)=`.
+- `install.sh` run end to end from linnote.app, then the uninstaller through
+  all four of its paths.
+
+On Fedora and Ubuntu that was the published binary and the installer. On
+EndeavourOS it was the AUR package built and installed with `makepkg -si`.
+The flatpak was built and run on Fedora.
+
+There is no arm64 build yet. Building from source on arm64 works.
 
 ## Usage
 
