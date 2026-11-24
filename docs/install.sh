@@ -369,14 +369,20 @@ uninstall() {
     kbuildsycoca6 --noincremental 2>/dev/null || true
     
     echo ""
-    echo -e "  ${GREEN}LinNote completely uninstalled!${NC}"
+    echo -e "  ${GREEN}LinNote uninstalled.${NC}"
     echo ""
     echo "  Removed:"
-    echo "    • Binaries (all locations)"
-    echo "    • Desktop entries (system + user)"
-    echo "    • Icons (all sizes)"
-    echo "    • Config + Cache + Database"
-    echo "    • KDE global shortcuts"
+    echo "    the program, its desktop entries and its icons"
+    echo "    LinNote's KDE global shortcut entry"
+    echo "    the cache"
+    if [ "$PURGE" = "yes" ]; then
+        echo "    your notes, your settings and the database"
+    else
+        echo ""
+        echo "  Kept:"
+        echo "    your notes and settings, under ~/.local/share"
+        echo "    run with --uninstall --purge to remove those too"
+    fi
     echo ""
 }
 
