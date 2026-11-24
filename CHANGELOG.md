@@ -54,6 +54,12 @@ All notable changes to this project will be documented in this file.
   built on. 1.0.0 handed the Arch build to Fedora, RHEL and openSUSE too,
   where a different Qt or glibc can stop it from starting. Arch is pointed
   at its AUR package and anything else at the Flatpak or a source build.
+- The uninstaller asks before it runs, lists what goes and what stays, and
+  keeps your notes unless you also pass `--purge`. It used to delete the
+  notes database on the first keystroke with no confirmation and no backup.
+- Uninstalling no longer corrupts another application's KDE global
+  shortcuts. The old cleanup deleted LinNote's section *and* the header of
+  whatever section came after it.
 - Typing `timer` switches the page to timer mode. It used to start a
   stopwatch without changing the mode, and with stopwatch auto-start
   turned off it did nothing at all.

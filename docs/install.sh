@@ -237,10 +237,55 @@ update_caches() {
 
 # Uninstall
 uninstall() {
+    local PURGE="${1:-no}"
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${CYAN}  Uninstalling LinNote${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    # Say what goes and what stays, and get a yes, before touching anything.
+    # Until 2.0.0 this function deleted the notes database on the first
+    # keystroke with no confirmation and no backup.
+    local DATA_DIRS=""
+    for d in "$HOME/.local/share/LinNote" "$HOME/.local/share/linnote" \
+             "$HOME/.config/LinNote" "$HOME/.config/linnote"; do
+        [ -d "$d" ] && DATA_DIRS="$DATA_DIRS  $d\n"
+    done
+
+    echo "  Will be removed:"
+    echo "    the linnote program, its desktop entry and its icons"
+    if [ "$PURGE" = "yes" ]; then
+        echo "    YOUR NOTES AND SETTINGS:"
+        [ -n "$DATA_DIRS" ] && printf "    %b" "$DATA_DIRS" || echo "      (none found)"
+    fi
+    echo ""
+    echo "  Will be kept:"
+    if [ "$PURGE" = "yes" ]; then
+        echo "    nothing"
+    else
+        echo "    your notes and settings:"
+        [ -n "$DATA_DIRS" ] && printf "    %b" "$DATA_DIRS" || echo "      (none found)"
+        echo "    run with --purge as well if you want those deleted too"
+    fi
+    echo ""
+    if [ -t 0 ]; then
+        printf "  Type yes to continue: "
+        read -r answer
+    else
+        # Piped from curl, so there is no terminal to ask on.
+        if [ -r /dev/tty ]; then
+            printf "  Type yes to continue: "
+            read -r answer < /dev/tty
+        else
+            answer=""
+        fi
+    fi
+    if [ "$answer" != "yes" ]; then
+        echo ""
+        echo "  Nothing was removed."
+        exit 0
+    fi
     echo ""
     
     # Kill running LinNote process if any
@@ -273,14 +318,16 @@ uninstall() {
     rm -f "$HOME/.local/share/icons/hicolor/scalable/apps/linnote.svg" 2>/dev/null
     print_success "Icons removed"
     
-    # Remove config, cache, and ALL app data (database, settings, etc.)
-    rm -rf "$HOME/.config/LinNote" 2>/dev/null
-    rm -rf "$HOME/.config/linnote" 2>/dev/null
-    rm -rf "$HOME/.cache/LinNote" 2>/dev/null
-    rm -rf "$HOME/.cache/linnote" 2>/dev/null
-    rm -rf "$HOME/.local/share/LinNote" 2>/dev/null
-    rm -rf "$HOME/.local/share/linnote" 2>/dev/null
-    print_success "Config, cache, and database removed"
+    # Caches are disposable and always go. Notes and settings only go when
+    # the user asked for that explicitly.
+    rm -rf "$HOME/.cache/LinNote" "$HOME/.cache/linnote" 2>/dev/null
+    if [ "$PURGE" = "yes" ]; then
+        rm -rf "$HOME/.config/LinNote" "$HOME/.config/linnote" 2>/dev/null
+        rm -rf "$HOME/.local/share/LinNote" "$HOME/.local/share/linnote" 2>/dev/null
+        print_success "Notes, settings and cache removed"
+    else
+        print_success "Cache removed, notes and settings kept"
+    fi
     
     # Remove KDE global shortcuts
     if command -v kwriteconfig6 &>/dev/null; then
@@ -291,9 +338,20 @@ uninstall() {
         kwriteconfig5 --file kglobalshortcutsrc --group linnote --key _k_friendly_name --delete 2>/dev/null || true
         kwriteconfig5 --file kglobalshortcutsrc --group LinNote --key _k_friendly_name --delete 2>/dev/null || true
     fi
-    # Remove entire LinNote section from kglobalshortcutsrc
-    sed -i '/\[linnote\]/,/^\[/d' "$HOME/.config/kglobalshortcutsrc" 2>/dev/null || true
-    sed -i '/\[LinNote\]/,/^\[/d' "$HOME/.config/kglobalshortcutsrc" 2>/dev/null || true
+    # Delete LinNote's own group only. The old range ended ON the next
+    # group header and deleted it too, which left the following
+    # application's shortcuts headerless and broken.
+    if [ -f "$HOME/.config/kglobalshortcutsrc" ]; then
+        cp "$HOME/.config/kglobalshortcutsrc" \
+           "$HOME/.config/kglobalshortcutsrc.linnote-backup" 2>/dev/null || true
+        awk 'BEGIN{skip=0}
+             /^\[/{ skip = ($0=="[linnote]" || $0=="[LinNote]") ? 1 : 0 }
+             !skip{print}' \
+            "$HOME/.config/kglobalshortcutsrc.linnote-backup" \
+            > "$HOME/.config/kglobalshortcutsrc" 2>/dev/null || \
+            cp "$HOME/.config/kglobalshortcutsrc.linnote-backup" \
+               "$HOME/.config/kglobalshortcutsrc"
+    fi
     print_success "KDE global shortcuts removed"
     
     # Update caches
@@ -317,7 +375,11 @@ uninstall() {
 main() {
     case "${1:-}" in
         --uninstall|-u)
-            uninstall
+            if [ "${2:-}" = "--purge" ]; then
+                uninstall yes
+            else
+                uninstall no
+            fi
             exit 0
             ;;
     esac
