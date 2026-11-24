@@ -50,6 +50,10 @@ All notable changes to this project will be documented in this file.
 - The installer refuses to install a binary built for another CPU
   architecture instead of reporting success and leaving a program that
   cannot run.
+- Each published binary is now offered only on the distribution it was
+  built on. 1.0.0 handed the Arch build to Fedora, RHEL and openSUSE too,
+  where a different Qt or glibc can stop it from starting. Arch is pointed
+  at its AUR package and anything else at the Flatpak or a source build.
 - Typing `timer` switches the page to timer mode. It used to start a
   stopwatch without changing the mode, and with stopwatch auto-start
   turned off it did nothing at all.

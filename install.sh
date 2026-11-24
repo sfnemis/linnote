@@ -128,20 +128,32 @@ download_binary() {
         print_error "Unsupported architecture: $machine"
     fi
     
-    # Select binary based on distro family
+    # Each binary is built on the distribution it is named after and is only
+    # offered there. LinNote 1.0.0 handed the Arch build to Fedora, RHEL and
+    # openSUSE as well; those carry different Qt and glibc versions, so the
+    # binary could fail to start with a symbol error. Arch has its own AUR
+    # package and is not served a foreign binary at all.
     case "$distro" in
-        arch|manjaro|endeavouros|garuda|cachyos|fedora|rhel|centos|opensuse*)
-            BINARY_NAME="linnote-arch"
+        fedora|rhel|centos|rocky|almalinux)
+            BINARY_NAME="linnote-fedora"
             ;;
-        debian)
-            BINARY_NAME="linnote-debian"
-            ;;
-        ubuntu|linuxmint|pop|elementary|zorin|kubuntu)
+        debian|ubuntu|linuxmint|pop|elementary|zorin|kubuntu)
             BINARY_NAME="linnote-ubuntu"
             ;;
+        arch|manjaro|endeavouros|garuda|cachyos)
+            echo ""
+            print_step "Arch and its derivatives have a package of their own:"
+            echo "      yay -S linnote"
+            echo ""
+            print_error "No binary is published for $distro, use the AUR package"
+            ;;
         *)
-            # Default to arch binary (newer Qt)
-            BINARY_NAME="linnote-arch"
+            echo ""
+            print_step "No binary is published for $distro. Two options:"
+            echo "      flatpak install flathub app.linnote.LinNote"
+            echo "    or build from source, see https://github.com/sfnemis/linnote"
+            echo ""
+            print_error "Unsupported distribution: $distro"
             ;;
     esac
     
