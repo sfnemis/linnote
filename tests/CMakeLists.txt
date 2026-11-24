@@ -79,3 +79,22 @@ add_executable(test_sqlite
 )
 target_link_libraries(test_sqlite PRIVATE Qt6::Test Qt6::Core Qt6::Sql)
 add_test(NAME SqliteStorageTests COMMAND test_sqlite)
+
+# ============ Headless ============
+
+# test_currency links Qt6::Gui and test_settings links Qt6::Widgets, so
+# QTEST_MAIN gives them a QGuiApplication and a QApplication, which need a
+# window system. Over SSH, in a container or in CI there is none, and both
+# abort with SIGABRT before printing a single line, which reads like a
+# broken test rather than a missing display. The offscreen plugin costs
+# nothing and is set for every test so a new one cannot inherit the trap.
+set_tests_properties(
+    MathEvaluatorTests
+    UnitConverterTests
+    TextAnalyzerTests
+    CurrencyConverterTests
+    SettingsTests
+    CryptoTests
+    SqliteStorageTests
+    PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+)
