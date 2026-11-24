@@ -1,3 +1,5 @@
+#include "version.h"
+
 #include "core/ExampleNotes.h"
 #include "core/NoteManager.h"
 #include "core/Settings.h"
@@ -129,7 +131,7 @@ int main(int argc, char *argv[]) {
 
   QApplication app(argc, argv);
   app.setApplicationName("linnote");
-  app.setApplicationVersion("1.0");
+  app.setApplicationVersion(QStringLiteral(LINNOTE_VERSION));
   app.setOrganizationName("LinNote");
   app.setOrganizationDomain("linnote.app");
 

@@ -1,7 +1,7 @@
 # Maintainer: sfnemis <sfnemis@linnote.app>
 pkgname=linnote
-pkgver=1.0.0
-pkgrel=2
+pkgver=2.0.0
+pkgrel=1
 pkgdesc="A fast, keyboard-driven scratchpad for Linux with smart calculator, OCR, timers, and 14+ themes"
 arch=('x86_64' 'aarch64')
 url="https://linnote.app"
@@ -28,9 +28,8 @@ optdepends=(
     'tesseract-data-fra: French OCR support'
     'tesseract-data-rus: Russian OCR support'
 )
-# Use main branch directly until next release tag
-source=("$pkgname-$pkgver.tar.gz::https://github.com/sfnemis/linnote/archive/refs/heads/main.tar.gz")
-sha256sums=('SKIP')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/sfnemis/linnote/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')  # replaced by updpkgsums once the tag is published
 
 build() {
     cd "$srcdir/$pkgname-main"

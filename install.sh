@@ -3,7 +3,7 @@
 # Usage: curl -fsSL https://linnote.app/install.sh | bash
 set -e
 
-VERSION="1.0.0"
+VERSION="2.0.0"
 INSTALL_DIR="/usr/local/bin"
 
 # Track installation (silent, non-blocking)
@@ -110,6 +110,23 @@ install_dependencies() {
 download_binary() {
     local distro=$(detect_distro)
     local BINARY_NAME=""
+
+    # Releases carry x86_64 builds only. Without this check the installer
+    # downloads one onto an arm64 machine, reports success, and leaves a
+    # program that dies with "cannot execute binary file".
+    local machine
+    machine=$(uname -m)
+    if [ "$machine" != "x86_64" ] && [ "$machine" != "amd64" ]; then
+        echo ""
+        print_step "No prebuilt binary for $machine."
+        echo "    Build from source instead:"
+        echo "      git clone https://github.com/sfnemis/linnote.git"
+        echo "      cd linnote && cmake -B build -DCMAKE_BUILD_TYPE=Release"
+        echo "      cmake --build build -j\$(nproc)"
+        echo "      sudo cmake --install build"
+        echo ""
+        print_error "Unsupported architecture: $machine"
+    fi
     
     # Select binary based on distro family
     case "$distro" in

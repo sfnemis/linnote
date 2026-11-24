@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-11-24
+
+### Security
+
+- Locked notes are now encrypted with AES-256-GCM. The key comes from the
+  password through PBKDF2-HMAC-SHA256 at 600000 iterations, the salt and the
+  nonce come from the system random generator, and the ciphertext carries an
+  authentication tag, so a wrong password or a tampered note is detected
+  instead of producing plausible-looking text. Version 1.0.0 used a
+  reversible scheme despite describing itself as AES.
+- A note locked by 1.0.0 still opens, and is rewritten in the new format the
+  first time it is unlocked. Nothing has to be exported or re-entered.
+- Password hashes moved to PBKDF2 and are compared in constant time. A hash
+  written by 1.0.0 keeps working and is rewritten when the password changes.
+- Note contents, clipboard contents and passwords are no longer written to
+  the system log, and debug output is compiled out of release builds.
+- The FreeCryptoAPI key that shipped inside the application is gone. The
+  field starts empty and crypto rates fall back to CoinGecko, which needs no
+  key. If you had not set your own key, nothing changes for you.
+
+### Added
+
+- The calculator reads a comma as the decimal point. `1,5 + 2,3` answers
+  `3,8`; in 1.0.0 it answered `1`. Settings, Calculator has Automatic, Dot
+  and Comma, and Automatic follows the system locale. With a comma active,
+  `;` separates function arguments as it does in a spreadsheet, `sum(1, 2)`
+  still works, and `1.234,56` reads as one thousand two hundred thirty four
+  and a half. (#7)
+- Flatpak package, built on the KDE 6.11 runtime, for immutable systems. (#6)
+- AppStream metadata, so the app has a proper entry in software centres.
+
+### Fixed
+
+- The global shortcut now binds on GNOME. The shortcuts portal refuses a
+  request it cannot tie to an installed desktop file, and LinNote now puts
+  itself in the systemd scope that makes that possible, whether it was
+  started from the menu, a terminal or an autostart entry. (#4)
+- Every icon size is installed system-wide instead of only the 128px one,
+  which is why the icon looked blurry. The 512px icon was also a 1024px
+  image. (#4)
+- Changing a locked note's password no longer overwrites the note when the
+  decryption before it failed.
+- The installer now installs the Qt SVG image plugin and the Qt SQLite
+  driver. Without them the toolbar icons were blank and the database would
+  not open on a clean Debian or Ubuntu install.
+- The installer refuses to install a binary built for another CPU
+  architecture instead of reporting success and leaving a program that
+  cannot run.
+
+### Changed
+
+- Building from source now needs OpenSSL development files: `openssl-devel`
+  on Fedora, `libssl-dev` on Debian and Ubuntu, `openssl` on Arch.
+
 ## [1.0.0] - 2025-01-19
 
 ### Added

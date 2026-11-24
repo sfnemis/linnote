@@ -11,13 +11,13 @@ A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
 ## Features
 
 - Multi-page notes with tabs
-- Smart calculations (type `2+2=` to evaluate)
+- Smart calculations (type `2+2=` to evaluate), with comma or dot as the decimal separator
 - Currency conversion (real-time rates)
 - Unit conversion (length, weight, temperature, etc.)
 - Pomodoro timer, stopwatch, countdown
 - OCR screen capture
 - Markdown & code highlighting
-- Note encryption with master password
+- Note encryption with a master password (AES-256-GCM)
 - 14+ color themes
 - Global hotkey support
 - Wayland native
@@ -32,6 +32,12 @@ A fast, keyboard-driven scratchpad for Linux. Built for KDE Plasma with Qt6.
 yay -S linnote
 # or
 paru -S linnote
+```
+
+### Flatpak
+
+```bash
+flatpak install flathub app.linnote.LinNote
 ```
 
 ### Universal Install (Debian, Fedora, openSUSE, etc.)
@@ -98,7 +104,8 @@ Launch from your application menu or run `linnote` from terminal.
 
 ## Configuration
 
-Settings are stored in `~/.local/share/linnote/`.
+Notes and settings are stored in `~/.local/share/LinNote/linnote/notes.db`.
+Under Flatpak they are in `~/.var/app/app.linnote.LinNote/data/`.
 
 ## Contributing
 
