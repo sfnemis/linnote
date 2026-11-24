@@ -68,3 +68,6 @@ web/.wrangler/
 
 # playwright screenshots
 .playwright-mcp/
+
+# cutover scratch: DNS snapshots taken before a routing change
+web/dns-before-*.json
