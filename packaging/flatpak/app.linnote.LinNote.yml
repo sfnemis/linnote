@@ -32,14 +32,23 @@ modules:
       - type: git
         url: https://invent.kde.org/plasma/layer-shell-qt.git
         tag: v6.4.5
+        commit: 7a3653124580016c33fc80ad1323ef1c160c61b5
+    # Only the runtime library is needed; the development files would
+    # otherwise ship inside the bundle.
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+      - /mkspecs
 
   - name: linnote
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
     sources:
-      - type: dir
-        path: ../..
+      - type: git
+        url: https://github.com/sfnemis/linnote.git
+        commit: 7f5395a0448866ddf43ce10dfd3dd414315279e2
     post-install:
       # The desktop file is renamed above to match the app id, so the
       # metainfo CMake installed has to point at the new name or
